@@ -21,7 +21,7 @@
         android:layout_width="match_parent"
         android:layout_height="180dp"
         android:text="MyButton"
-        android:backgroundTint="@color/cast_libraries_material_featurehighlight_outer_highlight_default_color" />
+        android:backgroundTint="@android:color/holo_green_dark" />
 
     <!--http://stackoverflow.com/questions/8743349/hardcoded-string-row-three-should-use-string-resource-->
     <!--webpage explaining why not to hardcode text strings for buttons in the layout so
