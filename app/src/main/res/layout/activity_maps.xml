@@ -1,8 +1,33 @@
-<fragment xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:map="http://schemas.android.com/apk/res-auto"
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/map"
-    android:name="com.google.android.gms.maps.SupportMapFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.corp.trace.trace.MapsActivity" />
+    android:orientation="vertical"
+    android:gravity="center">
+
+    <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:map="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/map"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="258dp"
+        tools:context="com.corp.trace.trace.MapsActivity" />
+
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="match_parent"
+        android:layout_height="180dp"
+        android:text="MyButton"
+        android:backgroundTint="@color/cast_libraries_material_featurehighlight_outer_highlight_default_color" />
+
+    <!--http://stackoverflow.com/questions/8743349/hardcoded-string-row-three-should-use-string-resource-->
+    <!--webpage explaining why not to hardcode text strings for buttons in the layout so
+        it's best to have it in a seperate xml file explained in the website. -->
+
+
+
+
+</LinearLayout>
