@@ -27,7 +27,4 @@
     <!--webpage explaining why not to hardcode text strings for buttons in the layout so
         it's best to have it in a seperate xml file explained in the website. -->
 
-
-
-
 </LinearLayout>
