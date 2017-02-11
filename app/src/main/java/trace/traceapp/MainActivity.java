@@ -68,7 +68,7 @@ public class MainActivity extends AppCompatActivity
             public void onClick(View view) {
                 appLocationManager.getLatitude();
                 appLocationManager.getLongitude();
-                Snackbar.make(view, appLocationManager.getLongitude() + " " +appLocationManager.getLatitude(), Snackbar.LENGTH_LONG)
+                Snackbar.make(view, "Latitude: "+appLocationManager.getLatitude() + " Longitude: " +appLocationManager.getLongitude(), Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
         });
@@ -82,14 +82,6 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        // Create an instance of GoogleAPIClient.
-        if (mGoogleApiClient == null) {
-            mGoogleApiClient = new GoogleApiClient.Builder(this)
-                    .addConnectionCallbacks(this)
-                    .addOnConnectionFailedListener(this)
-                    .addApi(LocationServices.API)
-                    .build();
-        }
 
     }
 
@@ -142,7 +134,11 @@ public class MainActivity extends AppCompatActivity
             String lat = appLocationManager.getLatitude();
             Toast.makeText(this, lat, Toast.LENGTH_LONG).show();
             Toast.makeText(this, lon, Toast.LENGTH_LONG).show();
-
+            TextView txt = (TextView) findViewById(R.id.gps);
+            // txt.setText(lon);
+            txt.setText("Lattitude: "+appLocationManager.getLatitude()+ " Longetude:"+ appLocationManager.getLongitude());
+           // mLatitudeTextView.setText(String.format("%s: %f", mLatitudeLabel,
+              //      mCurrentLocation.getLatitude()));
         } else if (id == R.id.nav_slideshow) {
 
         } else if (id == R.id.nav_manage) {
@@ -158,25 +154,19 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
     protected void onStart() {
-        mGoogleApiClient.connect();
+        //mGoogleApiClient.connect();
         super.onStart();
     }
 
     protected void onStop() {
-        mGoogleApiClient.disconnect();
+       // mGoogleApiClient.disconnect();
         super.onStop();
     }
 
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-//        String mLatitudeText = null;//////TODOOOOOOOOO MAKE SYSTEM STRINGS INSTEAD OF TIS SHIT
-//        Location mLastLocation = LocationServices.FusedLocationApi.getLastLocation( mGoogleApiClient);
-//        if (mLastLocation != null) {
-//            mLatitudeText.setText(String.valueOf(mLastLocation.getLatitude()));
-//            mLongitudeText.setText(String.valueOf(mLastLocation.getLongitude()));
-//        }
-//
+
     }
 
     @Override
