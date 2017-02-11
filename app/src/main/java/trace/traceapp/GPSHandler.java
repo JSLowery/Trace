@@ -15,6 +15,8 @@ import android.widget.Toast;
 
 import com.google.android.gms.location.LocationRequest;
 
+import java.util.Random;
+
 /**
  * Created by tenos on 2/10/17.
  */
@@ -74,6 +76,20 @@ public class GPSHandler implements LocationListener {
     }
     @Override
     public void onLocationChanged(Location location) {
+        Log.i("Location", "lat "+location.getLatitude()+" lon "+location.getLongitude());
+        Random r = new Random();
+        int Low = 10;
+        int High = 100;
+        String str = r.nextInt(High-Low) + Low+","+r.nextInt(High-Low) + Low;
+        String[] MockLoc = str.split(",");
+//        LocationManager mocLocationProvider = (LocationManager)  Context.getSystemService(Context.LOCATION_SERVICE);
+//        Location location1 = new Location(mocLocationProvider);
+//        Double lat = Double.valueOf(Moc100kLoc[0]);
+//        location1.setLatitude(lat);
+//        Double longi = Double.valueOf(MockLoc[1]);
+//        location1.setLongitude(longi);
+//        Double alti = Double.valueOf(MockLoc[2]);
+//        location1.setAltitude(alti);
         double lon = (double) (location.getLongitude());/// * 1E6);
         double lat = (double) (location.getLatitude());// * 1E6);
 
