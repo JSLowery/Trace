@@ -13,6 +13,8 @@ import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.google.android.gms.location.LocationRequest;
+
 /**
  * Created by tenos on 2/10/17.
  */
@@ -48,6 +50,12 @@ public class GPSHandler implements LocationListener {
                 0, this);
         setMostRecentLocation(locationManager.getLastKnownLocation(provider));
 
+    }
+    protected void createLocationRequest() {
+        LocationRequest mLocationRequest = new LocationRequest();
+        mLocationRequest.setInterval(10000);
+        mLocationRequest.setFastestInterval(5000);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
     }
     public String getLatitude() {
         return latitude;
