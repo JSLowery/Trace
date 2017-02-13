@@ -19,16 +19,17 @@ import java.util.Random;
 
 /**
  * Created by tenos on 2/10/17.
+ * This is the Class that will store and handle GPS information
  */
 
-public class GPSHandler implements LocationListener {
+class GPSHandler implements LocationListener {
     private LocationManager locationManager;
     private String latitude = "";
     private String longitude = "";
     private Criteria criteria;
     private String provider;
 
-    public GPSHandler(Context context) {
+    GPSHandler(Context context) {
         locationManager = (LocationManager) context
                 .getSystemService(Context.LOCATION_SERVICE);
         criteria = new Criteria();
@@ -48,9 +49,12 @@ public class GPSHandler implements LocationListener {
             Log.d("LOOK AT MEE", "test");
             return;
         }
-        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1,
-                0, this);
-        setMostRecentLocation(locationManager.getLastKnownLocation(provider));
+        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 10000,
+                1, this);
+        Location curLoc = locationManager.getLastKnownLocation(provider);
+        if (curLoc!= null){
+            setMostRecentLocation(curLoc);
+        }
 
     }
     protected void createLocationRequest() {
@@ -59,18 +63,18 @@ public class GPSHandler implements LocationListener {
         mLocationRequest.setFastestInterval(5000);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
     }
-    public String getLatitude() {
+    String getLatitude() {
         return latitude;
     }
 
-    public String getLongitude() {
+    String getLongitude() {
         return longitude;
     }
     private void setMostRecentLocation(Location lastKnownLocation) {
         double lon;
-        lon = (double) lastKnownLocation.getLongitude();
+        lon = lastKnownLocation.getLongitude();
         double lat;
-        lat = (double) lastKnownLocation.getLatitude();
+        lat = lastKnownLocation.getLatitude();
         longitude = lon + "";
         latitude = lat + "";
     }
@@ -90,8 +94,8 @@ public class GPSHandler implements LocationListener {
 //        location1.setLongitude(longi);
 //        Double alti = Double.valueOf(MockLoc[2]);
 //        location1.setAltitude(alti);
-        double lon = (double) (location.getLongitude());/// * 1E6);
-        double lat = (double) (location.getLatitude());// * 1E6);
+        double lon = location.getLongitude();/// * 1E6);
+        double lat = location.getLatitude();// * 1E6);
 
 //      int lontitue = (int) lon;
 //      int latitute = (int) lat;

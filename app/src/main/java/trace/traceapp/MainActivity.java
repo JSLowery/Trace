@@ -2,6 +2,7 @@ package trace.traceapp;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.icu.text.DateFormat;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -25,15 +26,30 @@ import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+
+import java.util.Date;
 
 import static trace.traceapp.R.layout.activity_main;
 import static trace.traceapp.R.layout.content_main;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
-
-    private static final int MY_PERMISSIONS_REQUEST_READ_CONTACTS = 0;
+        implements NavigationView.OnNavigationItemSelectedListener,
+        GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
+    //LocationClient locationClient;
+    private static final String TAG = "LocationActivity";
+    private static final long INTERVAL = 1000 * 10;
+    private static final long FASTEST_INTERVAL = 1000 * 5;
+    LocationRequest mLocationRequest;
+    Location mCurrentLocation;
+    String mLastUpdateTime;
+    TextView GPA_first;
+    TextView GPA_second;
+    // end google api stuff
     static GPSHandler appLocationManager;
     private GoogleApiClient mGoogleApiClient;
     @Override
@@ -45,22 +61,13 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        ActivityCompat.requestPermissions(this,
-                new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                MY_PERMISSIONS_REQUEST_READ_CONTACTS);
+//        ActivityCompat.requestPermissions(this,
+//                new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+//                MY_PERMISSIONS_REQUEST_READ_CONTACTS);
         appLocationManager = new GPSHandler(MainActivity.this);
         appLocationManager.getLatitude();
         appLocationManager.getLongitude();
-        lon = appLocationManager.getLongitude();
-        lat = appLocationManager.getLatitude();
-        //Toast.makeText(this, lat.toString(), Toast.LENGTH_LONG).show();
-        //Toast.makeText(this, lon, Toast.LENGTH_LONG).show();
         TextView txt = (TextView) findViewById(R.id.gps);
-        // txt.setText(lon);
-        txt.setText(R.string.gps_coord);
-
-        Log.i("long", lon);
-
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -81,6 +88,17 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        //begin the Google API stuff, this is for a test
+        //locationClient = new LocationClient(this, this, this);//this is no longer part of andriod... fuck
+        createLocationRequest();
+        if (mGoogleApiClient == null) {
+            mGoogleApiClient = new GoogleApiClient.Builder(this)
+                    .addConnectionCallbacks(this)
+                    .addOnConnectionFailedListener(this)
+                    .addApi(LocationServices.API)
+                    .build();
+        }
+        GPA_first = (TextView) findViewById(R.id.GFA_gps);
 
 
     }
@@ -119,7 +137,7 @@ public class MainActivity extends AppCompatActivity
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
         // Handle navigation view item clicks here.
         int id = item.getItemId();
@@ -154,21 +172,44 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
     protected void onStart() {
-        //mGoogleApiClient.connect();
+        mGoogleApiClient.connect();
         super.onStart();
     }
 
     protected void onStop() {
-       // mGoogleApiClient.disconnect();
+        mGoogleApiClient.disconnect();
+        stopLocationUpdates();
         super.onStop();
     }
 
-
+    public void onDisconnected(){
+        Toast.makeText(this, "Connected from Google Play Services.", Toast.LENGTH_SHORT).show();
+    }
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-
+        Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient) ;
+        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+        Toast.makeText(this, "Connected to Google Play Services", Toast.LENGTH_SHORT).show();
+        startLocationUpdates();
     }
-
+    //location request for google play api calls
+    protected void createLocationRequest() {
+        mLocationRequest = new LocationRequest();
+        mLocationRequest.setInterval(INTERVAL);
+        mLocationRequest.setFastestInterval(FASTEST_INTERVAL);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_NO_POWER);
+    }
+    //stoplocationupdates and startlocationupdates are for the google playservice api calls
+    protected void stopLocationUpdates() {
+        LocationServices.FusedLocationApi.removeLocationUpdates(
+                mGoogleApiClient, this);
+        Log.d(TAG, "Location update stopped .......................");
+    }
+    protected void startLocationUpdates() {
+        PendingResult<Status> pendingResult = LocationServices.FusedLocationApi.requestLocationUpdates(
+                mGoogleApiClient, mLocationRequest, this);
+        Log.d(TAG, "Location update started ..............: ");
+    }
     @Override
     public void onConnectionSuspended(int i) {
 
@@ -177,5 +218,31 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
         
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        Log.d(TAG, "Firing onLocationChanged..............................................");
+        mCurrentLocation = location;
+
+        //mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
+        updateUI();
+    }
+    private void updateUI() {
+        Log.d(TAG, "UI update initiated .............");
+        if (null != mCurrentLocation) {
+            String lat = String.valueOf(mCurrentLocation.getLatitude());
+            String lng = String.valueOf(mCurrentLocation.getLongitude());
+            GPA_first.setText("Latitude: " + lat + "\n" +
+                    "Longitude: " + lng + "\n" +
+                    "Accuracy: " + mCurrentLocation.getAccuracy() + "\n" +
+                    "Provider: " + mCurrentLocation.getProvider());
+            TextView txt = (TextView) findViewById(R.id.gps);
+            // txt.setText(lon);
+            txt.setText("Lattitude: "+appLocationManager.getLatitude()+ " Longetude:"+ appLocationManager.getLongitude());
+            Toast.makeText(this, "Location Updated", Toast.LENGTH_SHORT).show();
+        } else {
+            Log.d(TAG, "location is null ...............");
+        }
     }
 }
