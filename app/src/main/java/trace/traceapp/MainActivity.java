@@ -177,9 +177,10 @@ public class MainActivity extends AppCompatActivity
     }
 
     protected void onStop() {
+        super.onStop();
         mGoogleApiClient.disconnect();
         stopLocationUpdates();
-        super.onStop();
+
     }
 
     public void onDisconnected(){
@@ -244,5 +245,22 @@ public class MainActivity extends AppCompatActivity
         } else {
             Log.d(TAG, "location is null ...............");
         }
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (mGoogleApiClient.isConnected()) {
+            startLocationUpdates();
+            Log.d(TAG, "Location update resumed .....................");
+        }
+    }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        stopLocationUpdates();
+    }
+    protected void onDestroy(){
+        super.onDestroy();
+        stopLocationUpdates();
     }
 }

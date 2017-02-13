@@ -50,7 +50,7 @@ class GPSHandler implements LocationListener {
             return;
         }
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 10000,
-                1, this);
+                10, this);
         Location curLoc = locationManager.getLastKnownLocation(provider);
         if (curLoc!= null){
             setMostRecentLocation(curLoc);
@@ -81,11 +81,11 @@ class GPSHandler implements LocationListener {
     @Override
     public void onLocationChanged(Location location) {
         Log.i("Location", "lat "+location.getLatitude()+" lon "+location.getLongitude());
-        Random r = new Random();
-        int Low = 10;
-        int High = 100;
-        String str = r.nextInt(High-Low) + Low+","+r.nextInt(High-Low) + Low;
-        String[] MockLoc = str.split(",");
+//        Random r = new Random();
+//        int Low = 10;
+//        int High = 100;
+//        String str = r.nextInt(High-Low) + Low+","+r.nextInt(High-Low) + Low;
+//        String[] MockLoc = str.split(",");
 //        LocationManager mocLocationProvider = (LocationManager)  Context.getSystemService(Context.LOCATION_SERVICE);
 //        Location location1 = new Location(mocLocationProvider);
 //        Double lat = Double.valueOf(Moc100kLoc[0]);
