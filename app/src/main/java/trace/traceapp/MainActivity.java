@@ -75,7 +75,8 @@ public class MainActivity extends AppCompatActivity
             public void onClick(View view) {
                 appLocationManager.getLatitude();
                 appLocationManager.getLongitude();
-                Snackbar.make(view, "Latitude: "+appLocationManager.getLatitude() + " Longitude: " +appLocationManager.getLongitude(), Snackbar.LENGTH_LONG)
+                Snackbar.make(view, "Latitude: "+appLocationManager.getLatitude() + " Longitude: "
+                        +appLocationManager.getLongitude()+ " Acc: "+ appLocationManager.getAccuracy(), Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
         });
@@ -178,9 +179,8 @@ public class MainActivity extends AppCompatActivity
 
     protected void onStop() {
         super.onStop();
-        mGoogleApiClient.disconnect();
         stopLocationUpdates();
-
+        mGoogleApiClient.disconnect();
     }
 
     public void onDisconnected(){
@@ -240,7 +240,9 @@ public class MainActivity extends AppCompatActivity
                     "Provider: " + mCurrentLocation.getProvider());
             TextView txt = (TextView) findViewById(R.id.gps);
             // txt.setText(lon);
-            txt.setText("Lattitude: "+appLocationManager.getLatitude()+ " Longetude:"+ appLocationManager.getLongitude());
+            txt.setText("Lattitude: "+appLocationManager.getLatitude()+
+                    "\n Longetude: "+ appLocationManager.getLongitude()+
+                    "\n Accuracy: "+ appLocationManager.getAccuracy());
             Toast.makeText(this, "Location Updated", Toast.LENGTH_SHORT).show();
         } else {
             Log.d(TAG, "location is null ...............");
@@ -262,5 +264,6 @@ public class MainActivity extends AppCompatActivity
     protected void onDestroy(){
         super.onDestroy();
         stopLocationUpdates();
+        mGoogleApiClient.disconnect();
     }
 }

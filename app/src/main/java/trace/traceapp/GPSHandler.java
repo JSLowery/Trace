@@ -28,7 +28,7 @@ class GPSHandler implements LocationListener {
     private String longitude = "";
     private Criteria criteria;
     private String provider;
-
+    private String accuracy;
     GPSHandler(Context context) {
         locationManager = (LocationManager) context
                 .getSystemService(Context.LOCATION_SERVICE);
@@ -70,13 +70,17 @@ class GPSHandler implements LocationListener {
     String getLongitude() {
         return longitude;
     }
+    String getAccuracy() {return accuracy;}
     private void setMostRecentLocation(Location lastKnownLocation) {
         double lon;
         lon = lastKnownLocation.getLongitude();
         double lat;
         lat = lastKnownLocation.getLatitude();
+        double acc;
+        acc = lastKnownLocation.getAccuracy();
         longitude = lon + "";
         latitude = lat + "";
+        accuracy = acc + "";
     }
     @Override
     public void onLocationChanged(Location location) {
@@ -96,12 +100,12 @@ class GPSHandler implements LocationListener {
 //        location1.setAltitude(alti);
         double lon = location.getLongitude();/// * 1E6);
         double lat = location.getLatitude();// * 1E6);
-
+        double acc = location.getAccuracy();
 //      int lontitue = (int) lon;
 //      int latitute = (int) lat;
         latitude = lat + "";
         longitude = lon + "";
-
+        accuracy = acc + "";
     }
 
     @Override
