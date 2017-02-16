@@ -189,8 +189,10 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onConnected(@Nullable Bundle bundle) {
         Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient) ;
-        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+
+        //LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
         Toast.makeText(this, "Connected to Google Play Services", Toast.LENGTH_SHORT).show();
+        Log.i("onCon", "Connected to GPS");
         startLocationUpdates();
     }
     //location request for google play api calls
@@ -242,7 +244,8 @@ public class MainActivity extends AppCompatActivity
             // txt.setText(lon);
             txt.setText("Lattitude: "+appLocationManager.getLatitude()+
                     "\n Longetude: "+ appLocationManager.getLongitude()+
-                    "\n Accuracy: "+ appLocationManager.getAccuracy());
+                    "\n Accuracy: "+ appLocationManager.getAccuracy()+
+                    "\n Provider: "+appLocationManager.getProvider());
             Toast.makeText(this, "Location Updated", Toast.LENGTH_SHORT).show();
         } else {
             Log.d(TAG, "location is null ...............");
