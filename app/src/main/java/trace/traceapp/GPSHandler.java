@@ -22,7 +22,7 @@ import java.util.Random;
  * This is the Class that will store and handle GPS information
  */
 
-class GPSHandler implements LocationListener {
+class GPSHandler {
     private LocationManager locationManager;
     private String latitude = "";
     private String longitude = "";
@@ -31,31 +31,31 @@ class GPSHandler implements LocationListener {
     private String accuracy;
     private Location location;
     GPSHandler(Context context) {
-        locationManager = (LocationManager) context
-                .getSystemService(Context.LOCATION_SERVICE);
-        criteria = new Criteria();
-        criteria.setAccuracy(Criteria.ACCURACY_FINE);
-        provider = locationManager.getBestProvider(criteria, true);
-        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-
-            int permissionCheck = ContextCompat.checkSelfPermission(context,
-                    Manifest.permission.ACCESS_FINE_LOCATION);
-            Log.d("LOOK AT MEE", "test");
-            return;
-        }
-        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 10000,
-                10, this);
-        Location curLoc = locationManager.getLastKnownLocation(provider);
-        if (curLoc!= null){
-            setMostRecentLocation(curLoc);
-        }
+      //  locationManager = (LocationManager) context
+      //          .getSystemService(Context.LOCATION_SERVICE);
+//        criteria = new Criteria();
+//        criteria.setAccuracy(Criteria.ACCURACY_FINE);
+//        provider = locationManager.getBestProvider(criteria, true);
+//        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+//            // TODO: Consider calling
+//            //    ActivityCompat#requestPermissions
+//            // here to request the missing permissions, and then overriding
+//            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+//            //                                          int[] grantResults)
+//            // to handle the case where the user grants the permission. See the documentation
+//            // for ActivityCompat#requestPermissions for more details.
+//
+//            int permissionCheck = ContextCompat.checkSelfPermission(context,
+//                    Manifest.permission.ACCESS_FINE_LOCATION);
+//            Log.d("LOOK AT MEE", "test");
+//            return;
+//        }
+//        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 10000,
+//                10, this);
+//        Location curLoc = locationManager.getLastKnownLocation(provider);
+//        if (curLoc!= null){
+//            setMostRecentLocation(curLoc);
+//        }
 
     }
     protected void createLocationRequest() {
@@ -72,18 +72,20 @@ class GPSHandler implements LocationListener {
         return longitude;
     }
     String getAccuracy() {return accuracy;}
-    private void setMostRecentLocation(Location lastKnownLocation) {
+    private Location setMostRecentLocation(Location lastKnownLocation) {
         double lon;
         lon = lastKnownLocation.getLongitude();
         double lat;
         lat = lastKnownLocation.getLatitude();
         double acc;
         acc = lastKnownLocation.getAccuracy();
+        String prov = lastKnownLocation.getProvider();
         longitude = lon + "";
         latitude = lat + "";
         accuracy = acc + "";
         location = lastKnownLocation;
-
+        provider = prov;
+        return lastKnownLocation;
     }
     public String getProvider(){
         return provider;
@@ -91,44 +93,34 @@ class GPSHandler implements LocationListener {
     public Location getLocation(){
         return location;
     }
-    @Override
-    public void onLocationChanged(Location location) {
-        Log.i("Location", "lat "+location.getLatitude()+" lon "+location.getLongitude());
-//        Random r = new Random();
-//        int Low = 10;
-//        int High = 100;
-//        String str = r.nextInt(High-Low) + Low+","+r.nextInt(High-Low) + Low;
-//        String[] MockLoc = str.split(",");
-//        LocationManager mocLocationProvider = (LocationManager)  Context.getSystemService(Context.LOCATION_SERVICE);
-//        Location location1 = new Location(mocLocationProvider);
-//        Double lat = Double.valueOf(Moc100kLoc[0]);
-//        location1.setLatitude(lat);
-//        Double longi = Double.valueOf(MockLoc[1]);
-//        location1.setLongitude(longi);
-//        Double alti = Double.valueOf(MockLoc[2]);
-//        location1.setAltitude(alti);
-        double lon = location.getLongitude();/// * 1E6);
-        double lat = location.getLatitude();// * 1E6);
-        double acc = location.getAccuracy();
-//      int lontitue = (int) lon;
-//      int latitute = (int) lat;
-        latitude = lat + "";
-        longitude = lon + "";
-        accuracy = acc + "";
+    public void SetLocation(Location loc){
+        setMostRecentLocation(setMostRecentLocation(loc));
     }
+//    @Override
+//    public void onLocationChanged(Location location) {
+//        Log.i("Location", "lat "+location.getLatitude()+" lon "+location.getLongitude());
+////        Random r = new Random();
+////        int Low = 10;
+////        int High = 100;
+////        String str = r.nextInt(High-Low) + Low+","+r.nextInt(High-Low) + Low;
+////        String[] MockLoc = str.split(",");
+////        LocationManager mocLocationProvider = (LocationManager)  Context.getSystemService(Context.LOCATION_SERVICE);
+////        Location location1 = new Location(mocLocationProvider);
+////        Double lat = Double.valueOf(Moc100kLoc[0]);
+////        location1.setLatitude(lat);
+////        Double longi = Double.valueOf(MockLoc[1]);
+////        location1.setLongitude(longi);
+////        Double alti = Double.valueOf(MockLoc[2]);
+////        location1.setAltitude(alti);
+//        double lon = location.getLongitude();/// * 1E6);
+//        double lat = location.getLatitude();// * 1E6);
+//        double acc = location.getAccuracy();
+////      int lontitue = (int) lon;
+////      int latitute = (int) lat;
+//        latitude = lat + "";
+//        longitude = lon + "";
+//        accuracy = acc + "";
+//    }
 
-    @Override
-    public void onStatusChanged(String s, int i, Bundle bundle) {
 
-    }
-
-    @Override
-    public void onProviderEnabled(String s) {
-
-    }
-
-    @Override
-    public void onProviderDisabled(String s) {
-
-    }
 }

@@ -61,22 +61,13 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-//        ActivityCompat.requestPermissions(this,
-//                new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-//                MY_PERMISSIONS_REQUEST_READ_CONTACTS);
-        appLocationManager = new GPSHandler(MainActivity.this);
-        appLocationManager.getLatitude();
-        appLocationManager.getLongitude();
-        TextView txt = (TextView) findViewById(R.id.gps);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                appLocationManager.getLatitude();
-                appLocationManager.getLongitude();
-                Snackbar.make(view, "Latitude: "+appLocationManager.getLatitude() + " Longitude: "
-                        +appLocationManager.getLongitude()+ " Acc: "+ appLocationManager.getAccuracy(), Snackbar.LENGTH_LONG)
+
+                Snackbar.make(view, "Write something here!", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
         });
@@ -99,7 +90,6 @@ public class MainActivity extends AppCompatActivity
                     .addApi(LocationServices.API)
                     .build();
         }
-        GPA_first = (TextView) findViewById(R.id.GFA_gps);
 
 
     }
@@ -146,18 +136,7 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.nav_camera) {
             // Handle the camera action
         } else if (id == R.id.nav_gallery) {
-            //GPSHandler appLocationManager = new GPSHandler(MainActivity.this);
-            appLocationManager.getLatitude();
-            appLocationManager.getLongitude();
-            String lon = appLocationManager.getLongitude();
-            String lat = appLocationManager.getLatitude();
-            Toast.makeText(this, lat, Toast.LENGTH_LONG).show();
-            Toast.makeText(this, lon, Toast.LENGTH_LONG).show();
-            TextView txt = (TextView) findViewById(R.id.gps);
-            // txt.setText(lon);
-            txt.setText("Lattitude: "+appLocationManager.getLatitude()+ " Longetude:"+ appLocationManager.getLongitude());
-           // mLatitudeTextView.setText(String.format("%s: %f", mLatitudeLabel,
-              //      mCurrentLocation.getLatitude()));
+
         } else if (id == R.id.nav_slideshow) {
 
         } else if (id == R.id.nav_manage) {
@@ -200,8 +179,9 @@ public class MainActivity extends AppCompatActivity
         mLocationRequest = new LocationRequest();
         mLocationRequest.setInterval(INTERVAL);
         mLocationRequest.setFastestInterval(FASTEST_INTERVAL);
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_NO_POWER);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
     }
+
     //stoplocationupdates and startlocationupdates are for the google playservice api calls
     protected void stopLocationUpdates() {
         LocationServices.FusedLocationApi.removeLocationUpdates(
@@ -227,21 +207,21 @@ public class MainActivity extends AppCompatActivity
     public void onLocationChanged(Location location) {
         Log.d(TAG, "Firing onLocationChanged..............................................");
         mCurrentLocation = location;
+        appLocationManager.SetLocation(location);
 
         //mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
         updateUI();
+        if (mLocationRequest.getPriority() == LocationRequest.PRIORITY_HIGH_ACCURACY) {
+            mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+            Toast.makeText(this, "Priority changed", Toast.LENGTH_SHORT).show();
+        }
     }
     private void updateUI() {
         Log.d(TAG, "UI update initiated .............");
-        if (null != mCurrentLocation) {
-            String lat = String.valueOf(mCurrentLocation.getLatitude());
-            String lng = String.valueOf(mCurrentLocation.getLongitude());
-            GPA_first.setText("Latitude: " + lat + "\n" +
-                    "Longitude: " + lng + "\n" +
-                    "Accuracy: " + mCurrentLocation.getAccuracy() + "\n" +
-                    "Provider: " + mCurrentLocation.getProvider());
+        if (null != appLocationManager.getLocation()) {
+
             TextView txt = (TextView) findViewById(R.id.gps);
-            // txt.setText(lon);
+//             txt.setText(lon);
             txt.setText("Lattitude: "+appLocationManager.getLatitude()+
                     "\n Longetude: "+ appLocationManager.getLongitude()+
                     "\n Accuracy: "+ appLocationManager.getAccuracy()+
