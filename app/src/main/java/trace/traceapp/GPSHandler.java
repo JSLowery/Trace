@@ -29,6 +29,7 @@ class GPSHandler implements LocationListener {
     private Criteria criteria;
     private String provider;
     private String accuracy;
+    private Location location;
     GPSHandler(Context context) {
         locationManager = (LocationManager) context
                 .getSystemService(Context.LOCATION_SERVICE);
@@ -81,6 +82,14 @@ class GPSHandler implements LocationListener {
         longitude = lon + "";
         latitude = lat + "";
         accuracy = acc + "";
+        location = lastKnownLocation;
+
+    }
+    public String getProvider(){
+        return provider;
+    }
+    public Location getLocation(){
+        return location;
     }
     @Override
     public void onLocationChanged(Location location) {
