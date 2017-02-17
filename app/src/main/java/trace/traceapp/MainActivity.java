@@ -40,8 +40,8 @@ public class MainActivity extends AppCompatActivity
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
     //LocationClient locationClient;
     private static final String TAG = "LocationActivity";
-    private static final long INTERVAL = 0;//3600000;
-    private static final long FASTEST_INTERVAL =0; //1000;
+    private static final long INTERVAL = 3600000;
+    private static final long FASTEST_INTERVAL =1000;
     protected static final String ADDRESS_REQUESTED_KEY = "address-request-pending";
     protected static final String LOCATION_ADDRESS_KEY = "location-address";
     LocationRequest mLocationRequest;
