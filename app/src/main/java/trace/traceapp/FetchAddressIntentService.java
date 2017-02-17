@@ -28,13 +28,12 @@ import static android.content.ContentValues.TAG;
  */
 
 public class FetchAddressIntentService extends IntentService {
-    protected ResultReceiver mReceiver;
+    private ResultReceiver mReceiver;
     private static final String TAG = "FetchAddressIS";
     public FetchAddressIntentService() {
         super(TAG);
         Log.i(TAG, "Fetch Address started...........");
     }
-
     @Override
     protected void onHandleIntent(Intent intent) {
         String errorMessage = "";
