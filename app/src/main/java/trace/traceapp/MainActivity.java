@@ -1,5 +1,6 @@
 package trace.traceapp;
 
+import android.app.FragmentManager;
 import android.content.Intent;
 import android.location.Geocoder;
 import android.location.Location;
@@ -41,9 +42,10 @@ public class MainActivity extends AppCompatActivity
     //LocationClient locationClient;
     private static final String TAG = "LocationActivity";
     private static final long INTERVAL = 3600000;
-    private static final long FASTEST_INTERVAL =1000;
+    private static final long FASTEST_INTERVAL =0;
     protected static final String ADDRESS_REQUESTED_KEY = "address-request-pending";
     protected static final String LOCATION_ADDRESS_KEY = "location-address";
+    private RetainedFragment dataFragment;
     LocationRequest mLocationRequest;
     Location mCurrentLocation;
     String mLastUpdateTime;
@@ -57,13 +59,12 @@ public class MainActivity extends AppCompatActivity
     private GoogleApiClient mGoogleApiClient;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        String lon;
-        String lat;
         super.onCreate(savedInstanceState);
+        Log.i(TAG, "onCreate");
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        appLocationManager = new GPSHandler(MainActivity.this);
+        appLocationManager = new GPSHandler();
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -93,11 +94,28 @@ public class MainActivity extends AppCompatActivity
                     .addApi(LocationServices.API)
                     .build();
         }
-
+        //stuff for getting location
         updateValuesFromBundle(savedInstanceState);
         mResultReceiver = new AddressResultReceiver(new Handler());
+        //testing data fragments
+        // find the retained fragment on activity restarts
+        FragmentManager fm = getFragmentManager();
+        dataFragment = (RetainedFragment) fm.findFragmentByTag("data");
+        Log.i(TAG, "getting frag");
+        // create the fragment and data the first time
+        if (dataFragment == null)
+        {
 
+            Log.i(TAG, "building frag");
+            // add the fragment
+            dataFragment = new RetainedFragment();
+            fm.beginTransaction().add(dataFragment, "data").commit();
+            // load the data from the web
+            dataFragment.setData(appLocationManager);
+        }
 
+        appLocationManager = dataFragment.getData();
+        showToast(appLocationManager.getLatitude());
 
 
     }
@@ -176,7 +194,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onConnected(@Nullable Bundle bundle) {
         Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient) ;
-
+        Log.i(TAG, "onconnected");
         //LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
         Toast.makeText(this, "Connected to Google Play Services", Toast.LENGTH_SHORT).show();
         Log.i("onCon", "Connected to GPS");
@@ -192,9 +210,11 @@ public class MainActivity extends AppCompatActivity
 
     //stoplocationupdates and startlocationupdates are for the google playservice api calls
     protected void stopLocationUpdates() {
-        LocationServices.FusedLocationApi.removeLocationUpdates(
-                mGoogleApiClient, this);
-        Log.d(TAG, "Location update stopped .......................");
+        if (mGoogleApiClient.isConnected()) {
+            LocationServices.FusedLocationApi.removeLocationUpdates(
+                    mGoogleApiClient, this);
+            Log.d(TAG, "Location update stopped .......................");
+        }
     }
     protected void startLocationUpdates() {
         PendingResult<Status> pendingResult = LocationServices.FusedLocationApi.requestLocationUpdates(
@@ -311,20 +331,28 @@ public class MainActivity extends AppCompatActivity
             startLocationUpdates();
             Log.d(TAG, "Location update resumed .....................");
         }
+        FragmentManager fm = getFragmentManager();
+        dataFragment = (RetainedFragment) fm.findFragmentByTag("data");
+        Log.i(TAG, "getting frag");
     }
     @Override
     protected void onPause() {
         super.onPause();
         stopLocationUpdates();
+        dataFragment.setData(appLocationManager);
     }
     protected void onDestroy(){
         super.onDestroy();
-        stopLocationUpdates();
+        dataFragment.setData(appLocationManager);
+        //stopLocationUpdates();
+        if (mGoogleApiClient.isConnected())
         mGoogleApiClient.disconnect();
+
     }
     protected void showToast(String text) {
         Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
     }
+
     class AddressResultReceiver extends ResultReceiver {
         public AddressResultReceiver(Handler handler) {
             super(handler);
