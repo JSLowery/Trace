@@ -66,7 +66,7 @@ public class GPSHandler extends Fragment {
         return location;
     }
     public void SetLocation(Location loc){
-        setMostRecentLocation(setMostRecentLocation(loc));
+        setMostRecentLocation(loc);
     }
 //
 
