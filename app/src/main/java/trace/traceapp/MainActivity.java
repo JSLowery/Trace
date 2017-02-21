@@ -65,6 +65,7 @@ public class MainActivity extends AppCompatActivity
 //                new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
 //                MY_PERMISSIONS_REQUEST_READ_CONTACTS);
         appLocationManager = new GPSHandler(MainActivity.this);
+        Plotter plotter = new Plotter();
         appLocationManager.getLatitude();
         appLocationManager.getLongitude();
         TextView txt = (TextView) findViewById(R.id.gps);
