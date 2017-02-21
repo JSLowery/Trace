@@ -41,14 +41,13 @@ public class MainActivity extends AppCompatActivity
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
     //LocationClient locationClient;
     private static final String TAG = "LocationActivity";
-    private static final long INTERVAL = 3600000;
+    private static final long INTERVAL = 60000;
     private static final long FASTEST_INTERVAL =0;
     protected static final String ADDRESS_REQUESTED_KEY = "address-request-pending";
     protected static final String LOCATION_ADDRESS_KEY = "location-address";
     private RetainedFragment dataFragment;
     LocationRequest mLocationRequest;
     Location mCurrentLocation;
-    String mLastUpdateTime;
     //stuff for address
     private AddressResultReceiver mResultReceiver;
     protected String mAddressOutput;
@@ -257,10 +256,11 @@ public class MainActivity extends AppCompatActivity
             return;
         }
         startIntentService();
-        if (mLocationRequest.getPriority() == LocationRequest.PRIORITY_HIGH_ACCURACY) {
-            mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
-            Toast.makeText(this, "Priority changed", Toast.LENGTH_SHORT).show();
-        }
+//        if (mLocationRequest.getPriority() == LocationRequest.PRIORITY_HIGH_ACCURACY) {
+//            mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+//            Toast.makeText(this, "Priority changed", Toast.LENGTH_SHORT).show();
+//
+//        }
     }
 
     private void updateUI() {
