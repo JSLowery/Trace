@@ -18,20 +18,19 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
 
-        android:id="@+id/GFA_gps"
-        android:layout_marginTop="54dp"
-        android:layout_below="@+id/gps"
-        android:layout_alignParentStart="true"
-        tools:text="@string/gps_coord" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-
         android:id="@+id/gps"
         tools:text="@string/gps_coord"
         android:layout_marginTop="23dp"
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true" />
+
+    <TextView
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/location_address_view"
+        android:layout_below="@+id/gps"
+        android:layout_toEndOf="@+id/gps"
+        tools:text="@string/address_found" />
 
 </RelativeLayout>
