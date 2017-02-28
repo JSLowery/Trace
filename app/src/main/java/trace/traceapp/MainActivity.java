@@ -161,7 +161,7 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.nav_stats) {
             // Handle the camera action
         } else if (id == R.id.nav_mapview) {
-
+            startActivity(new Intent(MainActivity.this, MapsActivity.class));
         }  else if (id == R.id.nav_share) {
 
         } else if (id == R.id.nav_savecanvas) {
