@@ -1,28 +1,30 @@
 package trace.traceapp;
 
-import android.Manifest;
-import android.annotation.SuppressLint;
-import android.icu.text.DateFormat;
+import android.app.FragmentManager;
+import android.content.Intent;
+import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.ResultReceiver;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.ActivityCompat;
-import android.util.Log;
-import android.view.View;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
+
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.EditText;
-import android.widget.Toast;
+import android.view.View;
+
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -32,51 +34,43 @@ import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
-import java.util.Date;
-
-import static trace.traceapp.R.layout.activity_main;
-import static trace.traceapp.R.layout.content_main;
+import static java.util.concurrent.TimeUnit.NANOSECONDS;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
     //LocationClient locationClient;
     private static final String TAG = "LocationActivity";
-    private static final long INTERVAL = 1000 * 10;
-    private static final long FASTEST_INTERVAL = 1000 * 5;
+    private static final long INTERVAL = 60000;
+    private static final long FASTEST_INTERVAL =0;
+    protected static final String ADDRESS_REQUESTED_KEY = "address-request-pending";
+    protected static final String LOCATION_ADDRESS_KEY = "location-address";
+    private RetainedFragment dataFragment;
     LocationRequest mLocationRequest;
     Location mCurrentLocation;
-    String mLastUpdateTime;
-    TextView GPA_first;
-    TextView GPA_second;
+    //stuff for address
+    private AddressResultReceiver mResultReceiver;
+    protected String mAddressOutput;
+    protected boolean mAddressRequested;
+    protected TextView mLocationAddressTextView;
     // end google api stuff
     static GPSHandler appLocationManager;
     private GoogleApiClient mGoogleApiClient;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        String lon;
-        String lat;
         super.onCreate(savedInstanceState);
+        Log.i(TAG, "onCreate");
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-//        ActivityCompat.requestPermissions(this,
-//                new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-//                MY_PERMISSIONS_REQUEST_READ_CONTACTS);
-        appLocationManager = new GPSHandler(MainActivity.this);
-        Plotter plotter = new Plotter();
-        appLocationManager.getLatitude();
-        appLocationManager.getLongitude();
-        TextView txt = (TextView) findViewById(R.id.gps);
+        appLocationManager = new GPSHandler();
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                appLocationManager.getLatitude();
-                appLocationManager.getLongitude();
-                Snackbar.make(view, "Latitude: "+appLocationManager.getLatitude() + " Longitude: " +appLocationManager.getLongitude(), Snackbar.LENGTH_LONG)
+
+                Snackbar.make(view, "Write something here!", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
         });
@@ -99,7 +93,28 @@ public class MainActivity extends AppCompatActivity
                     .addApi(LocationServices.API)
                     .build();
         }
-        GPA_first = (TextView) findViewById(R.id.GFA_gps);
+        //stuff for getting location
+        updateValuesFromBundle(savedInstanceState);
+        mResultReceiver = new AddressResultReceiver(new Handler());
+        //testing data fragments
+        // find the retained fragment on activity restarts
+        FragmentManager fm = getFragmentManager();
+        dataFragment = (RetainedFragment) fm.findFragmentByTag("data");
+        Log.i(TAG, "getting frag");
+        // create the fragment and data the first time
+        if (dataFragment == null)
+        {
+
+            Log.i(TAG, "building frag");
+            // add the fragment
+            dataFragment = new RetainedFragment();
+            fm.beginTransaction().add(dataFragment, "data").commit();
+            // load the data from the web
+            dataFragment.setData(appLocationManager);
+        }
+
+        appLocationManager = dataFragment.getData();
+        showToast(appLocationManager.getLatitude());
 
 
     }
@@ -143,28 +158,13 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
+        if (id == R.id.nav_stats) {
             // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-            //GPSHandler appLocationManager = new GPSHandler(MainActivity.this);
-            appLocationManager.getLatitude();
-            appLocationManager.getLongitude();
-            String lon = appLocationManager.getLongitude();
-            String lat = appLocationManager.getLatitude();
-            Toast.makeText(this, lat, Toast.LENGTH_LONG).show();
-            Toast.makeText(this, lon, Toast.LENGTH_LONG).show();
-            TextView txt = (TextView) findViewById(R.id.gps);
-            // txt.setText(lon);
-            txt.setText("Lattitude: "+appLocationManager.getLatitude()+ " Longetude:"+ appLocationManager.getLongitude());
-           // mLatitudeTextView.setText(String.format("%s: %f", mLatitudeLabel,
-              //      mCurrentLocation.getLatitude()));
-        } else if (id == R.id.nav_slideshow) {
+        } else if (id == R.id.nav_mapview) {
 
-        } else if (id == R.id.nav_manage) {
+        }  else if (id == R.id.nav_share) {
 
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
+        } else if (id == R.id.nav_savecanvas) {
 
         }
 
@@ -179,9 +179,8 @@ public class MainActivity extends AppCompatActivity
 
     protected void onStop() {
         super.onStop();
-        mGoogleApiClient.disconnect();
         stopLocationUpdates();
-
+        mGoogleApiClient.disconnect();
     }
 
     public void onDisconnected(){
@@ -190,8 +189,10 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onConnected(@Nullable Bundle bundle) {
         Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient) ;
-        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+        Log.i(TAG, "onconnected");
+        //LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
         Toast.makeText(this, "Connected to Google Play Services", Toast.LENGTH_SHORT).show();
+        Log.i("onCon", "Connected to GPS");
         startLocationUpdates();
     }
     //location request for google play api calls
@@ -199,13 +200,16 @@ public class MainActivity extends AppCompatActivity
         mLocationRequest = new LocationRequest();
         mLocationRequest.setInterval(INTERVAL);
         mLocationRequest.setFastestInterval(FASTEST_INTERVAL);
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_NO_POWER);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
     }
+
     //stoplocationupdates and startlocationupdates are for the google playservice api calls
     protected void stopLocationUpdates() {
-        LocationServices.FusedLocationApi.removeLocationUpdates(
-                mGoogleApiClient, this);
-        Log.d(TAG, "Location update stopped .......................");
+        if (mGoogleApiClient.isConnected()) {
+            LocationServices.FusedLocationApi.removeLocationUpdates(
+                    mGoogleApiClient, this);
+            Log.d(TAG, "Location update stopped .......................");
+        }
     }
     protected void startLocationUpdates() {
         PendingResult<Status> pendingResult = LocationServices.FusedLocationApi.requestLocationUpdates(
@@ -219,33 +223,102 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        
-    }
 
+    }
+    private double time1= 0.0;
+    private double time2= 0.0;
+    private double nano1= 0.0;
+    private double nano2= 0.0;
     @Override
     public void onLocationChanged(Location location) {
         Log.d(TAG, "Firing onLocationChanged..............................................");
         mCurrentLocation = location;
+        //mAddressOutput = "";
 
+        if (mCurrentLocation.getAccuracy()<=100) {
+
+            appLocationManager.SetLocation(location);
+        }
         //mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
+        time2 = mCurrentLocation.getTime();
+        nano2 = mCurrentLocation.getElapsedRealtimeNanos();
         updateUI();
+        time1 = mCurrentLocation.getTime();
+        nano1 = mCurrentLocation.getElapsedRealtimeNanos();
+        //for getting addresses
+        if (!Geocoder.isPresent()) {
+            Toast.makeText(this, R.string.no_geocoder_available,
+                    Toast.LENGTH_LONG).show();
+            return;
+        }
+        startIntentService();
+//        if (mLocationRequest.getPriority() == LocationRequest.PRIORITY_HIGH_ACCURACY) {
+//            mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+//            Toast.makeText(this, "Priority changed", Toast.LENGTH_SHORT).show();
+//
+//        }
     }
+
     private void updateUI() {
         Log.d(TAG, "UI update initiated .............");
-        if (null != mCurrentLocation) {
-            String lat = String.valueOf(mCurrentLocation.getLatitude());
-            String lng = String.valueOf(mCurrentLocation.getLongitude());
-            GPA_first.setText("Latitude: " + lat + "\n" +
-                    "Longitude: " + lng + "\n" +
-                    "Accuracy: " + mCurrentLocation.getAccuracy() + "\n" +
-                    "Provider: " + mCurrentLocation.getProvider());
+        if (null != appLocationManager.getLocation()) {
+
             TextView txt = (TextView) findViewById(R.id.gps);
-            // txt.setText(lon);
-            txt.setText("Lattitude: "+appLocationManager.getLatitude()+ " Longetude:"+ appLocationManager.getLongitude());
+//             txt.setText(lon);
+            txt.setText(" Lattitude: "+appLocationManager.getLatitude()+
+                    "\n Longetude: "+ appLocationManager.getLongitude()+
+                    "\n Accuracy: "+ appLocationManager.getAccuracy()+
+                    "\n Provider: "+ appLocationManager.getProvider()+
+                    "\n Altitude: "+ mCurrentLocation.getAltitude()+
+                    "\n Bearing: "+ mCurrentLocation.getBearing()+
+                    "\n Time: " + (time2-time1)+
+                    "\n Speed: " + mCurrentLocation.getSpeed()+
+                    "\n Elapsed time: " + NANOSECONDS.toSeconds((long)(nano2- nano1))
+
+
+
+            );
             Toast.makeText(this, "Location Updated", Toast.LENGTH_SHORT).show();
         } else {
             Log.d(TAG, "location is null ...............");
         }
+    }
+    protected void startIntentService() {
+        Intent intent = new Intent(this, FetchAddressIntentService.class);
+        intent.putExtra(Constants.RECEIVER, mResultReceiver);
+        intent.putExtra(Constants.LOCATION_DATA_EXTRA, mCurrentLocation);
+        Log.i(TAG, "starting service");
+        startService(intent);
+    }
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        // Save whether the address has been requested.
+        savedInstanceState.putBoolean(ADDRESS_REQUESTED_KEY, mAddressRequested);
+
+        // Save the address string.
+        savedInstanceState.putString(LOCATION_ADDRESS_KEY, mAddressOutput);
+        super.onSaveInstanceState(savedInstanceState);
+    }
+    private void updateValuesFromBundle(Bundle savedInstanceState) {
+        if (savedInstanceState != null) {
+            // Check savedInstanceState to see if the address was previously requested.
+            if (savedInstanceState.keySet().contains(ADDRESS_REQUESTED_KEY)) {
+                mAddressRequested = savedInstanceState.getBoolean(ADDRESS_REQUESTED_KEY);
+            }
+            // Check savedInstanceState to see if the location address string was previously found
+            // and stored in the Bundle. If it was found, display the address string in the UI.
+            if (savedInstanceState.keySet().contains(LOCATION_ADDRESS_KEY)) {
+                mAddressOutput = savedInstanceState.getString(LOCATION_ADDRESS_KEY);
+                displayAddressOutput();
+            }
+        }
+    }
+    protected void displayAddressOutput() {
+        TextView test = (TextView) findViewById(R.id.location_address_view);
+         //mAddressOutput = LOCATION_ADDRESS_KEY;
+        //mLocationAddressTextView = (TextView) findViewById(R.id.location_address_view);
+        Log.i(TAG, "displayAddressOutpu");
+        test.setText(mAddressOutput);
     }
     @Override
     public void onResume() {
@@ -254,14 +327,49 @@ public class MainActivity extends AppCompatActivity
             startLocationUpdates();
             Log.d(TAG, "Location update resumed .....................");
         }
+        FragmentManager fm = getFragmentManager();
+        dataFragment = (RetainedFragment) fm.findFragmentByTag("data");
+        Log.i(TAG, "getting frag");
     }
     @Override
     protected void onPause() {
         super.onPause();
         stopLocationUpdates();
+        dataFragment.setData(appLocationManager);
     }
     protected void onDestroy(){
         super.onDestroy();
-        stopLocationUpdates();
+        dataFragment.setData(appLocationManager);
+        //stopLocationUpdates();
+        if (mGoogleApiClient.isConnected())
+        mGoogleApiClient.disconnect();
+
+    }
+    protected void showToast(String text) {
+        Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
+    }
+
+    class AddressResultReceiver extends ResultReceiver {
+        public AddressResultReceiver(Handler handler) {
+            super(handler);
+        }
+        @Override
+        protected void onReceiveResult(int resultCode, Bundle resultData) {
+
+            // Display the address string
+            // or an error message sent from the intent service.
+            mAddressOutput = resultData.getString(Constants.RESULT_DATA_KEY);
+            displayAddressOutput();
+
+            // Show a toast message if an address was found.
+            String log = Constants.SUCCESS_RESULT +"";
+            Log.i("wtf", log);
+            if (resultCode == Constants.SUCCESS_RESULT) {
+                log = resultData.describeContents() +"";
+                showToast(mAddressOutput);
+            }
+
+        }
+
     }
 }
