@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.location.LocationRequest;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 /**
@@ -31,8 +32,9 @@ public class GPSHandler extends Fragment {
     private String provider;
     private String accuracy;
     private Location location;
+    private ArrayList<Location> GPSArray;
     public GPSHandler() {
-
+        GPSArray= new ArrayList<>();
 
     }
 
@@ -57,8 +59,14 @@ public class GPSHandler extends Fragment {
         accuracy = acc + "";
         location = lastKnownLocation;
         provider = prov;
+        addLocArray(lastKnownLocation);
         return lastKnownLocation;
     }
+    public ArrayList<Location> getLocArray(){return GPSArray;}
+    private void addLocArray(Location location){
+        GPSArray.add(location);
+    }
+    public void clearLocArray(){GPSArray = new ArrayList<>();}
     public String getProvider(){
         return provider;
     }
@@ -68,7 +76,9 @@ public class GPSHandler extends Fragment {
     public void SetLocation(Location loc){
         setMostRecentLocation(loc);
     }
-//
+    public void getArrayFromService(ArrayList<Location> locArray){
+        GPSArray = locArray;
+    }
 
 
 }
