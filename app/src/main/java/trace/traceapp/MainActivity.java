@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
     //LocationClient locationClient;
     private static final String TAG = "LocationActivity";
-    private static final long INTERVAL = 60000;
+    private static final long INTERVAL = 60;
     private static final long FASTEST_INTERVAL =0;
     protected static final String ADDRESS_REQUESTED_KEY = "address-request-pending";
     protected static final String LOCATION_ADDRESS_KEY = "location-address";
@@ -282,7 +282,7 @@ public class MainActivity extends AppCompatActivity
                     "\n Provider: "+ appLocationManager.getProvider()+
                     "\n Altitude: "+ mCurrentLocation.getAltitude()+
                     "\n Bearing: "+ mCurrentLocation.getBearing()+
-                    "\n Time: " + (time2-time1)+
+                    "\n Time: " + (time2-time1)/1000+
                     "\n Speed: " + mCurrentLocation.getSpeed()+
                     "\n Elapsed time: " + NANOSECONDS.toSeconds((long)(nano2- nano1))
 
