@@ -1,10 +1,14 @@
 <resources>
-    <string name="app_name">Trace</string>
-    <string name="title_activity_maps">Map</string>
-    <string name="latitude_label">Latitude</string>
-    <string name="longitude_label">Longitude</string>
+    <string name="app_name">TraceApp</string>
 
-    <string name="no_location_detected">
-        No location detected. Make sure location is enabled on the device.
-</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
+    <string name="gps_coord">0</string>
+    <string name="service_not_available">\"\"</string>
+    <string name="invalid_lat_long_used">\"\"</string>
+    <string name="no_address_found">\"\"</string>
+    <string name="address_found">\"\"</string>
+    <string name="no_geocoder_available">\"\"</string>
 </resources>
