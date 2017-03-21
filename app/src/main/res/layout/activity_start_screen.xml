@@ -12,11 +12,10 @@
     tools:context="trace.traceapp.StartScreenActivity">
 
     <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:srcCompat="@drawable/TraceLogoTransparent"
         android:id="@+id/imageView4"
-        android:layout_alignParentTop="true"
+        android:layout_width="190dp"
+        android:layout_height="192dp"
+        android:adjustViewBounds="true"
         android:scaleType="fitStart"
-        android:adjustViewBounds="true" />
+        app:srcCompat="@drawable/trace_logo_transparent" />
 </LinearLayout>
