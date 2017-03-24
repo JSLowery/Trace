@@ -1,131 +1,134 @@
 package trace.traceapp;
 
-import android.app.IntentService;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.support.annotation.Nullable;
-import android.util.Log;
 
-import com.google.android.gms.location.LocationListener;
+public class GPSBGNDS extends Service implements LocationListener
+{
 
-import java.util.ArrayList;
+    private final Context mContext;
 
-/**
- * Created by tenos on 2/28/17.
- */
+    // flag for GPS status
+    boolean isGPSEnabled = false;
 
-public class GPSBGNDS extends Service {
-    private ArrayList<Location> locArray;
-    private static final String TAG = "LOCSERVICE:";
-    private LocationManager mLocationManager = null;
-    //milli seconds
-    private static final int LOCATION_INTERVAL = 1000; //1 second
-    private static final float LOCATION_DISTANCE = 10f;//float 10 meters
-    private GPSHandler GPSCallBack;
-    public GPSBGNDS(GPSHandler apploc){
-        super();
-        Log.i(TAG, "gps service started...........");
+    // flag for network status
+    boolean isNetworkEnabled = false;
 
-        GPSCallBack = apploc;
+    boolean canGetLocation = false;
+
+    Location location; // location
+    public static double latitude; // latitude
+    public static double longitude; // longitude
+
+    // The minimum distance to change Updates in meters
+    private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 10; // 10 meters
+
+    // The minimum time between updates in milliseconds
+    private static final long MIN_TIME_BW_UPDATES = 1000 * 60 * 1; // 1 minute
+
+    // Declaring a Location Manager
+    protected LocationManager locationManager;
+
+    public GPSBGNDS(Context context)
+    {
+        this.mContext = context;
+        getLocation();
     }
 
-    private class LocationListener implements android.location.LocationListener{
-        Location mLastLocation;
-        public LocationListener(String provider)
+    public Location getLocation()
+    {
+        try
         {
-            Log.e(TAG, "LocationListener " + provider);
-            mLastLocation = new Location(provider);
-        }
-        @Override
-        public void onLocationChanged(Location location)
-        {
-            Log.e(TAG, "onLocationChanged: " + location);
-            mLastLocation.set(location);
-            locArray.add(location);
+            locationManager = (LocationManager) mContext.getSystemService(LOCATION_SERVICE);
 
+            // getting GPS status
+            isGPSEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+
+            // getting network status
+            isNetworkEnabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+
+            if (!isGPSEnabled && !isNetworkEnabled)
+            {
+                // no network provider is enabled
+            }
+            else
+            {
+                this.canGetLocation = true;
+                // First get location from Network Provider
+                if (isNetworkEnabled)
+                {
+                    locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
+                            MIN_TIME_BW_UPDATES,MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
+//                  Log.d("Network", "Network");
+                    if (locationManager != null)
+                    {
+                        location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+                        if (location != null)
+                        {
+                            latitude = location.getLatitude();
+                            longitude = location.getLongitude();
+
+                        }
+                    }
+                }
+                // if GPS Enabled get lat/long using GPS Services
+                if (isGPSEnabled)
+                {
+                    if (location == null)
+                    {
+                        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
+                                MIN_TIME_BW_UPDATES,MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
+//                      Log.d("GPS Enabled", "GPS Enabled");
+                        if (locationManager != null)
+                        {
+                            location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                            if (location != null)
+                            {
+                                latitude = location.getLatitude();
+                                longitude = location.getLongitude();
+
+                            }
+                        }
+                    }
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        @Override
-        public void onProviderDisabled(String provider)
-        {
-            Log.e(TAG, "onProviderDisabled: " + provider);
-        }
-        @Override
-        public void onProviderEnabled(String provider)
-        {
-            Log.e(TAG, "onProviderEnabled: " + provider);
-        }
-        @Override
-        public void onStatusChanged(String provider, int status, Bundle extras)
-        {
-            Log.e(TAG, "onStatusChanged: " + provider);
-        }
+
+        return location;
     }
-    LocationListener[] mLocationListeners = new LocationListener[] {
-            new LocationListener(LocationManager.GPS_PROVIDER),
-            new LocationListener(LocationManager.NETWORK_PROVIDER)
-    };
+
+    @Override
+    public void onLocationChanged(Location location)
+    {
+    }
+
+    @Override
+    public void onProviderDisabled(String provider)
+    {
+    }
+
+    @Override
+    public void onProviderEnabled(String provider)
+    {
+    }
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras)
+    {
+    }
 
     @Override
     public IBinder onBind(Intent arg0)
     {
         return null;
-    }
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId)
-    {
-        Log.e(TAG, "onStartCommand");
-        super.onStartCommand(intent, flags, startId);
-        return START_STICKY;
-    }
-    @Override
-    public void onCreate()
-    {
-        Log.e(TAG, "onCreate");
-        initializeLocationManager();
-        try {
-            mLocationManager.requestLocationUpdates(
-                    LocationManager.NETWORK_PROVIDER, LOCATION_INTERVAL, LOCATION_DISTANCE,
-                    mLocationListeners[1]);
-        } catch (java.lang.SecurityException ex) {
-            Log.i(TAG, "fail to request location update, ignore", ex);
-        } catch (IllegalArgumentException ex) {
-            Log.d(TAG, "network provider does not exist, " + ex.getMessage());
-        }
-        try {
-            mLocationManager.requestLocationUpdates(
-                    LocationManager.GPS_PROVIDER, LOCATION_INTERVAL, LOCATION_DISTANCE,
-                    mLocationListeners[0]);
-        } catch (java.lang.SecurityException ex) {
-            Log.i(TAG, "fail to request location update, ignore", ex);
-        } catch (IllegalArgumentException ex) {
-            Log.d(TAG, "gps provider does not exist " + ex.getMessage());
-        }
-    }
-    @Override
-    public void onDestroy()
-    {
-        GPSCallBack.getArrayFromService(locArray);
-        Log.e(TAG, "onDestroy");
-        super.onDestroy();
-        if (mLocationManager != null) {
-            for (int i = 0; i < mLocationListeners.length; i++) {
-                try {
-                    mLocationManager.removeUpdates(mLocationListeners[i]);
-                } catch (Exception ex) {
-                    Log.i(TAG, "fail to remove location listners, ignore", ex);
-                }
-            }
-        }
-    }
-    private void initializeLocationManager() {
-        Log.e(TAG, "initializeLocationManager");
-        if (mLocationManager == null) {
-            mLocationManager = (LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
-        }
     }
 }
