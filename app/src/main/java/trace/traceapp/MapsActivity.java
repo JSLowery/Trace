@@ -55,11 +55,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        double lat = mLocationArray.get(mLocationArray.size()-1).getLatitude();
-        double lng = mLocationArray.get(mLocationArray.size()-1).getLongitude();
+        double lat = 43;
+        double lng = -12;
+        if (mLocationArray.size()>0) {
+            lat = mLocationArray.get(mLocationArray.size() - 1).getLatitude();
+            lng = mLocationArray.get(mLocationArray.size() - 1).getLongitude();
+        }
+
         // Add a marker in Sydney and move the camera mLocationArray.get(0).getLatitude() mLocationArray.get(0).getLongitude()
         LatLng sydney = new LatLng(lat, lng);
         mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+        mMap.setMaxZoomPreference(15.0f);
+        mMap.setMinZoomPreference(10.0f);
     }
 }
