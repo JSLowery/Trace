@@ -48,7 +48,7 @@ public class GPSHandler implements GoogleApiClient.ConnectionCallbacks, OnConnec
     private String filename = "testFilemost.srl";
     LocationRequest mLocationRequest;
     private static final long INTERVAL = 60;
-    private static final long FASTEST_INTERVAL =1000;
+    private static final long FASTEST_INTERVAL =1000*10; //10 seconds
     protected static final String ADDRESS_REQUESTED_KEY = "address-request-pending";
     protected static final String LOCATION_ADDRESS_KEY = "location-address";
     private GoogleApiClient mGoogleApiClient;
@@ -69,14 +69,24 @@ public class GPSHandler implements GoogleApiClient.ConnectionCallbacks, OnConnec
         mGoogleApiClient.connect();
         createLocationRequest();
 
-         db = new LocationsDB(context);
+        db = LocationsDB.getInstance(context);
+        if (GPSArray != null)
+        GPSArray.clear();
         GPSArray= getFromFile();
+
         for (int i = 0; i<GPSArray.size();i++){
             Log.i(filename, GPSArray.get(i).toString());
         }
         Log.i(filename, GPSArray.toString());
         Log.i (filename, context.getPackageName());
 
+
+    }
+    public void onStop() {
+        Log.i(filename, "stopping location updates");
+        stopLocationUpdates();
+        if (mGoogleApiClient.isConnected())
+            mGoogleApiClient.disconnect();
 
     }
     public void dumpToFile(){
@@ -89,32 +99,29 @@ public class GPSHandler implements GoogleApiClient.ConnectionCallbacks, OnConnec
             values.put(LocationsDB.FIELD_ACC, arr.getAccuracy() );
             db.insert(values);
         }
-        db.close();
-            //String Path =getActivity().getFilesDir().toString() ;
 
-//            ObjectOutput out = null;
-//
-//            try {
-//                out = new ObjectOutputStream(new FileOutputStream((new File(context.getFilesDir(),"")+File.separator+filename)));
-//                out.writeObject(GPSArray);
-//                out.close();
-//            } catch (FileNotFoundException e) {
-//                e.printStackTrace();
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-        stopLocationUpdates();
-        if (mGoogleApiClient.isConnected())
-            mGoogleApiClient.disconnect();
+
 
     }
-    private ArrayList<Location> getFromFile()
+    public ArrayList<Location> getFromFile()
     {
+        if (GPSArray != null)
+        GPSArray.clear();
+        if (mGoogleApiClient == null) {
+            mGoogleApiClient = new GoogleApiClient.Builder(context)
+                    .addConnectionCallbacks(this)
+                    .addOnConnectionFailedListener( this)
+                    .addApi(LocationServices.API)
+                    .build();
+        }
+        Log.i(filename, "getFromFile was called!!!!!!!!!!!");
         ArrayList<Location> nwLoc = new ArrayList<>();
+        int count= 0;
         Cursor cursor = db.getAllLocations();
         if (cursor != null){
             if (cursor.moveToFirst()){
                 do {
+                    count++;
                     double lat = cursor.getDouble(cursor.getColumnIndex(LocationsDB.FIELD_LAT));
                     double lng = cursor.getDouble(cursor.getColumnIndex(LocationsDB.FIELD_LNG));
                     double acc = cursor.getDouble(cursor.getColumnIndex(LocationsDB.FIELD_ACC));
@@ -124,29 +131,15 @@ public class GPSHandler implements GoogleApiClient.ConnectionCallbacks, OnConnec
                     loc.setAccuracy((float)acc);
 
                     nwLoc.add(loc);
+
                 }
                 while(cursor.moveToNext());
             }
+            db.del();
         }
-
-//        ObjectInputStream input;
-//
-//        ArrayList<Location> arr = new ArrayList<>();
-//        try {
-//            input = new ObjectInputStream(new FileInputStream(new File(new File(context.getFilesDir(),"")+File.separator+filename)));
-//            arr = (ArrayList<Location>) input.readObject();
-//
-//            Log.v(filename,"Person a="+arr.get(0).getProvider());
-//            input.close();
-//        } catch (StreamCorruptedException e) {
-//            e.printStackTrace();
-//        } catch (FileNotFoundException e) {
-//            e.printStackTrace();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        } catch (ClassNotFoundException e) {
-//            e.printStackTrace();
-//        }
+            Log.i(filename, "nwLoc: "+ count);
+            Log.i(filename, nwLoc.toString());
+            //this.clearLocArray();
 
         return nwLoc;
     }
@@ -176,6 +169,7 @@ public class GPSHandler implements GoogleApiClient.ConnectionCallbacks, OnConnec
         bearing = lastKnownLocation.getBearing();
         speed = lastKnownLocation.getSpeed();
         altitude = lastKnownLocation.getAltitude();
+        Log.i(filename, "Added location: "+ latitude+ " "+ longitude);
         addLocArray(lastKnownLocation);
         return lastKnownLocation;
     }
@@ -203,14 +197,16 @@ public class GPSHandler implements GoogleApiClient.ConnectionCallbacks, OnConnec
 
     public void onLocationChanged(Location location) {
 
-
+        Log.i(filename, "locationChanged");
         //mAddressOutput = "";
         if (mCurrentLocation == null) {
             mCurrentLocation = location;
             setMostRecentLocation(mCurrentLocation);
         }
+        if (mCurrentLocation.getLongitude()==location.getLongitude() && mCurrentLocation.getLatitude()== location.getLatitude())
+            return;
         mCurrentLocation.distanceTo(location);
-        if (location.getAccuracy()<=100 && location.distanceTo(mCurrentLocation)> 10)  {
+        if (location.getAccuracy()<=100&& location.distanceTo(mCurrentLocation)> 10)  {
             mCurrentLocation = location;
         setMostRecentLocation(mCurrentLocation);
 
@@ -241,11 +237,11 @@ public class GPSHandler implements GoogleApiClient.ConnectionCallbacks, OnConnec
 
     }
     public void onConnected(@Nullable Bundle bundle) {
-        Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient) ;
+        location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient) ;
 
         //LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
         Toast.makeText(context, "Connected to Google Play Services", Toast.LENGTH_SHORT).show();
-        Log.i("onCon", "Connected to GPS");
+        Log.i(filename, "Connected to GPS");
         startLocationUpdates();
     }
     //location request for google play api calls

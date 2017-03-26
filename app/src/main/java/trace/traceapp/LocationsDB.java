@@ -4,9 +4,11 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 
 public class LocationsDB extends SQLiteOpenHelper {
+    private static LocationsDB sInstance;
     /** Database name */
     private static String DBNAME = "locationmarkersqlite";
 
@@ -32,12 +34,45 @@ public class LocationsDB extends SQLiteOpenHelper {
     private SQLiteDatabase mDB;
 
     /** Constructor */
-    public LocationsDB(Context context) {
-        super(context, DBNAME, null, VERSION);
-        this.mDB = getWritableDatabase();
+//    public LocationsDB(Context context) {
+//        super(context, DBNAME, null, VERSION);
+//        this.mDB = getWritableDatabase();
+//    }
+
+    public static synchronized LocationsDB getInstance(Context context) {
+
+        // Use the application context, which will ensure that you
+        // don't accidentally leak an Activity's context.
+        // See this article for more information: http://bit.ly/6LRzfx
+        if (sInstance == null) {
+            sInstance = new LocationsDB(context.getApplicationContext());
+
+        }
+        return sInstance;
     }
 
+    /**
+     * Constructor should be private to prevent direct instantiation.
+     * make call to static method "getInstance()" instead.
+     */
+    private LocationsDB(Context context) {
+        super(context, DBNAME, null, VERSION);
+        Log.i("testFile", "started the DB?");
+        if (mDB == null) {
+            mDB = getWritableDatabase();
 
+            if (mDB.isOpen()){
+                Log.i("testFile", "mDB is open I think");
+                Cursor cursor = mDB.rawQuery("select DISTINCT tbl_name from sqlite_master where tbl_name = '"+DATABASE_TABLE+"'", null);
+                if(cursor!=null) {
+                    cursor.moveToFirst();
+                    Log.i("testFile",cursor.toString());
+                }
+            }else
+                onCreate(mDB);
+        }else
+            Log.i("testFile", "database was open");
+    }
     @Override
     public void onCreate(SQLiteDatabase db) {
         String sql =     "create table " + DATABASE_TABLE + " ( " +
@@ -46,7 +81,7 @@ public class LocationsDB extends SQLiteOpenHelper {
                 FIELD_LAT + " double , " +
                 FIELD_ACC + " double " +
                 " ) ";
-
+        Log.i("testFile", "oncreate was called");
         db.execSQL(sql);
     }
 
@@ -64,7 +99,10 @@ public class LocationsDB extends SQLiteOpenHelper {
 
     /** Returns all the locations from the table */
     public Cursor getAllLocations(){
+        if (mDB != null)
         return mDB.query(DATABASE_TABLE, new String[] { FIELD_ROW_ID,  FIELD_LAT , FIELD_LNG, FIELD_ACC } , null, null, null, null, null);
+        Cursor c = null;
+        return c;
     }
 
     @Override

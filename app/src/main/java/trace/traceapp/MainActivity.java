@@ -190,6 +190,7 @@ public class MainActivity extends AppCompatActivity
                     "\n Bearing: "+ appLocationManager.getBearing()+
                     "\n Time: " + (time2-time1)/1000+
                     "\n Speed: " + appLocationManager.getSpeed()+
+                    "\n Number of objects in array: "+ appLocationManager.getLocArray().size()+
                     "\n Elapsed time: " + NANOSECONDS.toSeconds((long)(nano2- nano1))
 
 
