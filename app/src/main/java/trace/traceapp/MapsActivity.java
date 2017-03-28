@@ -16,6 +16,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
@@ -95,7 +96,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             Log.i("testFile", "runnable fired");
             mLocationArray = appLocationManager.getLocArray();
             Toast.makeText(MapsActivity.this,mLocationArray.size()+"", Toast.LENGTH_SHORT).show();
-            if (appLocationManager.getLocation() != null && appLocationManager.getLatitude() != "") {
+            if (appLocationManager.getLocation() != null && !Objects.equals(appLocationManager.getLatitude(), "")) {
                 LatLng latl = new LatLng(Double.valueOf(appLocationManager.getLatitude()), Double.valueOf(appLocationManager.getLongitude()));
                 drawMarker(latl);
             }
@@ -116,6 +117,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Log.i("testFile", "drawMarker"+point.toString());
 // Adding marker on the Google Map
         mMap.addMarker(markerOptions);
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(point));
 
     }
     protected void onStop() {

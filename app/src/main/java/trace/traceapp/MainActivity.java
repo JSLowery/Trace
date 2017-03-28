@@ -74,6 +74,7 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
         appLocationManager = new GPSHandler(this);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
