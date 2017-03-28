@@ -11,4 +11,5 @@
     <string name="no_address_found">\"\"</string>
     <string name="address_found">\"\"</string>
     <string name="no_geocoder_available">\"\"</string>
+    <string name="title_activity_maps">Map</string>
 </resources>
