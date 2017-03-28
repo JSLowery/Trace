@@ -174,7 +174,7 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_mapview) {
             startActivity(new Intent(MainActivity.this, MapsActivity.class));
         }  else if (id == R.id.nav_share) {
-
+            startActivity(new Intent(MainActivity.this, StartDraw.class));
         } else if (id == R.id.nav_savecanvas) {
 
         }
@@ -185,6 +185,7 @@ public class MainActivity extends AppCompatActivity
     }
     protected void onStart() {
         mGoogleApiClient.connect();
+        //startActivity(new Intent(MainActivity.this, StartDraw.class));
         super.onStart();
     }
 

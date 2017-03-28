@@ -1,3 +1,4 @@
+/*
 package trace.traceapp;
 
 import java.util.ArrayList;
@@ -13,9 +14,11 @@ import android.widget.Toast;
 import static java.util.concurrent.TimeUnit.NANOSECONDS;
 import static trace.traceapp.MainActivity.appLocationManager;
 
+*/
 /**
  * Created by lotusland on 2/23/17.
- */
+ *//*
+
 
 
 
@@ -23,7 +26,9 @@ public class Plotter {
     //gps notes
     //7 sigfigs... first two sigfigs
     //1 deg covers 111,111 meters
-    public static final double RADIUS = 6378137.0; /* in meters on the equator */
+    public static final double RADIUS = 6378137.0; */
+/* in meters on the equator *//*
+
     ArrayList<Location> coordList;
     ArrayList<double> YpixelCoords;
     ArrayList<double> XpixelCoords;
@@ -105,3 +110,4 @@ public class Plotter {
     }
 
 }
+*/
