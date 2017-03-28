@@ -30,7 +30,7 @@ public class Plotter extends MainActivity {
     ArrayList<Double> YpixelCoords;
     ArrayList<Double> XpixelCoords;
     GPSHandler appLocationManager;
-    Context context;
+    Context context;//
     //Handle the following:
         //onpause
         //ondestroy
