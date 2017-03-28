@@ -56,6 +56,12 @@ public class MainActivity extends AppCompatActivity
     // end google api stuff
     static GPSHandler appLocationManager;
     private GoogleApiClient mGoogleApiClient;
+    //Plotter
+    Plotter plotter;
+    Location mPreviousLocation;
+    //graphics engine
+    //GraphicsEngine graphics;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,6 +70,9 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         appLocationManager = new GPSHandler();
+        plotter = new Plotter();
+        mPreviousLocation = null;
+        //graphics = new GraphicsEngine();
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -232,6 +241,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onLocationChanged(Location location) {
         Log.d(TAG, "Firing onLocationChanged..............................................");
+        mPreviousLocation = mCurrentLocation;
         mCurrentLocation = location;
         //mAddressOutput = "";
 
@@ -257,6 +267,7 @@ public class MainActivity extends AppCompatActivity
 //            Toast.makeText(this, "Priority changed", Toast.LENGTH_SHORT).show();
 //
 //        }
+        plotter.pushToPlotter(location);
     }
 
     private void updateUI() {
@@ -278,6 +289,7 @@ public class MainActivity extends AppCompatActivity
 
 
             );
+
             Toast.makeText(this, "Location Updated", Toast.LENGTH_SHORT).show();
         } else {
             Log.d(TAG, "location is null ...............");
