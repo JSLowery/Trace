@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_start_screen"
@@ -17,5 +17,26 @@
         android:layout_height="192dp"
         android:adjustViewBounds="true"
         android:scaleType="fitStart"
-        app:srcCompat="@drawable/trace_logo_transparent" />
-</LinearLayout>
+        app:srcCompat="@drawable/trace_logo_transparent"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
+
+    <EditText
+        android:id="@+id/editText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/imageView4"
+        android:layout_centerVertical="true"
+        android:ems="10"
+        android:hint="Enter Name"
+        android:inputType="textPersonName"
+        android:text="@string/str_UserName" />
+
+    <Button
+        android:id="@+id/btn_Enter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/editText"
+        android:layout_centerHorizontal="true"
+        android:text="@string/str_Enterbtn" />
+</RelativeLayout>

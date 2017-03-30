@@ -32,4 +32,6 @@
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
+    <string name="str_UserName"></string>
+    <string name="str_Enterbtn">Enter</string>
 </resources>
