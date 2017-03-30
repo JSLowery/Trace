@@ -60,6 +60,16 @@ public class MainActivity extends AppCompatActivity
     protected FragmentManager fm;
     // end google api stuff
     static GPSHandler appLocationManager;
+<<<<<<< HEAD
+    private GoogleApiClient mGoogleApiClient;
+    //Plotter
+    Plotter plotter;
+    Location mPreviousLocation;
+    //graphics engine
+    //GraphicsEngine graphics;
+
+=======
+>>>>>>> GPS_Branch
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,7 +84,14 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+<<<<<<< HEAD
+        appLocationManager = new GPSHandler();
+        plotter = new Plotter();
+        mPreviousLocation = null;
+        //graphics = new GraphicsEngine();
+=======
         appLocationManager = new GPSHandler(this);
+>>>>>>> GPS_Branch
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -177,6 +194,41 @@ public class MainActivity extends AppCompatActivity
     private double time2= 0.0;
     private double nano1= 0.0;
     private double nano2= 0.0;
+<<<<<<< HEAD
+    @Override
+    public void onLocationChanged(Location location) {
+        Log.d(TAG, "Firing onLocationChanged..............................................");
+        mPreviousLocation = mCurrentLocation;
+        mCurrentLocation = location;
+        //mAddressOutput = "";
+
+        if (mCurrentLocation.getAccuracy()<=100) {
+
+            appLocationManager.SetLocation(location);
+        }
+        //mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
+        time2 = mCurrentLocation.getTime();
+        nano2 = mCurrentLocation.getElapsedRealtimeNanos();
+        updateUI();
+        time1 = mCurrentLocation.getTime();
+        nano1 = mCurrentLocation.getElapsedRealtimeNanos();
+        //for getting addresses
+        if (!Geocoder.isPresent()) {
+            Toast.makeText(this, R.string.no_geocoder_available,
+                    Toast.LENGTH_LONG).show();
+            return;
+        }
+        startIntentService();
+//        if (mLocationRequest.getPriority() == LocationRequest.PRIORITY_HIGH_ACCURACY) {
+//            mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+//            Toast.makeText(this, "Priority changed", Toast.LENGTH_SHORT).show();
+//
+//        }
+        plotter.pushToPlotter(location);
+    }
+
+=======
+>>>>>>> GPS_Branch
     private void updateUI() {
         if (appLocationManager.getLocation() != null) {
 
@@ -196,6 +248,7 @@ public class MainActivity extends AppCompatActivity
 
 
             );
+
             Toast.makeText(this, "Location Updated", Toast.LENGTH_SHORT).show();
         } else {
             Log.d(TAG, "location is null ...............");
