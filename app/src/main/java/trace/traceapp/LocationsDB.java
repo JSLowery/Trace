@@ -30,14 +30,9 @@ public class LocationsDB extends SQLiteOpenHelper {
     /** A constant, stores the the table name */
     private static final String DATABASE_TABLE = "locations";
 
-    /** A constant, stores the the table name */
-    private static final String DATABASE_TABLE_STATS = "stats";
-    private static final String FIELD_TDISTANCE = "stats";
-    /** Field 1 of the table locations, which is the primary key */
-    public static final String FIELD_ROW_ID_STATS = "_id_stats";
-
     /** An instance variable for SQLiteDatabase */
     private SQLiteDatabase mDB;
+
 
     /** Constructor */
 //    public LocationsDB(Context context) {
@@ -70,16 +65,14 @@ public class LocationsDB extends SQLiteOpenHelper {
             if (mDB.isOpen()){
                 Log.i("testFile", "mDB is open I think");
                 Cursor cursor = mDB.rawQuery("select DISTINCT tbl_name from sqlite_master where tbl_name = '"+DATABASE_TABLE+"'", null);
-                Cursor statsCursor = mDB.rawQuery("select DISTINCT tbl_name from sqlite_master where tbl_name = '"+DATABASE_TABLE_STATS+"'", null);
-                if(cursor!=null && statsCursor!=null) {
+                if(cursor!=null) {
                     cursor.moveToFirst();
-                    statsCursor.moveToFirst();
                     Log.i("testFile",cursor.toString());
                 }
-            }else {
+            }else
                 onCreate(mDB);
-                onCreateStats(mDB);
-            }
+
+
         }else
             Log.i("testFile", "database was open");
     }
@@ -117,37 +110,7 @@ public class LocationsDB extends SQLiteOpenHelper {
     }
 
     /****************  STATS TABLE FUNCTIONS ***********************/
-    //creates the stats table database
-    public void onCreateStats(SQLiteDatabase db){
-        String sql =     "create table " + DATABASE_TABLE_STATS + " ( " +
-                FIELD_ROW_ID_STATS + " integer primary key autoincrement , "
-        FIELD_TDISTANCE + " double , " +
-                " ) ";
-        //add most frequently visited
-        //add home
 
-        Log.i("testFile", "oncreate was called");
-        db.execSQL(sql);
-    }
-    /** Inserts a new location to the table locations */
-    public long insert_stats(ContentValues contentValues){
-        long rowID = mDB.insert(DATABASE_TABLE, null, contentValues);
-        return rowID;
-    }
-
-    /** Deletes all locations from the table */
-    public int del_stats(){
-        int cnt = mDB.delete(DATABASE_TABLE, null , null);
-        return cnt;
-    }
-
-    /** Returns all the locations from the table */
-    public Cursor getDistance(){
-        if (mDB != null)
-            return mDB.query(DATABASE_TABLE, new String[] { FIELD_ROW_ID,  FIELD_LAT , FIELD_LNG, FIELD_ACC } , null, null, null, null, null);
-        Cursor c = null;
-        return c;
-    }
 
 
     @Override

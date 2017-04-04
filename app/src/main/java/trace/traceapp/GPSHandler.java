@@ -26,6 +26,7 @@ import com.google.android.gms.location.LocationServices;
 import java.util.ArrayList;
 
 
+import static android.location.Location.distanceBetween;
 import static java.util.concurrent.TimeUnit.NANOSECONDS;
 
 /**
@@ -53,7 +54,9 @@ public class GPSHandler implements GoogleApiClient.ConnectionCallbacks, OnConnec
     protected static final String LOCATION_ADDRESS_KEY = "location-address";
     private GoogleApiClient mGoogleApiClient;
     LocationsDB db;
+    StatsDB statsdb;
     private Location mCurrentLocation;
+    private Location mPreviousLocation;
     String path = String.valueOf(Environment.getExternalStoragePublicDirectory(
             Environment.DIRECTORY_DOCUMENTS));
     private Context context;
@@ -207,12 +210,24 @@ public class GPSHandler implements GoogleApiClient.ConnectionCallbacks, OnConnec
             return;
         mCurrentLocation.distanceTo(location);
         if (location.getAccuracy()<=100&& location.distanceTo(mCurrentLocation)> 10)  {
+            mPreviousLocation = mCurrentLocation;
             mCurrentLocation = location;
         setMostRecentLocation(mCurrentLocation);
 
         }
 
-
+        ContentValues values = new ContentValues();
+        float[] results = new float[1];
+        distanceBetween(mPreviousLocation.getLatitude(), mPreviousLocation.getLongitude(),
+                        mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude(), results);
+        Cursor cursor = statsdb.getDistance();
+        cursor.moveToFirst();
+        //get the distance to add to
+        double dist = cursor.getDouble(cursor.getColumnIndex(StatsDB.FIELD_TDISTANCE_STATS));
+        //put it back with the new result added
+        dist += results[0];
+        values.put(StatsDB.FIELD_TDISTANCE_STATS, dist);
+        db.insert(values);
 
 
 

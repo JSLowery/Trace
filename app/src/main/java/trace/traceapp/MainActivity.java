@@ -60,7 +60,6 @@ public class MainActivity extends AppCompatActivity
     protected FragmentManager fm;
     // end google api stuff
     static GPSHandler appLocationManager;
-<<<<<<< HEAD
     private GoogleApiClient mGoogleApiClient;
     //Plotter
     Plotter plotter;
@@ -68,12 +67,10 @@ public class MainActivity extends AppCompatActivity
     //graphics engine
     //GraphicsEngine graphics;
 
-=======
->>>>>>> GPS_Branch
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //stub for permissions, Drew look at me!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        //stub for permissions, Drew look at me!!
         //Also, delete this.
         int permissionCheck = ContextCompat.checkSelfPermission(this,
                 android.Manifest.permission.ACCESS_FINE_LOCATION);
@@ -84,15 +81,11 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-<<<<<<< HEAD
         appLocationManager = new GPSHandler();
         plotter = new Plotter();
         mPreviousLocation = null;
         //graphics = new GraphicsEngine();
-=======
         appLocationManager = new GPSHandler(this);
->>>>>>> GPS_Branch
-
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -194,7 +187,6 @@ public class MainActivity extends AppCompatActivity
     private double time2= 0.0;
     private double nano1= 0.0;
     private double nano2= 0.0;
-<<<<<<< HEAD
     @Override
     public void onLocationChanged(Location location) {
         Log.d(TAG, "Firing onLocationChanged..............................................");
@@ -227,8 +219,6 @@ public class MainActivity extends AppCompatActivity
         plotter.pushToPlotter(location);
     }
 
-=======
->>>>>>> GPS_Branch
     private void updateUI() {
         if (appLocationManager.getLocation() != null) {
 
