@@ -9,13 +9,12 @@ import java.util.ArrayList;
 
 public class StatsActivity extends AppCompatActivity {
 
-    private ListView locListView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_stats);
-        locListView = (ListView) findViewById(R.id.LocationList);
-        //final ArrayList<Location> locationList = Location
+        myListView = (ListView) findViewById(R.id.LocationList);
+        final ArrayList<String> names = new ArrayList<>();
     }
 
     /*private String[] name = {
@@ -31,7 +30,7 @@ public class StatsActivity extends AppCompatActivity {
     ListView listView = (ListView) findViewById(R.id.LocationList);
     listView.setAdapter(itemsAdapter);
 */
-
+    private ListView myListView;
 
 
 
