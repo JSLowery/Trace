@@ -4,17 +4,10 @@
 
     To get one, follow this link, follow the directions and press "Create" at the end:
 
-<<<<<<< HEAD
     https://console.developers.google.com/flows/enableapi?apiid=maps_android_backend&keyType=CLIENT_SIDE_ANDROID&r=3F:3F:4E:CA:CB:0E:8C:F5:32:7C:CB:AB:8F:29:1D:D1:DD:55:51:16%3Btrace.traceapp
 
     You can also add your credentials to an existing key, using this line:
     3F:3F:4E:CA:CB:0E:8C:F5:32:7C:CB:AB:8F:29:1D:D1:DD:55:51:16;trace.traceapp
-=======
-    https://console.developers.google.com/flows/enableapi?apiid=maps_android_backend&keyType=CLIENT_SIDE_ANDROID&r=52:7B:98:1B:8E:5C:4F:77:BD:0A:FB:0D:99:DC:FC:7D:F4:E3:EC:22%3Btrace.traceapp
-
-    You can also add your credentials to an existing key, using this line:
-    52:7B:98:1B:8E:5C:4F:77:BD:0A:FB:0D:99:DC:FC:7D:F4:E3:EC:22;trace.traceapp
->>>>>>> origin/NavigationBarTemplate
 
     Alternatively, follow the directions here:
     https://developers.google.com/maps/documentation/android/start#get-key
@@ -23,6 +16,10 @@
     string in this file.
     -->
     <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">
+
+
+
         AIzaSyD_jW92wCj8IhztYXZWv1XVKx7PIPUI4LE
+
     </string>
 </resources>
