@@ -33,7 +33,8 @@ import static java.util.concurrent.TimeUnit.NANOSECONDS;
  * This is the Class that will store and handle GPS information
  */
 
-public class GPSHandler implements GoogleApiClient.ConnectionCallbacks, OnConnectionFailedListener, com.google.android.gms.location.LocationListener {
+public class GPSHandler implements GoogleApiClient.ConnectionCallbacks, OnConnectionFailedListener,
+        com.google.android.gms.location.LocationListener {
     private LocationManager locationManager;
     private String latitude = "";
     private String longitude = "";
@@ -48,7 +49,7 @@ public class GPSHandler implements GoogleApiClient.ConnectionCallbacks, OnConnec
     private String filename = "testFilemost.srl";
     LocationRequest mLocationRequest;
     private static final long INTERVAL = 60;
-    private static final long FASTEST_INTERVAL =1000*10; //10 seconds
+    private static final long FASTEST_INTERVAL =1000; //1 seconds
     protected static final String ADDRESS_REQUESTED_KEY = "address-request-pending";
     protected static final String LOCATION_ADDRESS_KEY = "location-address";
     private GoogleApiClient mGoogleApiClient;
@@ -85,6 +86,7 @@ public class GPSHandler implements GoogleApiClient.ConnectionCallbacks, OnConnec
     public void onStop() {
         Log.i(filename, "stopping location updates");
         stopLocationUpdates();
+        db.close();
         if (mGoogleApiClient.isConnected())
             mGoogleApiClient.disconnect();
 
@@ -97,6 +99,7 @@ public class GPSHandler implements GoogleApiClient.ConnectionCallbacks, OnConnec
             values.put(LocationsDB.FIELD_LAT, arr.getLatitude() );
             values.put(LocationsDB.FIELD_LNG, arr.getLongitude() );
             values.put(LocationsDB.FIELD_ACC, arr.getAccuracy() );
+            values.put(LocationsDB.FIELD_TIME, arr.getTime());
             db.insert(values);
         }
 
@@ -125,11 +128,13 @@ public class GPSHandler implements GoogleApiClient.ConnectionCallbacks, OnConnec
                     double lat = cursor.getDouble(cursor.getColumnIndex(LocationsDB.FIELD_LAT));
                     double lng = cursor.getDouble(cursor.getColumnIndex(LocationsDB.FIELD_LNG));
                     double acc = cursor.getDouble(cursor.getColumnIndex(LocationsDB.FIELD_ACC));
+                    double tim = cursor.getDouble(cursor.getColumnIndex(LocationsDB.FIELD_TIME));
                     Location loc = new Location("fused");
                     loc.setLatitude(lat);
                     loc.setLongitude(lng);
                     loc.setAccuracy((float)acc);
-
+                    loc.setTime((long)tim);
+                    Log.i("testFile", loc.getTime()+"");
                     nwLoc.add(loc);
 
                 }
@@ -137,6 +142,7 @@ public class GPSHandler implements GoogleApiClient.ConnectionCallbacks, OnConnec
             }
             db.del();
         }
+        GPSArray = nwLoc;
             Log.i(filename, "nwLoc: "+ count);
             Log.i(filename, nwLoc.toString());
             //this.clearLocArray();
@@ -194,7 +200,6 @@ public class GPSHandler implements GoogleApiClient.ConnectionCallbacks, OnConnec
     public double getBearing(){return bearing;}
     public double getAltitude(){return altitude;}
 
-
     public void onLocationChanged(Location location) {
 
         Log.i(filename, "locationChanged");
@@ -206,23 +211,29 @@ public class GPSHandler implements GoogleApiClient.ConnectionCallbacks, OnConnec
         if (mCurrentLocation.getLongitude()==location.getLongitude() && mCurrentLocation.getLatitude()== location.getLatitude())
             return;
         mCurrentLocation.distanceTo(location);
-        if (location.getAccuracy()<=100&& location.distanceTo(mCurrentLocation)> 10)  {
+        if (location.getAccuracy()<= 100&& location.distanceTo(mCurrentLocation)> location.getAccuracy())  {
             mCurrentLocation = location;
         setMostRecentLocation(mCurrentLocation);
 
         }
 
-
-
-
-
-//        if (mLocationRequest.getPriority() == LocationRequest.PRIORITY_HIGH_ACCURACY) {
-//            mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
-//            Toast.makeText(this, "Priority changed", Toast.LENGTH_SHORT).show();
-//
-//        }
     }
-
+    //Be Aware this will return speed in meters/ second
+    public double calcSpeed(){
+        double speed = 0;
+        if (GPSArray.size()>1){
+            Location loc1 = GPSArray.get(GPSArray.size()-2);
+            Location loc2 = GPSArray.get(GPSArray.size()-1);
+            double dist = Math.abs(loc1.distanceTo(loc2));
+            Log.i("testFile", "dist: " + dist);
+            //Time is in milliseconds so you need teh *1000
+            double time = (loc2.getTime() - loc1.getTime())*1000;
+            Log.i("testFile", "time : " + time);
+            speed = dist/time;
+            Log.i("testFile", speed+"");
+        }
+        return speed;
+    }
     //stoplocationupdates and startlocationupdates are for the google playservice api calls
     protected void stopLocationUpdates() {
         if (mGoogleApiClient.isConnected()) {

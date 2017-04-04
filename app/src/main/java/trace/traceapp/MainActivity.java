@@ -74,8 +74,13 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        appLocationManager = new GPSHandler(this);
+        if (MapsActivity.appLocationManager != null) {
+            Log.i("fileTest", "Got GPSHANDLER reference from maps");
+            appLocationManager = MapsActivity.appLocationManager;
+        }
+        else {
+            appLocationManager = new GPSHandler(this);
+        }
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -162,12 +167,14 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
     protected void onStart() {
+        Log.i("testFile", "Main called get from file");
+        appLocationManager.getFromFile();
         super.onStart();
     }
 
     protected void onStop() {
         super.onStop();
-        appLocationManager.dumpToFile();
+
 
 
 
@@ -190,7 +197,7 @@ public class MainActivity extends AppCompatActivity
                     "\n Altitude: "+ appLocationManager.getAltitude()+
                     "\n Bearing: "+ appLocationManager.getBearing()+
                     "\n Time: " + (time2-time1)/1000+
-                    "\n Speed: " + appLocationManager.getSpeed()+
+                    "\n Speed: " + appLocationManager.calcSpeed()+
                     "\n Number of objects in array: "+ appLocationManager.getLocArray().size()+
                     "\n Elapsed time: " + NANOSECONDS.toSeconds((long)(nano2- nano1))
 
@@ -251,16 +258,18 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onPause() {
         super.onPause();
-
+        Log.i("testFile", "Main called dump file");
+        appLocationManager.dumpToFile();
 
     }
     protected void onDestroy(){
         super.onDestroy();
-
+        //appLocationManager.onStop();
 
 
 
     }
+
     protected void showToast(String text) {
         Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
     }
