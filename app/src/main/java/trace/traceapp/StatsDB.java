@@ -93,4 +93,7 @@ public class StatsDB extends SQLiteOpenHelper {
         }
         return sInstance;
     }
+    @Override
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+    }
 }
