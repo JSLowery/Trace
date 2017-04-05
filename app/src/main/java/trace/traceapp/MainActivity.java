@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.FragmentManager;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
@@ -66,7 +67,7 @@ public class MainActivity extends AppCompatActivity
     Location mPreviousLocation;
     //graphics engine
     //GraphicsEngine graphics;
-
+    StatsDB statsdb;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -81,7 +82,7 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        appLocationManager = new GPSHandler();
+        //appLocationManager = new GPSHandler();
         plotter = new Plotter();
         mPreviousLocation = null;
         //graphics = new GraphicsEngine();
@@ -114,7 +115,7 @@ public class MainActivity extends AppCompatActivity
         // find the retained fragment on activity restarts
 
         // create the fragment and data the first time
-
+        statsdb = StatsDB.getInstance(this);
     }
 
     @Override
@@ -152,12 +153,15 @@ public class MainActivity extends AppCompatActivity
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-
+        TextView txt = (TextView) findViewById(R.id.totalDistance);
+        Cursor cursor = statsdb.getDistance();
+        cursor.moveToFirst();
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
         if (id == R.id.nav_stats) {
             startActivity(new Intent(MainActivity.this, StatsActivity.class));
+            txt.setText(cursor.getColumnIndex(StatsDB.FIELD_TDISTANCE_STATS));
         } else if (id == R.id.nav_mapview) {
             startActivity(new Intent(MainActivity.this, MapsActivity.class));
         }  else if (id == R.id.nav_share) {
@@ -187,37 +191,7 @@ public class MainActivity extends AppCompatActivity
     private double time2= 0.0;
     private double nano1= 0.0;
     private double nano2= 0.0;
-    @Override
-    public void onLocationChanged(Location location) {
-        Log.d(TAG, "Firing onLocationChanged..............................................");
-        mPreviousLocation = mCurrentLocation;
-        mCurrentLocation = location;
-        //mAddressOutput = "";
 
-        if (mCurrentLocation.getAccuracy()<=100) {
-
-            appLocationManager.SetLocation(location);
-        }
-        //mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
-        time2 = mCurrentLocation.getTime();
-        nano2 = mCurrentLocation.getElapsedRealtimeNanos();
-        updateUI();
-        time1 = mCurrentLocation.getTime();
-        nano1 = mCurrentLocation.getElapsedRealtimeNanos();
-        //for getting addresses
-        if (!Geocoder.isPresent()) {
-            Toast.makeText(this, R.string.no_geocoder_available,
-                    Toast.LENGTH_LONG).show();
-            return;
-        }
-        startIntentService();
-//        if (mLocationRequest.getPriority() == LocationRequest.PRIORITY_HIGH_ACCURACY) {
-//            mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
-//            Toast.makeText(this, "Priority changed", Toast.LENGTH_SHORT).show();
-//
-//        }
-        plotter.pushToPlotter(location);
-    }
 
     private void updateUI() {
         if (appLocationManager.getLocation() != null) {

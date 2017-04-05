@@ -15,6 +15,8 @@ import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
+import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -71,7 +73,7 @@ public class GPSHandler implements GoogleApiClient.ConnectionCallbacks, OnConnec
         }
         mGoogleApiClient.connect();
         createLocationRequest();
-
+        statsdb = StatsDB.getInstance(context);
         db = LocationsDB.getInstance(context);
         if (GPSArray != null)
         GPSArray.clear();
@@ -227,9 +229,14 @@ public class GPSHandler implements GoogleApiClient.ConnectionCallbacks, OnConnec
         //put it back with the new result added
         dist += results[0];
         values.put(StatsDB.FIELD_TDISTANCE_STATS, dist);
-        db.insert(values);
-
-
+        statsdb.insert_stats(values);
+        /*
+        View inflater = new View();
+        View v = inflater.inflate(R.id.drawer_layout); //# such as R.layout.activity_main
+        View innerView = v.findViewById(id_number_of_view_inside_v);
+        TextView t = new TextView();
+        t = TextView.findViewById(R.id.totalDistance);
+        */
 
 //        if (mLocationRequest.getPriority() == LocationRequest.PRIORITY_HIGH_ACCURACY) {
 //            mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
