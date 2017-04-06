@@ -73,7 +73,8 @@ public class GPSHandler implements GoogleApiClient.ConnectionCallbacks, OnConnec
         }
         mGoogleApiClient.connect();
         createLocationRequest();
-        //statsdb = StatsDB.getInstance(context);
+        statsdb = new StatsDB(context);
+        //statsdb.insertDistance(7.0);
         db = LocationsDB.getInstance(context);
         if (GPSArray != null)
         GPSArray.clear();
@@ -201,7 +202,7 @@ public class GPSHandler implements GoogleApiClient.ConnectionCallbacks, OnConnec
 
 
     public void onLocationChanged(Location location) {
-
+        /*
         Log.i(filename, "locationChanged");
         //mAddressOutput = "";
         if (mCurrentLocation == null) {
@@ -217,20 +218,25 @@ public class GPSHandler implements GoogleApiClient.ConnectionCallbacks, OnConnec
         setMostRecentLocation(mCurrentLocation);
 
         }
-        /*
-        ContentValues values = new ContentValues();
+        */
+        Location loc1 = new Location("nel");
+        Location loc2 = new Location("nel");
+        loc1.setLatitude(40.3216491);
+        loc1.setLongitude(-75.9911328);
+        loc2.setLatitude(40.3216481);
+        loc2.setLongitude(-75.9911320);
         float[] results = new float[1];
-        distanceBetween(mPreviousLocation.getLatitude(), mPreviousLocation.getLongitude(),
-                        mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude(), results);
-        Cursor cursor = statsdb.getDistance();
-        cursor.moveToFirst();
+        //distanceBetween(mPreviousLocation.getLatitude(), mPreviousLocation.getLongitude(),
+        //                mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude(), results);
+        distanceBetween(loc1.getLatitude(), loc1.getLongitude(),
+                loc2.getLatitude(), loc2.getLongitude(), results);
         //get the distance to add to
-        double dist = cursor.getDouble(cursor.getColumnIndex(StatsDB.FIELD_TDISTANCE_STATS));
+        double dist = statsdb.getDistance();
+        //remove row with old result
+        statsdb.deleteStats();
         //put it back with the new result added
         dist += results[0];
-        values.put(StatsDB.FIELD_TDISTANCE_STATS, dist);
-        //statsdb.insert_stats(values);
-        */
+        statsdb.insertDistance(dist);
 
 //        if (mLocationRequest.getPriority() == LocationRequest.PRIORITY_HIGH_ACCURACY) {
 //            mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
@@ -239,13 +245,9 @@ public class GPSHandler implements GoogleApiClient.ConnectionCallbacks, OnConnec
 //        }
     }
 
-    public String getTotalDistance(){
-        Cursor cursor = statsdb.getDistance();
-        cursor.moveToFirst();
-        //get the distance to add to
-        return cursor.getString(cursor.getColumnIndex(StatsDB.FIELD_TDISTANCE_STATS));
+    public double getTotalDistance(){
+        return statsdb.getDistance();
     }
-
     //stoplocationupdates and startlocationupdates are for the google playservice api calls
     protected void stopLocationUpdates() {
         if (mGoogleApiClient.isConnected()) {

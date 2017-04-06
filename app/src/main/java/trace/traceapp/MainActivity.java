@@ -160,7 +160,9 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.nav_stats) {
             startActivity(new Intent(MainActivity.this, StatsActivity.class));
-            txt.setText(appLocationManager.getTotalDistance());
+            Location loc1 = new Location("nel");
+            appLocationManager.onLocationChanged(loc1);
+            txt.setText(appLocationManager.getTotalDistance() + " meters");//appLocationManager.getTotalDistance()
         } else if (id == R.id.nav_mapview) {
             startActivity(new Intent(MainActivity.this, MapsActivity.class));
         }  else if (id == R.id.nav_share) {
