@@ -115,7 +115,7 @@ public class MainActivity extends AppCompatActivity
         // find the retained fragment on activity restarts
 
         // create the fragment and data the first time
-        statsdb = StatsDB.getInstance(this);
+
     }
 
     @Override
@@ -154,14 +154,13 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         TextView txt = (TextView) findViewById(R.id.totalDistance);
-        Cursor cursor = statsdb.getDistance();
-        cursor.moveToFirst();
+
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
         if (id == R.id.nav_stats) {
             startActivity(new Intent(MainActivity.this, StatsActivity.class));
-            txt.setText(cursor.getColumnIndex(StatsDB.FIELD_TDISTANCE_STATS));
+            txt.setText(appLocationManager.getTotalDistance());
         } else if (id == R.id.nav_mapview) {
             startActivity(new Intent(MainActivity.this, MapsActivity.class));
         }  else if (id == R.id.nav_share) {

@@ -73,7 +73,7 @@ public class GPSHandler implements GoogleApiClient.ConnectionCallbacks, OnConnec
         }
         mGoogleApiClient.connect();
         createLocationRequest();
-        statsdb = StatsDB.getInstance(context);
+        //statsdb = StatsDB.getInstance(context);
         db = LocationsDB.getInstance(context);
         if (GPSArray != null)
         GPSArray.clear();
@@ -217,7 +217,7 @@ public class GPSHandler implements GoogleApiClient.ConnectionCallbacks, OnConnec
         setMostRecentLocation(mCurrentLocation);
 
         }
-
+        /*
         ContentValues values = new ContentValues();
         float[] results = new float[1];
         distanceBetween(mPreviousLocation.getLatitude(), mPreviousLocation.getLongitude(),
@@ -229,13 +229,7 @@ public class GPSHandler implements GoogleApiClient.ConnectionCallbacks, OnConnec
         //put it back with the new result added
         dist += results[0];
         values.put(StatsDB.FIELD_TDISTANCE_STATS, dist);
-        statsdb.insert_stats(values);
-        /*
-        View inflater = new View();
-        View v = inflater.inflate(R.id.drawer_layout); //# such as R.layout.activity_main
-        View innerView = v.findViewById(id_number_of_view_inside_v);
-        TextView t = new TextView();
-        t = TextView.findViewById(R.id.totalDistance);
+        //statsdb.insert_stats(values);
         */
 
 //        if (mLocationRequest.getPriority() == LocationRequest.PRIORITY_HIGH_ACCURACY) {
@@ -243,6 +237,13 @@ public class GPSHandler implements GoogleApiClient.ConnectionCallbacks, OnConnec
 //            Toast.makeText(this, "Priority changed", Toast.LENGTH_SHORT).show();
 //
 //        }
+    }
+
+    public String getTotalDistance(){
+        Cursor cursor = statsdb.getDistance();
+        cursor.moveToFirst();
+        //get the distance to add to
+        return cursor.getString(cursor.getColumnIndex(StatsDB.FIELD_TDISTANCE_STATS));
     }
 
     //stoplocationupdates and startlocationupdates are for the google playservice api calls
