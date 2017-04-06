@@ -29,59 +29,57 @@ public class StatsDB extends SQLiteOpenHelper {
     private SQLiteDatabase mDB;
 
 
-    private StatsDB(Context context) {
+    public StatsDB(Context context) {
         super(context, DBNAME, null, VERSION);
-        Log.i("testFile", "started the DB?");
-        if (mDB == null) {
-            mDB = getWritableDatabase();
-
-            if (mDB.isOpen()){
-                Log.i("testFile", "mDB is open I think");
-                Cursor statsCursor = mDB.rawQuery("select DISTINCT tbl_name from sqlite_master where tbl_name = '"+DATABASE_TABLE_STATS+"'", null);
-                if(statsCursor!=null) {
-                    statsCursor.moveToFirst();
-                    Log.i("testFile",statsCursor.toString());
-                }
-            }else
-                onCreate(mDB);
-
-        }else
-            Log.i("testFile", "database was open");
     }
 
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String sql =     "create table " + DATABASE_TABLE_STATS + " ( " +
+        String sql =     "create table " + DATABASE_TABLE_STATS + "( " +
                 FIELD_ROW_ID_STATS + " integer primary key autoincrement , " +
-                FIELD_TDISTANCE_STATS + " double , " +
+                FIELD_TDISTANCE_STATS + " double " +
                 " ) ";
         //add most frequently visited
         //add home
-        Log.i("testFile", "oncreate was called");
         db.execSQL(sql);
     }
 
     /** Inserts a new statistic to the table locations */
-    public long insert_stats(ContentValues contentValues){
-        long rowID = mDB.insert(DATABASE_TABLE_STATS, null, contentValues);
-        return rowID;
+    public void insertDistance(double distance){
+        mDB = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        String query = "select * from " + DATABASE_TABLE_STATS;
+        Cursor cursor = mDB.rawQuery(query,null);
+        values.put(FIELD_TDISTANCE_STATS,distance);
+        mDB.insert(DATABASE_TABLE_STATS,null,values);
+        //mDB.close();
     }
 
 
-    public int del_stats(){
-        int cnt = mDB.delete(DATABASE_TABLE_STATS, null , null);
-        return cnt;
+    public void deleteStats(){
+        mDB.delete(DATABASE_TABLE_STATS, null , null);
     }
 
-    /** Returns all the locations from the table */
-    public Cursor getDistance(){
-        if (mDB != null)
-            return mDB.query(DATABASE_TABLE_STATS, new String[] {FIELD_TDISTANCE_STATS} , null, null, null, null, null);
-        Cursor c = null;
-        return c;
+    public double getDistance(){
+        mDB = this.getReadableDatabase();
+        String query = "select " + FIELD_TDISTANCE_STATS + " from " + DATABASE_TABLE_STATS;
+        Cursor cursor = mDB.rawQuery(query,null);
+        cursor.moveToFirst();
+        final double dist = cursor.getDouble(cursor.getColumnIndex(FIELD_TDISTANCE_STATS));
+        //mDB.close();
+        return dist;
     }
 
+    public void updateBalance(double newDist){
+        mDB = this.getReadableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(FIELD_TDISTANCE_STATS, newDist);
+        mDB.update(DATABASE_TABLE_STATS, values, null, null);//where clause: FIELD_ROW_ID_STATS + " is '" + "1" + "'"
+        //mDB.close();
+    }
+
+    /*
     public static synchronized StatsDB getInstance(Context context) {
 
         // Use the application context, which will ensure that you
@@ -93,6 +91,7 @@ public class StatsDB extends SQLiteOpenHelper {
         }
         return sInstance;
     }
+    */
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
     }
