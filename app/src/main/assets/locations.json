@@ -1,0 +1,26 @@
+{
+  "locations": [
+    {
+      "title": "Home",
+      "statsLabel": "5",
+      "addressLabel": "123 Main St. Kutztown, PA  19530",
+      "totalDistance": ""
+    },
+
+    {
+      "title": "Kutztown University of Pennsylvania",
+      "statsLabel": "10",
+      "addressLabel": "15200 Kutztown Rd. Kutztown, PA 19530",
+      "totalDistance": ""
+
+    },
+
+    {
+      "title": "Work",
+      "statsLabel": "8",
+      "addressLabel": "550 Workman Ave. Kutztown, PA 19530",
+      "totalDistance": ""
+    }
+  ]
+
+}
