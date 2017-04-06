@@ -62,13 +62,13 @@ public class StatsDB extends SQLiteOpenHelper {
         db.execSQL(sql);
     }
 
-    /** Inserts a new location to the table locations */
+    /** Inserts a new statistic to the table locations */
     public long insert_stats(ContentValues contentValues){
         long rowID = mDB.insert(DATABASE_TABLE_STATS, null, contentValues);
         return rowID;
     }
 
-    /** Deletes all locations from the table */
+
     public int del_stats(){
         int cnt = mDB.delete(DATABASE_TABLE_STATS, null , null);
         return cnt;
