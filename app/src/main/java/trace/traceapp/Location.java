@@ -13,6 +13,11 @@ import java.util.ArrayList;
  * Created by david on 4/4/2017.
  * code was found and used through a tutorial at
  * https://www.raywenderlich.com/124438/android-listview-tutorial
+ *
+ * Location class is used to grab data from a json file
+ *
+ * JSON is JavaScript Object Notation, and is a way to store information
+ * in a readable manner and is easy to access.
  */
 
 public class Location {
@@ -28,20 +33,23 @@ public class Location {
         final ArrayList<Location> locationList = new ArrayList<>();
 
         try {
-
-           // String jsonString = loadJsonFromAsset("locations.json", context);
+            //grab strings from json file in assets folder
             String jsonString = loadJsonFromAsset("locations.json", context);
+            //create an object to assign strings.
             JSONObject json = new JSONObject(jsonString);
+            //array to hold objects of JSON
             JSONArray locations = json.getJSONArray("locations");
 
             for(int i = 0; i <locations.length(); i++) {
                 Location location = new Location();
+                //create object to pass string.
 
                 location.title = locations.getJSONObject(i).getString("title");
-                location.statsLabel = locations.getJSONObject(i).getString("statsLabel");
-                location.addressLabel = locations.getJSONObject(i).getString("addressLabel");
+                //location.statsLabel = locations.getJSONObject(i).getString("statsLabel");
+                //location.addressLabel = locations.getJSONObject(i).getString("addressLabel");
                 //location.totalDistance = locations.getJSONObject(i).getFloat("totalDistance");
 
+                //add to array
                 locationList.add(location);
             }
         } catch (JSONException e) {
