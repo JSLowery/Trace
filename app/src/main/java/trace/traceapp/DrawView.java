@@ -15,11 +15,13 @@ import android.graphics.Paint;
 import android.util.Log;
 import android.view.View;
 
+import java.util.ArrayList;
+
 public class DrawView extends View {
     Paint paint = new Paint();
     private Location location;
-    private double longList[] = {151,151,152,152,151, 150}; //test longitude values
-    private double latList[] = {-35,-36,-35,-36,-35,-35.5};  //test latitude values
+    private double longList[];// = {151,151,152,152,151, 150}; //test longitude values
+    private double latList[];// = {-35,-36,-35,-36,-35,-35.5};  //test latitude values
     private float result[] = new float[3];
     private static final String TAG = "DrawActivity";
 
@@ -27,6 +29,9 @@ public class DrawView extends View {
     private int h;
     private double metPerPx;
     private static final double downScale = 1.2;
+
+    ArrayList<Location> mLocationArray;
+    static GPSHandler appLocationManager;
 
     public DrawView(Context context) {
         super(context);
@@ -44,66 +49,73 @@ public class DrawView extends View {
         double longRange[] = new double[2];
         double latRange[] = new double[2];
 
-        //BEGIN to find how many meters per pixel for scale
-        //first we must find the range of lat and long
-        findRange(longList, longRange);//places minLong in longRange[0], maxLong in longRange[1]
-        findRange(latList, latRange);//places minLat in latRange[0], maxLat in latRange[1]
-        metPerPx = findMetPerPx(longRange, latRange);//Based on range, finds the max distance possible
-        //and returns how many meters per pixel is possible within that range for scale
-        //END
+        appLocationManager = MainActivity.appLocationManager;
+        mLocationArray =appLocationManager.getLocArray();
 
-        //BEGIN to find (x,y) coord to place the first (lat,long) point on canvas
-        //(latRange[0], longRange[0]) is min (lat,long), (latRange[1], longRange[1]) is max (lat,long)
-        //First we must find the relative (x,y) coord of max and min (lat,long)
-        //distanceBetween of min (lat,long) and max (lat,long)
-        location.distanceBetween(latRange[0], longRange[0], latRange[1], longRange[1], result);
-        dist = result[0];//dist is distance between (lat,long) min and max in meters
-        angle = (result[1] + result[2])/2;//angle is angle between (lat,long) min and max in degrees
-        quadrant = findQuadrant(angle);//quadrant is which quadrant of an x,y plain of angle (1-4)
-        xChange = findXChange(quadrant, dist, angle);//returns pixel change on x-axis in int
-        yChange = findYChange(quadrant, dist, angle);//returns pixel change on y-axis in int
-        xPrev = findXStart(quadrant, xChange);//returns relative x value of min (lat,long)
-        yPrev = findYStart(quadrant, yChange);//returns relative y value of min (lat,long)
-        xNext = xPrev + xChange;//xNext is now relative x value of max (lat,long)
-        yNext = yPrev + yChange;//yNext is now relative y value of max (lat,long)
-        //distanceBetween of max (lat,long) and first (lat,long)
-        location.distanceBetween(latRange[1], longRange[1], latList[0], longList[0], result);
-        dist = result[0];//dist is distance between max (lat,long) and first (lat,long) in meters
-        angle = (result[1] + result[2])/2;//angle is angle between max (lat,long) and first (lat,long) in degrees
-        quadrant = findQuadrant(angle);//quadrant is which quadrant of an x,y plain of angle (1-4)
-        xChange = findXChange(quadrant, dist, angle);//returns pixel change on x-axis in int
-        yChange = findYChange(quadrant, dist, angle);//returns pixel change on y-axis in int
-        xPrev = xNext;//set xPrev to x value of max (lat,long)
-        yPrev = yNext;//set yPrev to y value of max (lat,long)
-        xNext = xPrev + xChange;//xNext is now x value of first (lat,long)
-        yNext = yPrev + yChange;//yNext is now y value of first (lat,long)
-        //END
+        if (mLocationArray.size() > 1) {
+            //BEGIN to find how many meters per pixel for scale
+            populateLatList();
+            populateLongList();
+            //first we must find the range of lat and long
+            findRange(longList, longRange);//places minLong in longRange[0], maxLong in longRange[1]
+            findRange(latList, latRange);//places minLat in latRange[0], maxLat in latRange[1]
+            metPerPx = findMetPerPx(longRange, latRange);//Based on range, finds the max distance possible
+            //and returns how many meters per pixel is possible within that range for scale
+            //END
 
-        //BEGIN drawing (lat,long) points now that we have the relative (x,y) values for the first
-        //(lat,long) point
-        for (int i = 1; i < latList.length; i++) {
-            xPrev = xNext;//set xPrev to xNext for line continuity
-            yPrev = yNext;//set yPrev to yNext for line continuity
-            //distanceBetween of prev (lat,long) and next (lat,long)
-            location.distanceBetween(latList[i-1],longList[i-1],latList[i],longList[i],result);
-            dist = result[0];
-            angle = (result[1] + result[2]) / 2;
-            quadrant = findQuadrant(angle);
-            xChange = findXChange(quadrant, dist, angle);
-            yChange = findYChange(quadrant, dist, angle);
-            xNext = xPrev + xChange;
-            yNext = yPrev + yChange;
-            canvas.drawLine(xPrev, yPrev, xNext, yNext, paint);//draw line from (xPrev,yPrev) to (xNext,yNext)
-            //output for testing
-            Log.d(TAG, "Distance "+String.valueOf(i)+"........"+String.valueOf(dist));
-            Log.d(TAG, "Bearing "+String.valueOf(i)+"........."+String.valueOf(angle));
-            Log.d(TAG, "Theta (rads) "+String.valueOf(i)+"...."+String.valueOf(findTheta(angle)));
-            Log.d(TAG, "Sin "+String.valueOf(i)+"............."+String.valueOf(Math.sin(degToRad(angle))));
-            Log.d(TAG, "xPrev "+String.valueOf(i)+"..........."+String.valueOf(xPrev));
-            Log.d(TAG, "yPrev "+String.valueOf(i)+"..........."+String.valueOf(yPrev));
-            Log.d(TAG, "xChange "+String.valueOf(i)+"........."+String.valueOf(xChange));
-            Log.d(TAG, "yChange "+String.valueOf(i)+"........."+String.valueOf(yChange));
-            //loop until end of (lat,long) points
+            //BEGIN to find (x,y) coord to place the first (lat,long) point on canvas
+            //(latRange[0], longRange[0]) is min (lat,long), (latRange[1], longRange[1]) is max (lat,long)
+            //First we must find the relative (x,y) coord of max and min (lat,long)
+            //distanceBetween of min (lat,long) and max (lat,long)
+            location.distanceBetween(latRange[0], longRange[0], latRange[1], longRange[1], result);
+            dist = result[0];//dist is distance between (lat,long) min and max in meters
+            angle = (result[1] + result[2]) / 2;//angle is angle between (lat,long) min and max in degrees
+            quadrant = findQuadrant(angle);//quadrant is which quadrant of an x,y plain of angle (1-4)
+            xChange = findXChange(quadrant, dist, angle);//returns pixel change on x-axis in int
+            yChange = findYChange(quadrant, dist, angle);//returns pixel change on y-axis in int
+            xPrev = findXStart(quadrant, xChange);//returns relative x value of min (lat,long)
+            yPrev = findYStart(quadrant, yChange);//returns relative y value of min (lat,long)
+            xNext = xPrev + xChange;//xNext is now relative x value of max (lat,long)
+            yNext = yPrev + yChange;//yNext is now relative y value of max (lat,long)
+            //distanceBetween of max (lat,long) and first (lat,long)
+            location.distanceBetween(latRange[1], longRange[1], latList[0], longList[0], result);
+            dist = result[0];//dist is distance between max (lat,long) and first (lat,long) in meters
+            angle = (result[1] + result[2]) / 2;//angle is angle between max (lat,long) and first (lat,long) in degrees
+            quadrant = findQuadrant(angle);//quadrant is which quadrant of an x,y plain of angle (1-4)
+            xChange = findXChange(quadrant, dist, angle);//returns pixel change on x-axis in int
+            yChange = findYChange(quadrant, dist, angle);//returns pixel change on y-axis in int
+            xPrev = xNext;//set xPrev to x value of max (lat,long)
+            yPrev = yNext;//set yPrev to y value of max (lat,long)
+            xNext = xPrev + xChange;//xNext is now x value of first (lat,long)
+            yNext = yPrev + yChange;//yNext is now y value of first (lat,long)
+            //END
+
+            //BEGIN drawing (lat,long) points now that we have the relative (x,y) values for the first
+            //(lat,long) point
+            for (int i = 1; i < latList.length; i++) {
+                xPrev = xNext;//set xPrev to xNext for line continuity
+                yPrev = yNext;//set yPrev to yNext for line continuity
+                //distanceBetween of prev (lat,long) and next (lat,long)
+                location.distanceBetween(latList[i - 1], longList[i - 1], latList[i], longList[i], result);
+                dist = result[0];
+                angle = (result[1] + result[2]) / 2;
+                quadrant = findQuadrant(angle);
+                xChange = findXChange(quadrant, dist, angle);
+                yChange = findYChange(quadrant, dist, angle);
+                xNext = xPrev + xChange;
+                yNext = yPrev + yChange;
+                canvas.drawLine(xPrev, yPrev, xNext, yNext, paint);//draw line from (xPrev,yPrev) to (xNext,yNext)
+                //output for testing
+                Log.d(TAG, "Distance " + String.valueOf(i) + "........" + String.valueOf(dist));
+                Log.d(TAG, "Bearing " + String.valueOf(i) + "........." + String.valueOf(angle));
+                Log.d(TAG, "Theta (rads) " + String.valueOf(i) + "...." + String.valueOf(findTheta(angle)));
+                Log.d(TAG, "Sin " + String.valueOf(i) + "............." + String.valueOf(Math.sin(degToRad(angle))));
+                Log.d(TAG, "xPrev " + String.valueOf(i) + "..........." + String.valueOf(xPrev));
+                Log.d(TAG, "yPrev " + String.valueOf(i) + "..........." + String.valueOf(yPrev));
+                Log.d(TAG, "xChange " + String.valueOf(i) + "........." + String.valueOf(xChange));
+                Log.d(TAG, "yChange " + String.valueOf(i) + "........." + String.valueOf(yChange));
+                //loop until end of (lat,long) points
+            }
         }
         //END
     }
@@ -113,6 +125,22 @@ public class DrawView extends View {
         this.w = w;
         this.h = h;
         super.onSizeChanged(w, h, oldW, oldH);
+    }
+
+    private void populateLatList(){
+        latList = new double[mLocationArray.size()];
+        for(int i = 0; i < mLocationArray.size(); i++){
+            Location loc = mLocationArray.get(i);
+            latList[i] = loc.getLatitude();
+        }
+    }
+
+    private void populateLongList(){
+        longList = new double[mLocationArray.size()];
+        for(int i = 0; i < mLocationArray.size(); i++){
+            Location loc = mLocationArray.get(i);
+            longList[i] = loc.getLongitude();
+        }
     }
 
     private void findRange(double list[], double result[]){
