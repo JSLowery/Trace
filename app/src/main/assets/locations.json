@@ -1,0 +1,69 @@
+{
+  "locations": [
+    {
+      "title": "Home",
+      "statsLabel": "5",
+      "addressLabel": "123 Main St. Kutztown, PA  19530",
+      "totalDistance": ""
+    },
+
+    {
+      "title": "Kutztown University of Pennsylvania",
+      "statsLabel": "10",
+      "addressLabel": "15200 Kutztown Rd. Kutztown, PA 19530",
+      "totalDistance": ""
+
+    },
+
+    {
+      "title": "Work",
+      "statsLabel": "8",
+      "addressLabel": "550 Workman Ave. Kutztown, PA 19530",
+      "totalDistance": ""
+    },
+
+    {
+      "title": "Pizza Hut",
+      "statsLabel": "8",
+      "addressLabel": "550 Workman Ave. Kutztown, PA 19530",
+      "totalDistance": ""
+    },
+
+    {
+      "title": "Dr. Parson's Restaurant",
+      "statsLabel": "8",
+      "addressLabel": "550 Workman Ave. Kutztown, PA 19530",
+      "totalDistance": ""
+    },
+
+    {
+      "title": "Kutztown Family Practice",
+      "statsLabel": "8",
+      "addressLabel": "550 Workman Ave. Kutztown, PA 19530",
+      "totalDistance": ""
+    },
+
+    {
+      "title": "Academic Forum",
+      "statsLabel": "8",
+      "addressLabel": "550 Workman Ave. Kutztown, PA 19530",
+      "totalDistance": ""
+    },
+
+    {
+      "title": "Vinny's place",
+      "statsLabel": "8",
+      "addressLabel": "550 Workman Ave. Kutztown, PA 19530",
+      "totalDistance": ""
+    },
+
+    {
+      "title": "Jeremy's Pub",
+      "statsLabel": "8",
+      "addressLabel": "550 Workman Ave. Kutztown, PA 19530",
+      "totalDistance": ""
+    }
+
+  ]
+
+}
