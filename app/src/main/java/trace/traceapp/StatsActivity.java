@@ -18,14 +18,14 @@ public class StatsActivity extends AppCompatActivity {
         // 1 loads a list of Location objects from a JSON asset in the app
         //contains a Location class that contains all the information
         //about the locations to be displayed.
-        final ArrayList<Location> locationList = Location.getLocationsFromFile("locations.json", this);
+        final ArrayList<Loc> locationList = Loc.getLocationsFromFile("locations.json", this);
         // 2 creates an array of strings that will contain the text to be displayed.
         String[] listItems = new String[locationList.size()];
 
         // 3 Populates the listView with the titles of the locations lodaed in section one.
         for (int i =0; i< locationList.size(); i++)
         {
-            Location location = locationList.get(i);
+            Loc location = locationList.get(i);
             listItems[i] = location.title;
             //listItems[i] = location.addressLabel;
         }

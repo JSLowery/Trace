@@ -101,6 +101,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private Runnable runnable = new Runnable(){
         public void run() {
             Log.i("testFile", "runnable fired");
+            int arrSize = mLocationArray.size();
             mLocationArray = appLocationManager.getLocArray();
             Toast.makeText(MapsActivity.this,mLocationArray.size()+"", Toast.LENGTH_SHORT).show();
             if (appLocationManager.getLocation() != null && !Objects.equals(appLocationManager.getLatitude(), "")) {

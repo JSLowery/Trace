@@ -78,6 +78,9 @@ public class MainActivity extends AppCompatActivity
             Log.i("fileTest", "Got GPSHANDLER reference from maps");
             appLocationManager = MapsActivity.appLocationManager;
         }
+        else if (StartDraw.appLocationManager != null){
+            appLocationManager = StartDraw.appLocationManager;
+        }
         else {
             appLocationManager = new GPSHandler(this);
         }

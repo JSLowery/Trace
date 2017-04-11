@@ -20,7 +20,7 @@ import java.util.ArrayList;
  * in a readable manner and is easy to access.
  */
 
-public class Location {
+public class Loc {
 
     public String title;
     public String statsLabel;
@@ -28,9 +28,9 @@ public class Location {
     public float totalDistance;
     public String mostVisited;
 
-   public static ArrayList<Location> getLocationsFromFile(String filename, Context context)
+   public static ArrayList<Loc> getLocationsFromFile(String filename, Context context)
     {
-        final ArrayList<Location> locationList = new ArrayList<>();
+        final ArrayList<Loc> locationList = new ArrayList<>();
 
         try {
             //grab strings from json file in assets folder
@@ -41,7 +41,7 @@ public class Location {
             JSONArray locations = json.getJSONArray("locations");
 
             for(int i = 0; i <locations.length(); i++) {
-                Location location = new Location();
+                Loc location = new Loc();
                 //create object to pass string.
 
                 location.title = locations.getJSONObject(i).getString("title");

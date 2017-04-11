@@ -54,6 +54,7 @@ public class StartDraw extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        appLocationManager = MainActivity.appLocationManager;
         setContentView(R.layout.activity_main);
 
         int permissionCheck = ContextCompat.checkSelfPermission(this,
