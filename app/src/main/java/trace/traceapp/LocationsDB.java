@@ -109,10 +109,6 @@ public class LocationsDB extends SQLiteOpenHelper {
         return c;
     }
 
-    /****************  STATS TABLE FUNCTIONS ***********************/
-
-
-
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
     }

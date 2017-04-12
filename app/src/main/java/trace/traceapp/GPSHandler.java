@@ -74,6 +74,7 @@ public class GPSHandler implements GoogleApiClient.ConnectionCallbacks, OnConnec
         mGoogleApiClient.connect();
         createLocationRequest();
         statsdb = new StatsDB(context);
+        //need to initialize value in database before getting row in onlocchanged
         //statsdb.insertDistance(7.0);
         db = LocationsDB.getInstance(context);
         if (GPSArray != null)
@@ -230,13 +231,11 @@ public class GPSHandler implements GoogleApiClient.ConnectionCallbacks, OnConnec
         //                mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude(), results);
         distanceBetween(loc1.getLatitude(), loc1.getLongitude(),
                 loc2.getLatitude(), loc2.getLongitude(), results);
-        //get the distance to add to
+        //get the distance, add new dist, update
         double dist = statsdb.getDistance();
-        //remove row with old result
-        statsdb.deleteStats();
-        //put it back with the new result added
         dist += results[0];
-        statsdb.insertDistance(dist);
+        statsdb.updateDistance(dist);
+        //statsdb.updateName("Yams");
 
 //        if (mLocationRequest.getPriority() == LocationRequest.PRIORITY_HIGH_ACCURACY) {
 //            mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
@@ -245,9 +244,8 @@ public class GPSHandler implements GoogleApiClient.ConnectionCallbacks, OnConnec
 //        }
     }
 
-    public double getTotalDistance(){
-        return statsdb.getDistance();
-    }
+    public double getTotalDistance(){return statsdb.getDistance();}
+    public String getName(){return statsdb.getName();}
     //stoplocationupdates and startlocationupdates are for the google playservice api calls
     protected void stopLocationUpdates() {
         if (mGoogleApiClient.isConnected()) {
