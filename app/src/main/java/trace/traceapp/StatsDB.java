@@ -19,6 +19,8 @@ public class StatsDB extends SQLiteOpenHelper {
     /** Version number of the database */
     private static int VERSION = 1;
 
+    private static boolean init = false;
+
     /** A constant, stores the the table name */
     public static final String DATABASE_TABLE_STATS = "stats";
     public static final String FIELD_TDISTANCE_STATS = "tdistance";
@@ -29,7 +31,7 @@ public class StatsDB extends SQLiteOpenHelper {
     public static final String FIELD_MOSTFREQ_STATS = "mostfrequent";
     public static final String FIELD_MOSTFREQCOUNT_STATS = "mostfrequentcount";
     public static final String FIELD_NAME_STATS = "name";
-
+    public static final String FIELD_INIT_STATS = "initdb";
     /** An instance variable for SQLiteDatabase */
     private SQLiteDatabase mDB;
 
@@ -43,6 +45,7 @@ public class StatsDB extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         String sql = "create table " + DATABASE_TABLE_STATS + "( " +
                 FIELD_ROW_ID_STATS + " integer primary key autoincrement , " +
+                FIELD_INIT_STATS + " boolean ," +
                 FIELD_TDISTANCE_STATS + " double ," +
                 FIELD_NAME_STATS + " string ," +
                 FIELD_HOME_STATS + " string ," +
@@ -50,18 +53,29 @@ public class StatsDB extends SQLiteOpenHelper {
                 FIELD_MOSTFREQ_STATS + " string ," +
                 FIELD_MOSTFREQCOUNT_STATS + " integer " +
                 " ) ";
-        //add most frequently visited
-        //add home
         db.execSQL(sql);
+
+        if(!init){
+            //drop the dang table
+            mDB.delete(DATABASE_TABLE_STATS, null, null);
+            ContentValues values = new ContentValues();
+            values.put(FIELD_TDISTANCE_STATS,0.0);
+            values.put(FIELD_INIT_STATS,1);
+            values.put(FIELD_NAME_STATS,"name");
+            values.put(FIELD_HOME_STATS,"home");
+            values.put(FIELD_HOMECOUNT_STATS,0);
+            values.put(FIELD_MOSTFREQ_STATS,"mostfreq");
+            values.put(FIELD_MOSTFREQCOUNT_STATS,0);
+            mDB.insert(DATABASE_TABLE_STATS, null, values);
+            //first try inserting row instead of initializing
+            //
+        }
+
     }
 
-
-    //UPDATE table_name
-    //SET column1 = value1, column2 = value2...., columnN = valueN
-    //WHERE [condition];
-
-
-
+    public void del(){
+        mDB.delete(DATABASE_TABLE_STATS, null , null);
+    }
 
     //gets and sets (updates)
     public void updateDistance(double distance){
@@ -136,13 +150,17 @@ public class StatsDB extends SQLiteOpenHelper {
     public String getName(){
         mDB = this.getReadableDatabase();
         String query = "select " + FIELD_NAME_STATS + " from " + DATABASE_TABLE_STATS;
-        Cursor cursor = mDB.rawQuery(query,null);
-        cursor.moveToFirst();
-        if(cursor != null) {
-            final String name = cursor.getString(cursor.getColumnIndex(FIELD_NAME_STATS));
-            return name;
-        }
-        else return " ";
+        //try {
+            Cursor cursor = mDB.rawQuery(query, null);
+            cursor.moveToFirst();
+            if (cursor != null) {
+                final String name = cursor.getString(cursor.getColumnIndex(FIELD_NAME_STATS));
+                return name;
+            }
+        //}catch(){
+
+        //}
+        else return "";
     }
 
     public String getHomeName(){
