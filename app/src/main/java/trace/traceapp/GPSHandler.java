@@ -235,7 +235,7 @@ public class GPSHandler implements GoogleApiClient.ConnectionCallbacks, OnConnec
         double dist = statsdb.getDistance();
         dist += results[0];
         statsdb.updateDistance(dist);
-        //statsdb.updateName("Yams");
+        statsdb.updateName("Yams");
 
 //        if (mLocationRequest.getPriority() == LocationRequest.PRIORITY_HIGH_ACCURACY) {
 //            mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);

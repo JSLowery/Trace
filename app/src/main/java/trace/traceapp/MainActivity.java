@@ -163,7 +163,7 @@ public class MainActivity extends AppCompatActivity
             Location loc1 = new Location("nel");
             appLocationManager.onLocationChanged(loc1);
             //txt.setText("Distance: " + appLocationManager.getTotalDistance() + " meters");
-            txt.setText("Name: " + appLocationManager.getName());
+            //txt.setText("Name: " + appLocationManager.getName());
         } else if (id == R.id.nav_mapview) {
             startActivity(new Intent(MainActivity.this, MapsActivity.class));
         }  else if (id == R.id.nav_share) {
