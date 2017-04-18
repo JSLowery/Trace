@@ -74,15 +74,19 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        if (appLocationManager ==null)
+            Log.i("testFile", "appLocationManager was null");
         if (MapsActivity.appLocationManager != null) {
-            Log.i("fileTest", "Got GPSHANDLER reference from maps");
+            Log.i("testfile", "Got GPSHANDLER reference from maps");
             appLocationManager = MapsActivity.appLocationManager;
         }
         else if (StartDraw.appLocationManager != null){
             appLocationManager = StartDraw.appLocationManager;
+            Log.i("fileTest", "Got GPSHANDLER reference from draw");
         }
         else {
             appLocationManager = new GPSHandler(this);
+            Log.i("testfile", "made a new GPSHANDLER");
         }
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);

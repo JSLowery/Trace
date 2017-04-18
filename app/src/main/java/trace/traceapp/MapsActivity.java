@@ -28,16 +28,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
+//        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+//                .findFragmentById(R.id.map);
+//        mapFragment.getMapAsync(this);
         appLocationManager = MainActivity.appLocationManager;
 
          mLocationArray =appLocationManager.getLocArray();
-        for (Location loc: mLocationArray){
-            Log.i("testFile", loc.toString());
-        }
-        //appLocationManager.clearLocArray();
 
     }
 
@@ -55,7 +51,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     protected void showToast(String text) {
         Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
     }
-    private void drawAllPoints(){
+    public void drawAllPoints(){
         mMap.clear();
         mLocationArray = appLocationManager.getLocArray();
         double lat = 40.3216491;
@@ -67,13 +63,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 lng = mLocationArray.get(i).getLongitude();
             }
 
-            // Add a marker in Sydney and move the camera mLocationArray.get(0).getLatitude() mLocationArray.get(0).getLongitude()
-            LatLng sydney = new LatLng(lat, lng);
-            drawMarker(sydney);
-//            MarkerOptions mark = new MarkerOptions();
-//            mark.position(sydney);
-//            mMap.addMarker(mark);
-            Log.i("testFile", "Added: "+sydney.latitude+" "+sydney.longitude);
+            // Add a marker and move the camera mLocationArray.get(0).getLatitude() mLocationArray.get(0).getLongitude()
+            LatLng marker = new LatLng(lat, lng);
+            drawMarker(marker);
+
+            Log.i("testFile", "Added: "+marker.latitude+" "+marker.longitude);
 
         }
         LatLng sydney = new LatLng(lat, lng);
@@ -82,32 +76,38 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        Log.i("testfile", "on map ready called setting up locationenabled");
+        showToast("on map ready called");
         mMap.setMyLocationEnabled(true);
-
+        mMap.setLocationSource(appLocationManager);
+        appLocationManager.setMapRef(mMap);
         mLocationArray = appLocationManager.getLocArray();
         String size = mLocationArray.size()+"";
         showToast(size);
-        drawAllPoints();
+        //drawAllPoints();
 
         mMap.animateCamera(CameraUpdateFactory.zoomTo(15.0f));
         mMap.setMaxZoomPreference(20.0f);
         mMap.setMinZoomPreference(5.0f);
-        handler.postAtTime(runnable, System.currentTimeMillis()+interval);
-        handler.postDelayed(runnable, interval);
-
+//        handler.postAtTime(runnable, System.currentTimeMillis()+interval);
+//        handler.postDelayed(runnable, interval/6);
+        if (appLocationManager.getLatLng()!= null)
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(appLocationManager.getLatLng()));
+        mMap.animateCamera(CameraUpdateFactory.zoomTo(15.0f));
     }
     private int interval = 1000*6; // 6 Second
     private Handler handler = new Handler();
     private Runnable runnable = new Runnable(){
         public void run() {
             Log.i("testFile", "runnable fired");
+
             int arrSize = mLocationArray.size();
             mLocationArray = appLocationManager.getLocArray();
             Toast.makeText(MapsActivity.this,mLocationArray.size()+"", Toast.LENGTH_SHORT).show();
             if (appLocationManager.getLocation() != null && !Objects.equals(appLocationManager.getLatitude(), "")) {
 //                LatLng latl = new LatLng(Double.valueOf(appLocationManager.getLatitude()), Double.valueOf(appLocationManager.getLongitude()));
 //                drawMarker(latl);
-                drawAllPoints();
+                //drawAllPoints();
                 //showToast("speed from loc: "+appLocationManager.getSpeed()+"");
                 //showToast("calculated speed: "+appLocationManager.calcSpeed()+"");
 
@@ -144,11 +144,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         super.onPause();
         Log.i("testFile", "Maps called dump file");
         appLocationManager.dumpToFile();
+        mMap.setMyLocationEnabled(false);
     }
     protected void onResume(){
         super.onResume();
+        //mMap.setMyLocationEnabled(true);
         Log.i("testFile", "Maps called get from file");
         appLocationManager.getFromFile();
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.map);
+        mapFragment.getMapAsync(this);
+//        handler.postAtTime(runnable, System.currentTimeMillis()+interval);
+//        handler.postDelayed(runnable, interval/6);
     }
     protected void onDestroy(){
         super.onDestroy();

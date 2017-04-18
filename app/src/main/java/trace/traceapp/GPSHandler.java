@@ -5,6 +5,7 @@ import android.content.ContentValues;
 import android.content.Context;
 
 import android.database.Cursor;
+import android.graphics.Color;
 import android.location.Criteria;
 import android.location.Geocoder;
 import android.location.Location;
@@ -23,6 +24,14 @@ import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.LocationSource;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
+
 import java.util.ArrayList;
 
 
@@ -34,8 +43,11 @@ import static java.util.concurrent.TimeUnit.NANOSECONDS;
  */
 
 public class GPSHandler implements GoogleApiClient.ConnectionCallbacks, OnConnectionFailedListener,
-        com.google.android.gms.location.LocationListener {
-    private LocationManager locationManager;
+        com.google.android.gms.location.LocationListener, LocationSource {
+    Polyline line;
+    LatLng locLatLng;
+    private GoogleMap mMap;
+    private OnLocationChangedListener mListener;
     private String latitude = "";
     private String longitude = "";
     private Criteria criteria;
@@ -49,7 +61,7 @@ public class GPSHandler implements GoogleApiClient.ConnectionCallbacks, OnConnec
     private String filename = "testFilemost.srl";
     LocationRequest mLocationRequest;
     private static final long INTERVAL = 60;
-    private static final long FASTEST_INTERVAL =1000; //1 seconds
+    private static final long FASTEST_INTERVAL =1000*3; //3 seconds
     protected static final String ADDRESS_REQUESTED_KEY = "address-request-pending";
     protected static final String LOCATION_ADDRESS_KEY = "location-address";
     private GoogleApiClient mGoogleApiClient;
@@ -150,14 +162,7 @@ public class GPSHandler implements GoogleApiClient.ConnectionCallbacks, OnConnec
         return nwLoc;
     }
 
-    public String getLatitude() {
-        return latitude;
-    }
-
-    public String getLongitude() {
-        return longitude;
-    }
-    public String getAccuracy() {return accuracy;}
+    //Sets the users CURRENT location
     private Location setMostRecentLocation(Location lastKnownLocation) {
         double lon;
         lon = lastKnownLocation.getLongitude();
@@ -177,8 +182,11 @@ public class GPSHandler implements GoogleApiClient.ConnectionCallbacks, OnConnec
         altitude = lastKnownLocation.getAltitude();
         Log.i(filename, "Added location: "+ latitude+ " "+ longitude);
         addLocArray(lastKnownLocation);
+        locLatLng = new LatLng(lastKnownLocation.getLatitude(),lastKnownLocation.getLongitude());
         return lastKnownLocation;
     }
+
+    //Getter and setter bull
     public ArrayList<Location> getLocArray(){return GPSArray;}
     private void addLocArray(Location location){
         GPSArray.add(location);
@@ -199,7 +207,16 @@ public class GPSHandler implements GoogleApiClient.ConnectionCallbacks, OnConnec
     public double getSpeed(){return speed;}
     public double getBearing(){return bearing;}
     public double getAltitude(){return altitude;}
-
+    public String getLatitude() {
+        return latitude;
+    }
+    public String getLongitude() {
+        return longitude;
+    }
+    public String getAccuracy() {return accuracy;}
+    public void setMapRef(GoogleMap gmap){this.mMap = gmap; }
+    public LatLng getLatLng(){return locLatLng;};
+    //Err this is a call back from GPS, no touchy touchy
     public void onLocationChanged(Location location) {
 
         Log.i(filename, "locationChanged");
@@ -207,17 +224,39 @@ public class GPSHandler implements GoogleApiClient.ConnectionCallbacks, OnConnec
         if (mCurrentLocation == null) {
             mCurrentLocation = location;
             setMostRecentLocation(mCurrentLocation);
+
         }
         if (mCurrentLocation.getLongitude()==location.getLongitude() && mCurrentLocation.getLatitude()== location.getLatitude())
             return;
         mCurrentLocation.distanceTo(location);
         if (location.getAccuracy()<= 100&& location.distanceTo(mCurrentLocation)> location.getAccuracy())  {
             mCurrentLocation = location;
-        setMostRecentLocation(mCurrentLocation);
+            setMostRecentLocation(mCurrentLocation);
+            //This updates our map's blue dot and location
+            locLatLng = new LatLng(mCurrentLocation.getLatitude(),mCurrentLocation.getLongitude());
+            if (mListener != null) {
+                mListener.onLocationChanged(location);
 
+                PolylineOptions options = new PolylineOptions().width(10).color(Color.BLUE).geodesic(true);
+                for (int i = 0; i < getLocArray().size(); i++) {
+                    LatLng point = new LatLng(getLocArray().get(i).getLatitude(),getLocArray().get(i).getLongitude());
+                    options.add(point);
+                }
+                MarkerOptions markerOptions = new MarkerOptions();
+
+// Setting latitude and longitude for the marker
+                markerOptions.position(locLatLng);
+                //mMap.addMarker(markerOptions); //add Marker in current position
+                line = mMap.addPolyline(options);
+                mMap.addPolyline(new PolylineOptions());
+                mMap.moveCamera(CameraUpdateFactory.newLatLng(locLatLng));
+               // mMap.animateCamera(CameraUpdateFactory.zoomTo(15.0f));
+            }
         }
 
+
     }
+
     //Be Aware this will return speed in meters/ second
     public double calcSpeed(){
         double speed = 0;
@@ -273,5 +312,16 @@ public class GPSHandler implements GoogleApiClient.ConnectionCallbacks, OnConnec
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
     }
+    //These two methods, activate and deactivate are for our map..
+    @Override
+    public void activate(OnLocationChangedListener listener) {
+        mListener = listener;
+        Log.i(filename, "activate called");
+        Toast.makeText(context.getApplicationContext(), "dsfsd", Toast.LENGTH_SHORT);
+    }
 
+    @Override
+    public void deactivate() {
+        mListener = null;
+    }
 }

@@ -13,7 +13,6 @@ public class locNode {
     private int timesVisit = 0;
 
     public locNode() {
-        super();
     }
 
 

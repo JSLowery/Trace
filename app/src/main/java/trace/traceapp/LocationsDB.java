@@ -30,15 +30,16 @@ public class LocationsDB extends SQLiteOpenHelper {
 
     /** A constant, stores the the table name */
     private static final String DATABASE_TABLE = "locations";
-
+    private static final String LOCNODE_TABLE = "locNodes";
     /** An instance variable for SQLiteDatabase */
     private SQLiteDatabase mDB;
-
-    /** Constructor */
-//    public LocationsDB(Context context) {
-//        super(context, DBNAME, null, VERSION);
-//        this.mDB = getWritableDatabase();
-//    }
+    public static final String FIELD_NAME = "LocName";
+    public static final String FIELD_ADDY = "Address";
+    public static final String FIELD_TIMESVISITED = "timesVisited";
+    private static final String CREATE_LOCNODE_TABLE = "CREATE TABLE "
+            + LOCNODE_TABLE + "(" + FIELD_ROW_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + FIELD_NAME
+            + " TEXT," + FIELD_ADDY + " TEXT," + FIELD_LAT + " DOUBLE"
+            +FIELD_LNG + " DOUBLE," + FIELD_TIMESVISITED + "INTEGER" + ")";
 
     public static synchronized LocationsDB getInstance(Context context) {
 
@@ -70,14 +71,20 @@ public class LocationsDB extends SQLiteOpenHelper {
                     cursor.moveToFirst();
                     Log.i("testFile",cursor.toString());
                 }
+                cursor = mDB.rawQuery("select DISTINCT tbl_name from sqlite_master where tbl_name = '"+LOCNODE_TABLE+"'", null);
+                if (cursor != null){
+                    Log.i("testfile", "the seconds table existed");
+                }
             }else
 //                mDB.execSQL("DROP TABLE "+DATABASE_TABLE+";");
                 onCreate(mDB);
+                Log.i("testfile","fired on create from the esle block");
         }else
             Log.i("testFile", "database was open");
     }
-    @Override
+
     public void onCreate(SQLiteDatabase db) {
+
         String sql =     "create table " + DATABASE_TABLE + " ( " +
                 FIELD_ROW_ID + " integer primary key autoincrement , " +
                 FIELD_LNG + " double , " +
@@ -87,18 +94,37 @@ public class LocationsDB extends SQLiteOpenHelper {
                 " ) ";
         Log.i("testFile", "oncreate was called");
         db.execSQL(sql);
+        db.execSQL(CREATE_LOCNODE_TABLE);
     }
-
+    //Inserts a new LocNode to the table LockNodes
+    public long insertLoc(ContentValues contentValues){
+        long rowID = mDB.insert(LOCNODE_TABLE, null, contentValues);
+        return rowID;
+    }
     /** Inserts a new location to the table locations */
     public long insert(ContentValues contentValues){
         long rowID = mDB.insert(DATABASE_TABLE, null, contentValues);
         return rowID;
     }
 
+    /** Deletes all locations from the table locNodes */
+    public int delLoc(){
+        int cnt = mDB.delete(LOCNODE_TABLE, null , null);
+        return cnt;
+    }
+
     /** Deletes all locations from the table */
     public int del(){
         int cnt = mDB.delete(DATABASE_TABLE, null , null);
         return cnt;
+    }
+
+    /** Returns all the locations from the table LocNode */
+    public Cursor getAllLocationsLoc(){
+        if (mDB != null)
+            return mDB.query(LOCNODE_TABLE, new String[] { FIELD_ROW_ID, FIELD_NAME, FIELD_ADDY,  FIELD_LAT , FIELD_LNG, FIELD_TIMESVISITED }, null, null, null, null, null, null);
+        Cursor c = null;
+        return c;
     }
 
     /** Returns all the locations from the table */
