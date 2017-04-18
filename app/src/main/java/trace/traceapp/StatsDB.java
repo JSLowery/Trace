@@ -43,6 +43,9 @@ public class StatsDB extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
+
+        db.execSQL("DROP TABLE IF EXISTS " + DATABASE_TABLE_STATS);
+        
         String sql = "create table " + DATABASE_TABLE_STATS + "( " +
                 FIELD_ROW_ID_STATS + " integer primary key autoincrement , " +
                 FIELD_INIT_STATS + " boolean ," +
@@ -55,6 +58,7 @@ public class StatsDB extends SQLiteOpenHelper {
                 " ) ";
         db.execSQL(sql);
 
+        /*
         if(!init){
             //drop the dang table
             mDB.delete(DATABASE_TABLE_STATS, null, null);
@@ -70,6 +74,8 @@ public class StatsDB extends SQLiteOpenHelper {
             //first try inserting row instead of initializing
             //
         }
+        */
+
 
     }
 
