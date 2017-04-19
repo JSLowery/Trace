@@ -3,11 +3,14 @@ package trace.traceapp;
 import android.app.FragmentManager;
 import android.location.Location;
 import android.os.Handler;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
-
+import android.view.View;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -18,6 +21,8 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import java.util.ArrayList;
 import java.util.Objects;
 
+
+
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
@@ -27,17 +32,35 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
 //        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
 //                .findFragmentById(R.id.map);
 //        mapFragment.getMapAsync(this);
         appLocationManager = MainActivity.appLocationManager;
-
          mLocationArray =appLocationManager.getLocArray();
+        Button buttonOpenDialog = (Button) findViewById(R.id.testButton);
+        buttonOpenDialog.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View arg0){
+                openDialog();
+            }
+        });
 
     }
-
-
+    void openDialog(){
+        DialogFragment myDialogFrag = (DialogFragment)LocNodeFrag.newInstance();
+        myDialogFrag.show(getSupportFragmentManager(),"dialog");
+    }
+    public void saveClicked(EditText input){
+        showToast("saved "+input.getEditableText());
+        appLocationManager.makeLocNode(input.getEditableText()+"");
+        ArrayList<locNode> arr = appLocationManager.getLocNodeArr();
+        showToast(arr.get(0).getLocAddress());
+    }
+    public void cancelClicked(){
+        showToast("Not Saved");
+    }
     /**
      * Manipulates the map once available.
      * This callback is triggered when the map is ready to be used.
@@ -104,20 +127,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             int arrSize = mLocationArray.size();
             mLocationArray = appLocationManager.getLocArray();
             Toast.makeText(MapsActivity.this,mLocationArray.size()+"", Toast.LENGTH_SHORT).show();
-            if (appLocationManager.getLocation() != null && !Objects.equals(appLocationManager.getLatitude(), "")) {
-//                LatLng latl = new LatLng(Double.valueOf(appLocationManager.getLatitude()), Double.valueOf(appLocationManager.getLongitude()));
-//                drawMarker(latl);
-                //drawAllPoints();
-                //showToast("speed from loc: "+appLocationManager.getSpeed()+"");
-                //showToast("calculated speed: "+appLocationManager.calcSpeed()+"");
 
-            }
 
-//            if (appLocationManager!=null){
-//                if (appLocationManager.calcSpeed()>= 1)
-//                    interval= (int) (interval/(appLocationManager.calcSpeed()));
-//                Log.i("testFile", "interval = "+ interval);
-//            }
+
             handler.postAtTime(runnable, System.currentTimeMillis() + interval);
             handler.postDelayed(runnable, interval);
         }
