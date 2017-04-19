@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity
     LocationRequest mLocationRequest;
     Location mCurrentLocation;
     //stuff for address
-    private AddressResultReceiver mResultReceiver;
+    //private AddressResultReceiver mResultReceiver;
     protected String mAddressOutput;
     protected boolean mAddressRequested;
     protected TextView mLocationAddressTextView;
@@ -112,7 +112,7 @@ public class MainActivity extends AppCompatActivity
 
         //stuff for getting location
         updateValuesFromBundle(savedInstanceState);
-        mResultReceiver = new AddressResultReceiver(new Handler());
+       // mResultReceiver = new AddressResultReceiver(new Handler());
         //testing data fragments
         // find the retained fragment on activity restarts
 
@@ -222,7 +222,7 @@ public class MainActivity extends AppCompatActivity
     protected void startIntentService() {
         if (appLocationManager.getLocation() == null){return;}
         Intent intent = new Intent(this, FetchAddressIntentService.class);
-        intent.putExtra(Constants.RECEIVER, mResultReceiver);
+        //intent.putExtra(Constants.RECEIVER, mResultReceiver);
         intent.putExtra(Constants.LOCATION_DATA_EXTRA, appLocationManager.getLocation());
         Log.i(TAG, "starting service");
         startService(intent);
@@ -281,27 +281,27 @@ public class MainActivity extends AppCompatActivity
         Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
     }
 
-    class AddressResultReceiver extends ResultReceiver {
-        public AddressResultReceiver(Handler handler) {
-            super(handler);
-        }
-        @Override
-        protected void onReceiveResult(int resultCode, Bundle resultData) {
-
-            // Display the address string
-            // or an error message sent from the intent service.
-            mAddressOutput = resultData.getString(Constants.RESULT_DATA_KEY);
-            displayAddressOutput();
-
-            // Show a toast message if an address was found.
-            String log = Constants.SUCCESS_RESULT +"";
-            Log.i("wtf", log);
-            if (resultCode == Constants.SUCCESS_RESULT) {
-                log = resultData.describeContents() +"";
-                showToast(mAddressOutput);
-            }
-
-        }
-
-    }
+//    class AddressResultReceiver extends ResultReceiver {
+//        public AddressResultReceiver(Handler handler) {
+//            super(handler);
+//        }
+//        @Override
+//        protected void onReceiveResult(int resultCode, Bundle resultData) {
+//
+//            // Display the address string
+//            // or an error message sent from the intent service.
+//            mAddressOutput = resultData.getString(Constants.RESULT_DATA_KEY);
+//            displayAddressOutput();
+//
+//            // Show a toast message if an address was found.
+//            String log = Constants.SUCCESS_RESULT +"";
+//            Log.i("wtf", log);
+//            if (resultCode == Constants.SUCCESS_RESULT) {
+//                log = resultData.describeContents() +"";
+//                showToast(mAddressOutput);
+//            }
+//
+//        }
+//
+//    }
 }

@@ -4,6 +4,7 @@ package trace.traceapp;
 import android.content.ContentValues;
 import android.content.Context;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.location.Criteria;
@@ -13,6 +14,8 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.ResultReceiver;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -46,6 +49,9 @@ public class GPSHandler implements GoogleApiClient.ConnectionCallbacks, OnConnec
         com.google.android.gms.location.LocationListener, LocationSource {
     Polyline line;
     LatLng locLatLng;
+    private AddressResultReceiver mResultReceiver;
+    protected String mAddressOutput;
+    protected boolean mAddressRequested;
     private GoogleMap mMap;
     private OnLocationChangedListener mListener;
     private String latitude = "";
@@ -65,6 +71,7 @@ public class GPSHandler implements GoogleApiClient.ConnectionCallbacks, OnConnec
     protected static final String ADDRESS_REQUESTED_KEY = "address-request-pending";
     protected static final String LOCATION_ADDRESS_KEY = "location-address";
     private GoogleApiClient mGoogleApiClient;
+    private ArrayList<locNode> locNodeArr;
     LocationsDB db;
     private Location mCurrentLocation;
     String path = String.valueOf(Environment.getExternalStoragePublicDirectory(
@@ -86,13 +93,15 @@ public class GPSHandler implements GoogleApiClient.ConnectionCallbacks, OnConnec
         if (GPSArray != null)
         GPSArray.clear();
         GPSArray= getFromFile();
-
+        if (locNodeArr == null){
+            locNodeArr = getLNFromFile();
+        }
         for (int i = 0; i<GPSArray.size();i++){
             Log.i(filename, GPSArray.get(i).toString());
         }
         Log.i(filename, GPSArray.toString());
         Log.i (filename, context.getPackageName());
-
+        mResultReceiver = new AddressResultReceiver(new Handler());
 
     }
     public void onStop() {
@@ -117,6 +126,32 @@ public class GPSHandler implements GoogleApiClient.ConnectionCallbacks, OnConnec
 
 
 
+    }
+    public ArrayList<locNode> getLNFromFile(){
+        ArrayList<locNode> LN = new ArrayList<>();
+        Cursor cursor = db.getAllLocationsLoc();
+        if (cursor != null){
+            if (cursor.moveToFirst()){
+                do {
+                    String name = cursor.getString(cursor.getColumnIndex(LocationsDB.FIELD_NAME));
+                    String addy = cursor.getString(cursor.getColumnIndex(LocationsDB.FIELD_NAME));
+                    double lat = cursor.getDouble(cursor.getColumnIndex(LocationsDB.FIELD_LAT));
+                    double lng = cursor.getDouble(cursor.getColumnIndex(LocationsDB.FIELD_LNG));
+                    double timV = cursor.getInt(cursor.getColumnIndex(LocationsDB.FIELD_TIMESVISITED));
+                    locNode loc = new locNode();
+                    loc.setLocName(name);
+                    loc.setLocAddress(addy);
+                    loc.setLocLatCoord(lat);
+                    loc.setLocLongCoord(lng);
+                    loc.setTimesVisit((int)timV);
+                    LN.add(loc);
+
+                }
+                while(cursor.moveToNext());
+            }
+
+        }
+        return LN;
     }
     public ArrayList<Location> getFromFile()
     {
@@ -319,9 +354,48 @@ public class GPSHandler implements GoogleApiClient.ConnectionCallbacks, OnConnec
         Log.i(filename, "activate called");
         Toast.makeText(context.getApplicationContext(), "dsfsd", Toast.LENGTH_SHORT);
     }
-
+    protected void startIntentService() {
+        if (getLocation() == null){return;}
+        Intent intent = new Intent(context, FetchAddressIntentService.class);
+        intent.putExtra(Constants.RECEIVER, mResultReceiver);
+        intent.putExtra(Constants.LOCATION_DATA_EXTRA, getLocation());
+        context.startService(intent);
+    }
+    public ArrayList<locNode> getLocNodeArr(){
+        return locNodeArr;
+    }
+    public void makeLocNode(String name){
+        startIntentService();
+        locNode loc = new locNode();
+        loc.SetLoc(getLocation());
+        loc.setLocName(name);
+        loc.setTimesVisit(1);
+        if (mAddressOutput != null) {
+            loc.setLocAddress(mAddressOutput);
+        }
+        locNodeArr.add(loc);
+    }
     @Override
     public void deactivate() {
         mListener = null;
+    }
+    class AddressResultReceiver extends ResultReceiver {
+        public AddressResultReceiver(Handler handler) {
+            super(handler);
+        }
+        @Override
+        protected void onReceiveResult(int resultCode, Bundle resultData) {
+
+            // Display the address string
+            // or an error message sent from the intent service.
+            mAddressOutput = resultData.getString(Constants.RESULT_DATA_KEY);
+            String log = Constants.SUCCESS_RESULT +"";
+            Log.i("wtf", log);
+            if (resultCode == Constants.SUCCESS_RESULT) {
+                log = resultData.describeContents() +"";
+            }
+
+        }
+
     }
 }
