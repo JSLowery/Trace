@@ -1,6 +1,13 @@
 package trace.traceapp;
 
 import android.content.Context;
+import android.widget.CursorAdapter;
+import android.database.Cursor;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
+import android.view.LayoutInflater;
+
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -18,8 +25,50 @@ import java.util.ArrayList;
  *
  * JSON is JavaScript Object Notation, and is a way to store information
  * in a readable manner and is easy to access.
+ *
+ * Total Distance - double
+ * Name - name of the user
+ * Home - name of the location Node
+ * Home_Count - How many times you have visited a certain location
+ * MostFreq  - Name of most frequently lcoation
+ * MostFreqCount - number of most frequently visited location.
+ *
+ *
  */
 
+
+/*
+public class Loc extends CursorAdapter {
+    public Loc(Context context, Cursor cursor) {
+        super(context, cursor, 0);
+    }
+
+    // The newView method is used to inflate a new view and return it,
+    // you don't bind any data to the view at this point.
+    //@Override
+    public View newView(Context context, Cursor cursor, ViewGroup parent) {
+        return LayoutInflater.from(context).inflate(R.layout.activity_stats, parent, false);
+    }
+
+    // The bindView method is used to bind all data to a given view
+    // such as setting the text on a TextView.
+    //@Override
+    public void bindView(View view, Context context, Cursor cursor) {
+        // Find fields to populate in inflated template
+        TextView Name = (TextView) view.findViewById(R.id.textView5);
+        TextView totalDistance = (TextView) view.findViewById(R.id.textView4);
+        TextView mostVisitedLoc = (TextView) view.findViewById(R.id.textView3);
+        // Extract properties from cursor
+        String nameExtract = cursor.getString(cursor.getColumnIndexOrThrow("name"));
+        double totalDistExtract = cursor.getInt(cursor.getColumnIndexOrThrow("total distance"));
+        double mostVisitExtract = cursor.getInt(cursor.getColumnIndexOrThrow("most frequent"));
+        // Populate fields with extracted properties
+        Name.setText(nameExtract);
+        totalDistance.setText(String.valueOf(totalDistExtract));
+        mostVisitedLoc.setText(String.valueOf(mostVisitExtract));
+    }
+
+}*/
 public class Loc {
 
     public String title;
@@ -79,5 +128,5 @@ public class Loc {
         return json;
     }
 
-
 }
+

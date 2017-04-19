@@ -41,5 +41,28 @@ public class locNode {
         this.locLongCoord = longitude;
     }*/
 
+    public String getLocName() {
+        return locName;
+    }
+
+    public String getLocAddress() {
+        return locAddress;
+    }
+
+    public int getTimesVisit() {
+        return timesVisit;
+    }
+
+    public float getLocLatCoord() {
+        return locLatCoord;
+    }
+
+    public float getLocLongCoord() {
+        return locLongCoord;
+    }
+    
+
+
+
     
 }
