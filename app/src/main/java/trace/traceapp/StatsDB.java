@@ -35,7 +35,6 @@ public class StatsDB extends SQLiteOpenHelper {
     public static final String FIELD_INIT_STATS = "initdb";
     /** An instance variable for SQLiteDatabase */
     private SQLiteDatabase mDB;
-    private DatabaseOpenHelper databaseOpenHelper;
 
 
     public StatsDB(Context context){
@@ -58,11 +57,6 @@ public class StatsDB extends SQLiteOpenHelper {
     }
 
     public void onCreate(SQLiteDatabase db) {
-
-        //db.execSQL("DROP TABLE IF EXISTS " + DATABASE_TABLE_STATS);
-        //if(db == null) {
-            //db = getWritableDatabase();
-            //db.execSQL("DROP TABLE IF EXISTS " + DATABASE_TABLE_STATS);
 
             String sql = "create table " + DATABASE_TABLE_STATS + "( " +
                     FIELD_ROW_ID_STATS + " integer primary key autoincrement , " +
@@ -97,6 +91,25 @@ public class StatsDB extends SQLiteOpenHelper {
 
 
 
+    }
+
+    public Cursor getData(){
+        mDB = this.getReadableDatabase();
+        String query = "select * from " + DATABASE_TABLE_STATS;
+        Cursor cursor = mDB.rawQuery(query,null);
+        return cursor;
+    }
+
+    public void insertInto(){
+        mDB = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(FIELD_TDISTANCE_STATS,0.0);
+        values.put(FIELD_NAME_STATS,"name");
+        values.put(FIELD_HOME_STATS,"home");
+        values.put(FIELD_HOMECOUNT_STATS,0);
+        values.put(FIELD_MOSTFREQ_STATS,"mostfreq");
+        values.put(FIELD_MOSTFREQCOUNT_STATS,0);
+        mDB.insert(DATABASE_TABLE_STATS, null, values);
     }
 
     public void del(){
@@ -177,11 +190,12 @@ public class StatsDB extends SQLiteOpenHelper {
 
     public String getName(){
         if(mDB != null) {
-            mDB = this.getReadableDatabase();
-            String query = "select " + FIELD_NAME_STATS + " from " + DATABASE_TABLE_STATS;
+            //mDB = this.getReadableDatabase();
+            //String query = "select " + FIELD_NAME_STATS + " from " + DATABASE_TABLE_STATS;
             //try {
-            Cursor cursor = mDB.rawQuery(query, null);
-            cursor.moveToFirst();
+            //Cursor cursor = mDB.rawQuery(query, null);
+            //cursor.moveToFirst();
+            Cursor cursor = this.getData();
             if (cursor != null) {
                 final String name = cursor.getString(cursor.getColumnIndex(FIELD_NAME_STATS));
                 return name;
