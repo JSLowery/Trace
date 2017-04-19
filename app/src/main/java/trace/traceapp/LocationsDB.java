@@ -35,11 +35,11 @@ public class LocationsDB extends SQLiteOpenHelper {
     private SQLiteDatabase mDB;
     public static final String FIELD_NAME = "LocName";
     public static final String FIELD_ADDY = "Address";
-    public static final String FIELD_TIMESVISITED = "timesVisited";
+    public static final String FIELD_TIMESVISITED = "timesV";
     private static final String CREATE_LOCNODE_TABLE = "CREATE TABLE "
             + LOCNODE_TABLE + "(" + FIELD_ROW_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + FIELD_NAME
-            + " TEXT," + FIELD_ADDY + " TEXT," + FIELD_LAT + " DOUBLE"
-            +FIELD_LNG + " DOUBLE," + FIELD_TIMESVISITED + "INTEGER" + ")";
+            + " TEXT," + FIELD_ADDY + " TEXT," + FIELD_LAT + " DOUBLE,"
+            +FIELD_LNG + " DOUBLE," + FIELD_TIMESVISITED + " INTEGER" + ");";
 
     public static synchronized LocationsDB getInstance(Context context) {
 
@@ -65,7 +65,7 @@ public class LocationsDB extends SQLiteOpenHelper {
 
             if (mDB.isOpen()){
                 Log.i("testFile", "mDB is open I think");
-//                mDB.execSQL("DROP TABLE "+DATABASE_TABLE+";");
+                //mDB.execSQL("DROP TABLE "+LOCNODE_TABLE+";");
                 Cursor cursor = mDB.rawQuery("select DISTINCT tbl_name from sqlite_master where tbl_name = '"+DATABASE_TABLE+"'", null);
                 if(cursor!=null) {
                     cursor.moveToFirst();
@@ -128,7 +128,7 @@ public class LocationsDB extends SQLiteOpenHelper {
     /** Returns all the locations from the table LocNode */
     public Cursor getAllLocationsLoc(){
         if (mDB != null)
-            return mDB.query(LOCNODE_TABLE, new String[] { FIELD_ROW_ID, FIELD_NAME, FIELD_ADDY,  FIELD_LAT , FIELD_LNG, FIELD_TIMESVISITED }, null, null, null, null, null, null);
+            return mDB.query(LOCNODE_TABLE, new String[] { FIELD_ROW_ID, FIELD_NAME, FIELD_ADDY,  FIELD_LAT , FIELD_LNG, FIELD_TIMESVISITED }, null, null, null, null, null);
         Cursor c = null;
         return c;
     }
