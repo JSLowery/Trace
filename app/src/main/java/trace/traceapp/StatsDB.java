@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+import android.view.ViewDebug;
 
 /**
  * close the databaseeeeee after use
@@ -34,47 +35,66 @@ public class StatsDB extends SQLiteOpenHelper {
     public static final String FIELD_INIT_STATS = "initdb";
     /** An instance variable for SQLiteDatabase */
     private SQLiteDatabase mDB;
+    private DatabaseOpenHelper databaseOpenHelper;
 
 
-    public StatsDB(Context context) {
+    public StatsDB(Context context){
         super(context, DBNAME, null, VERSION);
+        if(mDB == null){
+            mDB = getWritableDatabase();
+            Log.d("DB: ","getWritabledatabase() works");
+            //mDB.execSQL("DROP TABLE IF EXISTS " + DATABASE_TABLE_STATS);
+            if(mDB.isOpen()){
+                Log.d("Constructor: ","is the db open?");
+                Log.d("Name: " , this.getName());
+                //mDB.delete(DATABASE_TABLE_STATS, "1", null);
+                //Log.d("Rows: ", "rows were removed man");
+            }
+            else{
+                Log.d("Create: ","Oncreate about to run");
+                onCreate(mDB);
+            }
+        }
     }
 
-
-    @Override
     public void onCreate(SQLiteDatabase db) {
 
-        db.execSQL("DROP TABLE IF EXISTS " + DATABASE_TABLE_STATS);
-        
-        String sql = "create table " + DATABASE_TABLE_STATS + "( " +
-                FIELD_ROW_ID_STATS + " integer primary key autoincrement , " +
-                FIELD_INIT_STATS + " boolean ," +
-                FIELD_TDISTANCE_STATS + " double ," +
-                FIELD_NAME_STATS + " string ," +
-                FIELD_HOME_STATS + " string ," +
-                FIELD_HOMECOUNT_STATS + "integer ," +
-                FIELD_MOSTFREQ_STATS + " string ," +
-                FIELD_MOSTFREQCOUNT_STATS + " integer " +
-                " ) ";
-        db.execSQL(sql);
+        //db.execSQL("DROP TABLE IF EXISTS " + DATABASE_TABLE_STATS);
+        //if(db == null) {
+            //db = getWritableDatabase();
+            //db.execSQL("DROP TABLE IF EXISTS " + DATABASE_TABLE_STATS);
 
-        /*
-        if(!init){
-            //drop the dang table
-            mDB.delete(DATABASE_TABLE_STATS, null, null);
+            String sql = "create table " + DATABASE_TABLE_STATS + "( " +
+                    FIELD_ROW_ID_STATS + " integer primary key autoincrement , " +
+                    FIELD_TDISTANCE_STATS + " double ," +
+                    FIELD_NAME_STATS + " string ," +
+                    FIELD_HOME_STATS + " string ," +
+                    FIELD_HOMECOUNT_STATS + " integer ," +
+                    FIELD_MOSTFREQ_STATS + " string ," +
+                    FIELD_MOSTFREQCOUNT_STATS + " integer " +
+                    " ) ";
+            db.execSQL(sql);
+
+            /*
             ContentValues values = new ContentValues();
             values.put(FIELD_TDISTANCE_STATS,0.0);
-            values.put(FIELD_INIT_STATS,1);
             values.put(FIELD_NAME_STATS,"name");
             values.put(FIELD_HOME_STATS,"home");
             values.put(FIELD_HOMECOUNT_STATS,0);
             values.put(FIELD_MOSTFREQ_STATS,"mostfreq");
             values.put(FIELD_MOSTFREQCOUNT_STATS,0);
             mDB.insert(DATABASE_TABLE_STATS, null, values);
+            */
+    //}
+
+        //if(!init){
+            //drop the dang table
+            //mDB.delete(DATABASE_TABLE_STATS, null, null);
+
             //first try inserting row instead of initializing
             //
-        }
-        */
+        //}
+
 
 
     }
@@ -92,10 +112,12 @@ public class StatsDB extends SQLiteOpenHelper {
     }
 
     public void updateName(String name){
-        mDB = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put(FIELD_NAME_STATS,name);
-        mDB.update(DATABASE_TABLE_STATS, values, null, null);
+        if(mDB != null) {
+            mDB = this.getWritableDatabase();
+            ContentValues values = new ContentValues();
+            values.put(FIELD_NAME_STATS, name);
+            mDB.update(DATABASE_TABLE_STATS, values, null, null);
+        }
     }
 
     public void updateHomeName(String homename){
@@ -154,19 +176,22 @@ public class StatsDB extends SQLiteOpenHelper {
     }
 
     public String getName(){
-        mDB = this.getReadableDatabase();
-        String query = "select " + FIELD_NAME_STATS + " from " + DATABASE_TABLE_STATS;
-        //try {
+        if(mDB != null) {
+            mDB = this.getReadableDatabase();
+            String query = "select " + FIELD_NAME_STATS + " from " + DATABASE_TABLE_STATS;
+            //try {
             Cursor cursor = mDB.rawQuery(query, null);
             cursor.moveToFirst();
             if (cursor != null) {
                 final String name = cursor.getString(cursor.getColumnIndex(FIELD_NAME_STATS));
                 return name;
             }
-        //}catch(){
+            else return "testCursorCheck";
+            //}catch(){
 
-        //}
-        else return "";
+            //}
+        }
+        return "testMDBNullCheck";
     }
 
     public String getHomeName(){
@@ -191,3 +216,12 @@ public class StatsDB extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
     }
 }
+
+/*
+private class DatabaseOpenHelper extends SQLiteOpenHelper{
+
+    public DatabaseOpenHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version){
+
+    }
+}
+*/
