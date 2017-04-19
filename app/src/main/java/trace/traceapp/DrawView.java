@@ -30,8 +30,8 @@ public class DrawView extends View {
     private double metPerPx;
     private static final double downScale = 1.2;
 
-    ArrayList<Location> mLocationArray;
-    static GPSHandler appLocationManager;
+    ArrayList<Location> mLocationArray = appLocationManager.getLocArray();
+    static GPSHandler appLocationManager = appLocationManager = MainActivity.appLocationManager;
 
     public DrawView(Context context) {
         super(context);
@@ -126,6 +126,8 @@ public class DrawView extends View {
         this.h = h;
         super.onSizeChanged(w, h, oldW, oldH);
     }
+
+    public int getLocArraySize(){return mLocationArray.size();}
 
     private void populateLatList(){
         latList = new double[mLocationArray.size()];

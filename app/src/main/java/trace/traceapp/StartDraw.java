@@ -44,12 +44,17 @@ import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+
+import java.util.ArrayList;
+
 import static android.Manifest.permission_group.LOCATION;
 import static java.util.concurrent.TimeUnit.NANOSECONDS;
 
 public class StartDraw extends Activity {
     DrawView drawView;
-    static GPSHandler appLocationManager;
+    static GPSHandler appLocationManager; //= MainActivity.appLocationManager;
+    //ArrayList<Location> mLocationArray = appLocationManager.getLocArray();
+    int arraySize;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -57,22 +62,50 @@ public class StartDraw extends Activity {
         appLocationManager = MainActivity.appLocationManager;
         setContentView(R.layout.activity_main);
 
-        int permissionCheck = ContextCompat.checkSelfPermission(this,
-                android.Manifest.permission.ACCESS_FINE_LOCATION);
-        if (permissionCheck!= PackageManager.PERMISSION_GRANTED){
-
-        }
         //appLocationManager = new GPSHandler();
 
         drawView = new DrawView(this);
         drawView.setBackgroundColor(Color.WHITE);
         setContentView(drawView);
+        drawView.setWillNotDraw(false);
+        arraySize = drawView.getLocArraySize();
     }
 
-    public void onLocationChanged(Location loc)
-    {
+    @Override
+    public void onResume() {
+        super.onResume();  // Always call the superclass method first
 
+        appLocationManager.getFromFile();
 
+        //if (arraySize <= drawView.getLocArraySize()){
+
+            arraySize = drawView.getLocArraySize();
+            handler.postAtTime(runnable, System.currentTimeMillis()+interval);
+            handler.postDelayed(runnable, interval/6);
+        //}
+    }
+
+    private int interval = 1000*6; // 6 Second
+    private Handler handler = new Handler();
+    private Runnable runnable = new Runnable() {
+        public void run() {
+            drawView.invalidate();
+
+            arraySize = drawView.getLocArraySize();
+
+            handler.postAtTime(runnable, System.currentTimeMillis()+interval);
+            handler.postDelayed(runnable, interval/6);
+        }
+    };
+
+    protected void onStop() {
+        super.onStop();
+        handler.removeCallbacks(runnable);
+    }
+
+    protected void onPause(){
+        super.onPause();
+        appLocationManager.dumpToFile();
     }
 }
 
