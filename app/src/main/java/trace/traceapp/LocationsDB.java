@@ -106,7 +106,13 @@ public class LocationsDB extends SQLiteOpenHelper {
         long rowID = mDB.insert(DATABASE_TABLE, null, contentValues);
         return rowID;
     }
-
+    // public long incrementLocTimesV
+    public void incrementLocTV(String name){
+        String stmt = "UPDATE " + LOCNODE_TABLE +
+                " SET " +FIELD_TIMESVISITED + " = "+FIELD_TIMESVISITED+1
+                + "WHERE " + FIELD_NAME + "=" + name;
+        mDB.execSQL(stmt);
+    }
     /** Deletes all locations from the table locNodes */
     public int delLoc(){
         int cnt = mDB.delete(LOCNODE_TABLE, null , null);
