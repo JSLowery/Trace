@@ -42,7 +42,7 @@ public class StatsDB extends SQLiteOpenHelper {
         if(mDB == null){
             mDB = getWritableDatabase();
             Log.d("DB: ","getWritabledatabase() works");
-            //mDB.execSQL("DROP TABLE IF EXISTS " + DATABASE_TABLE_STATS);
+            mDB.execSQL("DROP TABLE IF EXISTS " + DATABASE_TABLE_STATS);
             if(mDB.isOpen()){
                 Log.d("Constructor: ","is the db open?");
                 Log.d("Name: " , this.getName());
@@ -94,10 +94,14 @@ public class StatsDB extends SQLiteOpenHelper {
     }
 
     public Cursor getData(){
-        mDB = this.getReadableDatabase();
-        String query = "select * from " + DATABASE_TABLE_STATS;
-        Cursor cursor = mDB.rawQuery(query,null);
-        return cursor;
+        if(mDB != null) {
+            mDB = this.getReadableDatabase();
+            String query = "select * from " + DATABASE_TABLE_STATS;
+            Cursor cursor = mDB.rawQuery(query, null);
+            return cursor;
+        }
+        return null;
+
     }
 
     public void insertInto(){
