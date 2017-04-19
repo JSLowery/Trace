@@ -30,7 +30,8 @@
             android:id="@+id/imageView2"
             android:layout_width="150dp"
             android:layout_height="150dp"
-            app:srcCompat="@android:drawable/ic_input_add" />
+            app:srcCompat="@android:drawable/ic_input_add"
+            android:onClick="loadImagefromGallery"/>
 
         <LinearLayout
             android:layout_width="match_parent"
