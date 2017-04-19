@@ -245,7 +245,10 @@ public class GPSHandler implements GoogleApiClient.ConnectionCallbacks, OnConnec
     }
 
     public double getTotalDistance(){return statsdb.getDistance();}
-    public String getName(){return statsdb.getName();}
+    public String getName(){
+        //statsdb.updateName("PleaseWorkMatey");
+        return statsdb.getName();}
+
     //stoplocationupdates and startlocationupdates are for the google playservice api calls
     protected void stopLocationUpdates() {
         if (mGoogleApiClient.isConnected()) {
