@@ -49,7 +49,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
     void openDialog(){
-        DialogFragment myDialogFrag = (DialogFragment)LocNodeFrag.newInstance();
+        DialogFragment myDialogFrag = LocNodeFrag.newInstance();
         myDialogFrag.show(getSupportFragmentManager(),"dialog");
     }
     public void saveClicked(EditText input){
@@ -117,6 +117,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         if (appLocationManager.getLatLng()!= null)
         mMap.moveCamera(CameraUpdateFactory.newLatLng(appLocationManager.getLatLng()));
         mMap.animateCamera(CameraUpdateFactory.zoomTo(15.0f));
+        //appLocationManager.drawPoly();
     }
     private int interval = 1000*6; // 6 Second
     private Handler handler = new Handler();

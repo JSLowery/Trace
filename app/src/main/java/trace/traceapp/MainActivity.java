@@ -37,6 +37,8 @@ import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
+import java.util.ArrayList;
+
 import static android.Manifest.permission_group.LOCATION;
 import static java.util.concurrent.TimeUnit.NANOSECONDS;
 
@@ -193,6 +195,11 @@ public class MainActivity extends AppCompatActivity
     private double nano1= 0.0;
     private double nano2= 0.0;
     private void updateUI() {
+        ArrayList<locNode> LNA =appLocationManager.getLocNodeArr();
+        showToast(appLocationManager.getLocNodeArr().size()+"");
+        if (LNA.size()>0){
+            showToast(LNA.get(0).getLocAddress());
+        }
         if (appLocationManager.getLocation() != null) {
 
             TextView txt = (TextView) findViewById(R.id.gps);
@@ -221,11 +228,11 @@ public class MainActivity extends AppCompatActivity
 
     protected void startIntentService() {
         if (appLocationManager.getLocation() == null){return;}
-        Intent intent = new Intent(this, FetchAddressIntentService.class);
+        //Intent intent = new Intent(this, FetchAddressIntentService.class);
         //intent.putExtra(Constants.RECEIVER, mResultReceiver);
-        intent.putExtra(Constants.LOCATION_DATA_EXTRA, appLocationManager.getLocation());
-        Log.i(TAG, "starting service");
-        startService(intent);
+       // intent.putExtra(Constants.LOCATION_DATA_EXTRA, appLocationManager.getLocation());
+       // Log.i(TAG, "starting service");
+       // startService(intent);
     }
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
