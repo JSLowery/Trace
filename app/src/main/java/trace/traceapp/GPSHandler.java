@@ -56,7 +56,7 @@ public class GPSHandler implements GoogleApiClient.ConnectionCallbacks, OnConnec
     protected static final String LOCATION_ADDRESS_KEY = "location-address";
     private GoogleApiClient mGoogleApiClient;
     LocationsDB db;
-    StatsDB statsdb;
+    StatsDB2 statsdb;
     private Location mCurrentLocation;
     private Location mPreviousLocation;
     String path = String.valueOf(Environment.getExternalStoragePublicDirectory(
@@ -73,7 +73,7 @@ public class GPSHandler implements GoogleApiClient.ConnectionCallbacks, OnConnec
         }
         mGoogleApiClient.connect();
         createLocationRequest();
-        statsdb = new StatsDB(context);
+        statsdb = new StatsDB2(context);
         //need to initialize value in database before getting row in onlocchanged
         //statsdb.insertDistance(7.0);
         db = LocationsDB.getInstance(context);

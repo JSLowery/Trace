@@ -67,7 +67,6 @@ public class MainActivity extends AppCompatActivity
     Location mPreviousLocation;
     //graphics engine
     //GraphicsEngine graphics;
-    StatsDB statsdb;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -163,7 +162,6 @@ public class MainActivity extends AppCompatActivity
             Location loc1 = new Location("nel");
             //appLocationManager.onLocationChanged(loc1);
             //txt.setText("Distance: " + appLocationManager.getTotalDistance() + " meters");
-
             txt.setText("Name: " + appLocationManager.getName());
         } else if (id == R.id.nav_mapview) {
             startActivity(new Intent(MainActivity.this, MapsActivity.class));
