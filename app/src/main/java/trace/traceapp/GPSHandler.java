@@ -62,6 +62,7 @@ public class GPSHandler implements GoogleApiClient.ConnectionCallbacks, OnConnec
     private Location location;
     private double speed;
     private double altitude;
+    private String curAddress;
     private double bearing;
     private ArrayList<Location> GPSArray;
     private String filename = "testFilemost.srl";
@@ -93,8 +94,9 @@ public class GPSHandler implements GoogleApiClient.ConnectionCallbacks, OnConnec
         if (GPSArray != null)
         GPSArray.clear();
         GPSArray= getFromFile();
-        if (locNodeArr == null){
+        if (locNodeArr == null || locNodeArr.size()<1){
             locNodeArr = getLNFromFile();
+            Log.i(filename, "============================GETTING LOCNODES FROM FILE++++++++++++++++++++++++");
         }
         for (int i = 0; i<GPSArray.size();i++){
             Log.i(filename, GPSArray.get(i).toString());
@@ -114,7 +116,9 @@ public class GPSHandler implements GoogleApiClient.ConnectionCallbacks, OnConnec
     }
     public void dumpToFile(){
 
-
+        for (locNode loc : locNodeArr){
+            loc.storeSelf(context);
+        }
         ContentValues values = new ContentValues();
         for (Location arr : GPSArray){
             values.put(LocationsDB.FIELD_LAT, arr.getLatitude() );
@@ -217,6 +221,7 @@ public class GPSHandler implements GoogleApiClient.ConnectionCallbacks, OnConnec
         altitude = lastKnownLocation.getAltitude();
         Log.i(filename, "Added location: "+ latitude+ " "+ longitude);
         addLocArray(lastKnownLocation);
+
         locLatLng = new LatLng(lastKnownLocation.getLatitude(),lastKnownLocation.getLongitude());
         return lastKnownLocation;
     }
@@ -266,32 +271,37 @@ public class GPSHandler implements GoogleApiClient.ConnectionCallbacks, OnConnec
         mCurrentLocation.distanceTo(location);
         if (location.getAccuracy()<= 100&& location.distanceTo(mCurrentLocation)> location.getAccuracy())  {
             mCurrentLocation = location;
+            startIntentService();
             setMostRecentLocation(mCurrentLocation);
             //This updates our map's blue dot and location
             locLatLng = new LatLng(mCurrentLocation.getLatitude(),mCurrentLocation.getLongitude());
             if (mListener != null) {
                 mListener.onLocationChanged(location);
-
-                PolylineOptions options = new PolylineOptions().width(10).color(Color.BLUE).geodesic(true);
-                for (int i = 0; i < getLocArray().size(); i++) {
-                    LatLng point = new LatLng(getLocArray().get(i).getLatitude(),getLocArray().get(i).getLongitude());
-                    options.add(point);
-                }
-                MarkerOptions markerOptions = new MarkerOptions();
-
-// Setting latitude and longitude for the marker
-                markerOptions.position(locLatLng);
-                //mMap.addMarker(markerOptions); //add Marker in current position
-                line = mMap.addPolyline(options);
-                mMap.addPolyline(new PolylineOptions());
-                mMap.moveCamera(CameraUpdateFactory.newLatLng(locLatLng));
-               // mMap.animateCamera(CameraUpdateFactory.zoomTo(15.0f));
+                drawPoly();
             }
         }
 
 
     }
+    public void drawPoly(){
+        if (getLocArray() == null || locLatLng == null){
+            return;
+        }
+        PolylineOptions options = new PolylineOptions().width(10).color(Color.BLUE).geodesic(true);
+        for (int i = 0; i < getLocArray().size(); i++) {
+            LatLng point = new LatLng(getLocArray().get(i).getLatitude(),getLocArray().get(i).getLongitude());
+            options.add(point);
+        }
+        MarkerOptions markerOptions = new MarkerOptions();
 
+// Setting latitude and longitude for the marker
+        markerOptions.position(locLatLng);
+        //mMap.addMarker(markerOptions); //add Marker in current position
+        line = mMap.addPolyline(options);
+        mMap.addPolyline(new PolylineOptions());
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(locLatLng));
+        // mMap.animateCamera(CameraUpdateFactory.zoomTo(15.0f));
+    }
     //Be Aware this will return speed in meters/ second
     public double calcSpeed(){
         double speed = 0;
@@ -365,13 +375,13 @@ public class GPSHandler implements GoogleApiClient.ConnectionCallbacks, OnConnec
         return locNodeArr;
     }
     public void makeLocNode(String name){
-        startIntentService();
+
         locNode loc = new locNode();
         loc.SetLoc(getLocation());
         loc.setLocName(name);
         loc.setTimesVisit(1);
-        if (mAddressOutput != null) {
-            loc.setLocAddress(mAddressOutput);
+        if (curAddress != null) {
+            loc.setLocAddress(curAddress);
         }
         locNodeArr.add(loc);
     }
@@ -389,6 +399,8 @@ public class GPSHandler implements GoogleApiClient.ConnectionCallbacks, OnConnec
             // Display the address string
             // or an error message sent from the intent service.
             mAddressOutput = resultData.getString(Constants.RESULT_DATA_KEY);
+            mAddressOutput = mAddressOutput.replace('\n', ' ');
+            curAddress = mAddressOutput;
             String log = Constants.SUCCESS_RESULT +"";
             Log.i("wtf", log);
             if (resultCode == Constants.SUCCESS_RESULT) {

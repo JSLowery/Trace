@@ -72,7 +72,7 @@ public class locNode {
             values.put(LocationsDB.FIELD_LAT, locLatCoord );
             values.put(LocationsDB.FIELD_LNG, locLongCoord );
             values.put(LocationsDB.FIELD_TIMESVISITED, timesVisit);
-            db.insert(values);
+            db.insertLoc(values);
     }
     /*public void setLocationCoord(float latitude, float longitude) {
         this.locLatCoord = latitude;

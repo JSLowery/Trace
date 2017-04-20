@@ -37,9 +37,13 @@ public class LocationsDB extends SQLiteOpenHelper {
     public static final String FIELD_ADDY = "Address";
     public static final String FIELD_TIMESVISITED = "timesV";
     private static final String CREATE_LOCNODE_TABLE = "CREATE TABLE "
-            + LOCNODE_TABLE + "(" + FIELD_ROW_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + FIELD_NAME
-            + " TEXT," + FIELD_ADDY + " TEXT," + FIELD_LAT + " DOUBLE,"
-            +FIELD_LNG + " DOUBLE," + FIELD_TIMESVISITED + " INTEGER" + ");";
+            + LOCNODE_TABLE + " ( " +
+            FIELD_ROW_ID + " INTEGER PRIMARY KEY AUTOINCREMENT , " +
+            FIELD_NAME + " TEXT , " +
+            FIELD_ADDY + " TEXT , " +
+            FIELD_LAT + " DOUBLE , " +
+            FIELD_LNG + " DOUBLE , " +
+            FIELD_TIMESVISITED + " INTEGER" + ");";
 
     public static synchronized LocationsDB getInstance(Context context) {
 
@@ -103,14 +107,14 @@ public class LocationsDB extends SQLiteOpenHelper {
     }
     /** Inserts a new location to the table locations */
     public long insert(ContentValues contentValues){
-        long rowID = mDB.insert(DATABASE_TABLE, null, contentValues);
+        long rowID = mDB.insert(DATABASE_TABLE, "", contentValues);
         return rowID;
     }
     // public long incrementLocTimesV
     public void incrementLocTV(String name){
         String stmt = "UPDATE " + LOCNODE_TABLE +
                 " SET " +FIELD_TIMESVISITED + " = "+FIELD_TIMESVISITED+1
-                + "WHERE " + FIELD_NAME + "=" + name;
+                + " WHERE " + FIELD_NAME + " = " + name;
         mDB.execSQL(stmt);
     }
     /** Deletes all locations from the table locNodes */
