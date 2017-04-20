@@ -1,6 +1,7 @@
 package trace.traceapp;
 
 import android.content.Context;
+import android.widget.BaseAdapter;
 import android.widget.CursorAdapter;
 import android.database.Cursor;
 import android.view.View;
@@ -69,7 +70,9 @@ public class Loc extends CursorAdapter {
     }
 
 }*/
-public class Loc {
+
+
+public class Loc{
 
     public String title;
     public String statsLabel;
@@ -128,5 +131,8 @@ public class Loc {
         return json;
     }
 
+
 }
+
+
 
