@@ -1,6 +1,5 @@
 package trace.traceapp;
 
-import android.location.Location;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
@@ -16,7 +15,7 @@ import android.provider.MediaStore;
 import java.util.ArrayList;
 
 public class StatsActivity extends AppCompatActivity {
-    private GPSHandler appLocationManager;
+    private static GPSHandler appLocationManager = MainActivity.appLocationManager;
     private static int RESULT_LOAD_IMG = 1;
     String imgDecodableString;
 
@@ -27,21 +26,19 @@ public class StatsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_stats);
         locListView = (ListView) findViewById(R.id.LocationList);
 
-        appLocationManager = MainActivity.appLocationManager;
 
         // 1 loads a list of Location objects from a JSON asset in the app
         //contains a Location class that contains all the information
         //about the locations to be displayed.
-        //THIS WILL BE LOCNODE ARRAY NOT A LOCARRAY
-        final ArrayList<Location> locationList = appLocationManager.getLocArray();//Loc.getLocationsFromFile("locations.json", this);
+        final ArrayList<locNode> locationList = appLocationManager.getLocNodeArr();
         // 2 creates an array of strings that will contain the text to be displayed.
-        Double[] listItems = new Double[locationList.size()];
+        String[] listItems = new String[locationList.size()];
 
         // 3 Populates the listView with the titles of the locations lodaed in section one.
         for (int i =0; i< locationList.size(); i++)
         {
-            Location loc = locationList.get(i);
-            listItems[i] = loc.getLatitude();
+            locNode location = locationList.get(i);
+            listItems[i] = location.getLocName();
             //listItems[i] = location.addressLabel;
         }
 
@@ -107,7 +104,6 @@ public class StatsActivity extends AppCompatActivity {
             ImageView imageView = (ImageView) findViewById(R.id.imageView2);
             //need to find a way to scale image to the imageview
             imageView.setImageBitmap(BitmapFactory.decodeFile(picturePath));
-
 
         }
     }

@@ -27,6 +27,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private GoogleMap mMap;
     ArrayList<Location> mLocationArray;
+    private ArrayList<locNode> mLocNodeArray;
     static GPSHandler appLocationManager;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +40,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 //        mapFragment.getMapAsync(this);
         appLocationManager = MainActivity.appLocationManager;
          mLocationArray =appLocationManager.getLocArray();
+        mLocNodeArray = appLocationManager.getLocNodeArr();
         Button buttonOpenDialog = (Button) findViewById(R.id.testButton);
         buttonOpenDialog.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -57,6 +59,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         appLocationManager.makeLocNode(input.getEditableText()+"");
         ArrayList<locNode> arr = appLocationManager.getLocNodeArr();
         showToast(arr.get(0).getLocAddress());
+        drawAllPoints();
     }
     public void cancelClicked(){
         showToast("Not Saved");
@@ -76,14 +79,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
     public void drawAllPoints(){
         mMap.clear();
-        mLocationArray = appLocationManager.getLocArray();
+        mLocNodeArray = appLocationManager.getLocNodeArr();
         double lat = 40.3216491;
         double lng = -75.9911328;
-        for (int i = 0;i<mLocationArray.size();i++) {
+        for (int i = 0;i<mLocNodeArray.size();i++) {
 
-            if (mLocationArray.size() > 0) {
-                lat = mLocationArray.get(i).getLatitude();
-                lng = mLocationArray.get(i).getLongitude();
+            if (mLocNodeArray.size() > 0) {
+                lat = mLocNodeArray.get(i).getLocLatCoord();
+                lng = mLocNodeArray.get(i).getLocLongCoord();
             }
 
             // Add a marker and move the camera mLocationArray.get(0).getLatitude() mLocationArray.get(0).getLongitude()
@@ -101,13 +104,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap = googleMap;
         Log.i("testfile", "on map ready called setting up locationenabled");
         showToast("on map ready called");
+        appLocationManager.setMapRef(mMap);
         mMap.setMyLocationEnabled(true);
         mMap.setLocationSource(appLocationManager);
-        appLocationManager.setMapRef(mMap);
+
         mLocationArray = appLocationManager.getLocArray();
         String size = mLocationArray.size()+"";
         showToast(size);
-        //drawAllPoints();
+        drawAllPoints();
 
         mMap.animateCamera(CameraUpdateFactory.zoomTo(15.0f));
         mMap.setMaxZoomPreference(20.0f);
@@ -120,21 +124,21 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         //appLocationManager.drawPoly();
     }
     private int interval = 1000*6; // 6 Second
-    private Handler handler = new Handler();
-    private Runnable runnable = new Runnable(){
-        public void run() {
-            Log.i("testFile", "runnable fired");
-
-            int arrSize = mLocationArray.size();
-            mLocationArray = appLocationManager.getLocArray();
-            Toast.makeText(MapsActivity.this,mLocationArray.size()+"", Toast.LENGTH_SHORT).show();
-
-
-
-            handler.postAtTime(runnable, System.currentTimeMillis() + interval);
-            handler.postDelayed(runnable, interval);
-        }
-    };
+//    private Handler handler = new Handler();
+//    private Runnable runnable = new Runnable(){
+//        public void run() {
+//            Log.i("testFile", "runnable fired");
+//
+//            int arrSize = mLocationArray.size();
+//            mLocationArray = appLocationManager.getLocArray();
+//            Toast.makeText(MapsActivity.this,mLocationArray.size()+"", Toast.LENGTH_SHORT).show();
+//
+//
+//
+//            handler.postAtTime(runnable, System.currentTimeMillis() + interval);
+//            handler.postDelayed(runnable, interval);
+//        }
+//    };
 
     private void drawMarker(LatLng point){
 // Creating an instance of MarkerOptions
@@ -151,7 +155,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     protected void onStop() {
         super.onStop();
 
-        handler.removeCallbacks(runnable);
+//        handler.removeCallbacks(runnable);
     }
     protected void onPause(){
         super.onPause();
