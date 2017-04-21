@@ -19,7 +19,9 @@ public class locNode {
     LocationsDB db;
     public locNode() {
     }
-
+    public String getLocName(){
+        return locName;
+    }
     public int getTimesVisit() {
         return timesVisit;
     }

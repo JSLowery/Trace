@@ -15,7 +15,7 @@ import android.provider.MediaStore;
 import java.util.ArrayList;
 
 public class StatsActivity extends AppCompatActivity {
-
+    private static GPSHandler appLocationManager = MainActivity.appLocationManager;
     private static int RESULT_LOAD_IMG = 1;
     String imgDecodableString;
 
@@ -30,15 +30,15 @@ public class StatsActivity extends AppCompatActivity {
         // 1 loads a list of Location objects from a JSON asset in the app
         //contains a Location class that contains all the information
         //about the locations to be displayed.
-        final ArrayList<Loc> locationList = Loc.getLocationsFromFile("locations.json", this);
+        final ArrayList<locNode> locationList = appLocationManager.getLocNodeArr();
         // 2 creates an array of strings that will contain the text to be displayed.
         String[] listItems = new String[locationList.size()];
 
         // 3 Populates the listView with the titles of the locations lodaed in section one.
         for (int i =0; i< locationList.size(); i++)
         {
-            Loc location = locationList.get(i);
-            listItems[i] = location.title;
+            locNode location = locationList.get(i);
+            listItems[i] = location.getLocName();
             //listItems[i] = location.addressLabel;
         }
 

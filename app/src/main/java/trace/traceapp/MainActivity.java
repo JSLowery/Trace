@@ -114,11 +114,7 @@ public class MainActivity extends AppCompatActivity
 
         //stuff for getting location
         updateValuesFromBundle(savedInstanceState);
-       // mResultReceiver = new AddressResultReceiver(new Handler());
-        //testing data fragments
-        // find the retained fragment on activity restarts
 
-        // create the fragment and data the first time
 
     }
 
@@ -197,8 +193,12 @@ public class MainActivity extends AppCompatActivity
     private void updateUI() {
         ArrayList<locNode> LNA =appLocationManager.getLocNodeArr();
         showToast(appLocationManager.getLocNodeArr().size()+"");
-        if (LNA.size()>0){
-            showToast(LNA.get(0).getLocAddress());
+        for (locNode LN : LNA) {
+                showToast(LN.getLocAddress() + "\n"
+                        + LN.getLocName() + "\n"
+                        + LN.getLocLatCoord() + "\n"
+                        + LN.getLocLongCoord() + "\n"
+                        + LN.getTimesVisit());
         }
         if (appLocationManager.getLocation() != null) {
 
@@ -211,8 +211,8 @@ public class MainActivity extends AppCompatActivity
                     "\n Altitude: "+ appLocationManager.getAltitude()+
                     "\n Bearing: "+ appLocationManager.getBearing()+
                     "\n Time: " + (time2-time1)/1000+
-                    "\n Speed: " + appLocationManager.calcSpeed()+
-                    "\n Number of objects in array: "+ appLocationManager.getLocArray().size()+
+                    "\n Speed: " + appLocationManager.getSpeed()+
+                    "\n Number of objects in arrayLN: "+ appLocationManager.getLocNodeArr().size()+
                     "\n Elapsed time: " + NANOSECONDS.toSeconds((long)(nano2- nano1))
 
 
