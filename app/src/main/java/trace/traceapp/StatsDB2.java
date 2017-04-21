@@ -182,15 +182,12 @@ public class StatsDB2 extends SQLiteOpenHelper {
     }
 
     public String getName(){
-        //if(mDB != null) {
             mDB = this.getReadableDatabase();
             String query = "select " + FIELD_NAME_STATS + " from " + DATABASE_TABLE_STATS;
             Cursor cursor = mDB.rawQuery(query, null);
             cursor.moveToFirst();
             final String name = cursor.getString(cursor.getColumnIndex(FIELD_NAME_STATS));
             return name;
-       // }
-       // return "mDBWasNull_GetName()";
     }
 
     public String getHomeName(){
