@@ -16,9 +16,12 @@ public class locNode {
     private double locLongCoord;
     private int timesVisit = 0;
     private Location loc;
+    private boolean withinFlag = false;
     LocationsDB db;
     public locNode() {
     }
+    public boolean getFlag (){return withinFlag;}
+    public void setFlag(boolean bool){withinFlag = bool;}
     public String getLocName(){
         return locName;
     }
@@ -61,15 +64,19 @@ public class locNode {
     public void setLocLongCoord(double longitude) {
         this.locLongCoord = longitude;
     }
-    public void SetLoc(Location loc){
+    public void setLoc(Location loc){
         this.loc = loc;
         setLocLatCoord(loc.getLatitude());
         setLocLongCoord(loc.getLongitude());
     }
+    public String fixSql(String str){
+        str = str.replaceAll("'","''");
+        return str;
+    }
     public void storeSelf(Context context){
             ContentValues values = new ContentValues();
             db = LocationsDB.getInstance(context);
-            values.put(LocationsDB.FIELD_NAME, locName);
+            values.put(LocationsDB.FIELD_NAME, fixSql(locName));
             values.put(LocationsDB.FIELD_ADDY, locAddress);
             values.put(LocationsDB.FIELD_LAT, locLatCoord );
             values.put(LocationsDB.FIELD_LNG, locLongCoord );

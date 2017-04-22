@@ -68,7 +68,7 @@ public class GPSHandler implements GoogleApiClient.ConnectionCallbacks, OnConnec
     private String filename = "testFilemost.srl";
     LocationRequest mLocationRequest;
     private static final long INTERVAL = 60;
-    private static final long FASTEST_INTERVAL =1000*5; //5 seconds
+    private static final long FASTEST_INTERVAL =1000*1; //1 seconds
     protected static final String ADDRESS_REQUESTED_KEY = "address-request-pending";
     protected static final String LOCATION_ADDRESS_KEY = "location-address";
     private GoogleApiClient mGoogleApiClient;
@@ -91,8 +91,7 @@ public class GPSHandler implements GoogleApiClient.ConnectionCallbacks, OnConnec
         createLocationRequest();
 
         db = LocationsDB.getInstance(context);
-        if (GPSArray != null)
-        GPSArray.clear();
+        if (GPSArray == null)
         GPSArray= getFromFile();
         if (locNodeArr == null || locNodeArr.size()<1){
             locNodeArr = getLNFromFile();
@@ -125,17 +124,14 @@ public class GPSHandler implements GoogleApiClient.ConnectionCallbacks, OnConnec
     public void dumpToFile(){
 
 
-        ContentValues values = new ContentValues();
-        for (Location arr : GPSArray){
-            values.put(LocationsDB.FIELD_LAT, arr.getLatitude() );
-            values.put(LocationsDB.FIELD_LNG, arr.getLongitude() );
-            values.put(LocationsDB.FIELD_ACC, arr.getAccuracy() );
-            values.put(LocationsDB.FIELD_TIME, arr.getTime());
-            db.insert(values);
-        }
-
-
-
+//        ContentValues values = new ContentValues();
+//        for (Location arr : GPSArray){
+//            values.put(LocationsDB.FIELD_LAT, arr.getLatitude() );
+//            values.put(LocationsDB.FIELD_LNG, arr.getLongitude() );
+//            values.put(LocationsDB.FIELD_ACC, arr.getAccuracy() );
+//            values.put(LocationsDB.FIELD_TIME, arr.getTime());
+//            db.insert(values);
+//        }
     }
     public ArrayList<locNode> getLNFromFile(){
         ArrayList<locNode> LN = new ArrayList<>();
@@ -154,6 +150,10 @@ public class GPSHandler implements GoogleApiClient.ConnectionCallbacks, OnConnec
                     loc.setLocLatCoord(lat);
                     loc.setLocLongCoord(lng);
                     loc.setTimesVisit((int)timV);
+                    Location mlocation = new Location("fused");
+                    mlocation.setLatitude(lat);
+                    mlocation.setLongitude(lng);
+                    loc.setLoc(mlocation);
                     LN.add(loc);
 
                 }
@@ -165,8 +165,11 @@ public class GPSHandler implements GoogleApiClient.ConnectionCallbacks, OnConnec
     }
     public ArrayList<Location> getFromFile()
     {
-        if (GPSArray != null)
-        GPSArray.clear();
+        ArrayList<Location> tempLocArray = new ArrayList<>();
+        if (GPSArray != null) {
+            tempLocArray =(ArrayList<Location>) GPSArray.clone();
+            GPSArray.clear();
+        }
         if (mGoogleApiClient == null) {
             mGoogleApiClient = new GoogleApiClient.Builder(context)
                     .addConnectionCallbacks(this)
@@ -199,6 +202,15 @@ public class GPSHandler implements GoogleApiClient.ConnectionCallbacks, OnConnec
             }
             db.del();
         }
+//        if (tempLocArray != null){
+//            for (int i=0;i<tempLocArray.size();i++){
+//                if (nwLoc.contains(tempLocArray.get(i))){
+//                    nwLoc.remove(tempLocArray.get(i));
+//                }
+//            }
+//            if (tempLocArray.size()>0)
+//            nwLoc.addAll(tempLocArray);
+//        }
         GPSArray = nwLoc;
             Log.i(filename, "nwLoc: "+ count);
             Log.i(filename, nwLoc.toString());
@@ -229,6 +241,18 @@ public class GPSHandler implements GoogleApiClient.ConnectionCallbacks, OnConnec
         addLocArray(lastKnownLocation);
 
         locLatLng = new LatLng(lastKnownLocation.getLatitude(),lastKnownLocation.getLongitude());
+        for (locNode LN : locNodeArr){
+            Log.i(filename, LN.getLoc()+" ");
+            Log.i(filename, location + " ");
+            if (location.distanceTo(LN.getLoc())<30 && !LN.getFlag()){
+                LN.setFlag(true);
+                db.incrementLocTV(LN.fixSql(LN.getLocName()));
+                LN.setTimesVisit(LN.getTimesVisit()+1);
+            }
+            else
+                LN.setFlag(false);
+
+        }
         return lastKnownLocation;
     }
 
@@ -236,6 +260,12 @@ public class GPSHandler implements GoogleApiClient.ConnectionCallbacks, OnConnec
     public ArrayList<Location> getLocArray(){return GPSArray;}
     private void addLocArray(Location location){
         GPSArray.add(location);
+        ContentValues values = new ContentValues();
+            values.put(LocationsDB.FIELD_LAT, location.getLatitude() );
+            values.put(LocationsDB.FIELD_LNG, location.getLongitude() );
+            values.put(LocationsDB.FIELD_ACC, location.getAccuracy() );
+            values.put(LocationsDB.FIELD_TIME, location.getTime());
+            db.insert(values);
     }
     public void clearLocArray(){GPSArray = new ArrayList<>(); db.del();}
     public String getProvider(){
@@ -291,21 +321,22 @@ public class GPSHandler implements GoogleApiClient.ConnectionCallbacks, OnConnec
 
 
     }
-    public void drawPoly(){
+    private void drawPoly(){
         if (getLocArray() == null || locLatLng == null){
             return;
         }
+        ArrayList<Location> locAr = getLocArray();
         Log.i(filename, "location array sie "+ getLocArray().size());
         PolylineOptions options = new PolylineOptions().width(10).color(Color.BLUE).geodesic(true);
-        for (int i = 0; i < getLocArray().size(); i++) {
-            LatLng point = new LatLng(getLocArray().get(i).getLatitude(),getLocArray().get(i).getLongitude());
+        for (int i = 0; i < locAr.size(); i++) {
+            LatLng point = new LatLng(locAr.get(i).getLatitude(),locAr.get(i).getLongitude());
             options.add(point);
         }
 
         line = mMap.addPolyline(options);
         mMap.addPolyline(new PolylineOptions());
         mMap.moveCamera(CameraUpdateFactory.newLatLng(locLatLng));
-         mMap.animateCamera(CameraUpdateFactory.zoomTo(20.0f));
+        // mMap.animateCamera(CameraUpdateFactory.zoomTo(20.0f));
     }
     //Be Aware this will return speed in meters/ second
     public double calcSpeed(){
@@ -367,7 +398,6 @@ public class GPSHandler implements GoogleApiClient.ConnectionCallbacks, OnConnec
     public void activate(OnLocationChangedListener listener) {
         mListener = listener;
         Log.i(filename, "activate called");
-        Toast.makeText(context.getApplicationContext(), "dsfsd", Toast.LENGTH_SHORT);
         if (mCurrentLocation !=null){
             mListener.onLocationChanged(mCurrentLocation);
             if (mMap != null && locLatLng != null){
@@ -390,7 +420,7 @@ public class GPSHandler implements GoogleApiClient.ConnectionCallbacks, OnConnec
     public void makeLocNode(String name){
 
         locNode loc = new locNode();
-        loc.SetLoc(getLocation());
+        loc.setLoc(location);
         loc.setLocName(name);
         loc.setTimesVisit(1);
         if (curAddress != null) {
