@@ -169,8 +169,7 @@ public class GPSHandler implements GoogleApiClient.ConnectionCallbacks, OnConnec
     {
         ArrayList<Location> tempLocArray = new ArrayList<>();
         if (GPSArray != null) {
-            tempLocArray =(ArrayList<Location>) GPSArray.clone();
-            GPSArray.clear();
+            return GPSArray;
         }
         if (mGoogleApiClient == null) {
             mGoogleApiClient = new GoogleApiClient.Builder(context)
@@ -202,7 +201,7 @@ public class GPSHandler implements GoogleApiClient.ConnectionCallbacks, OnConnec
                 }
                 while(cursor.moveToNext());
             }
-            db.del();
+            //db.del();
         }
 //        if (tempLocArray != null){
 //            for (int i=0;i<tempLocArray.size();i++){
@@ -270,7 +269,10 @@ public class GPSHandler implements GoogleApiClient.ConnectionCallbacks, OnConnec
             values.put(LocationsDB.FIELD_LNG, location.getLongitude() );
             values.put(LocationsDB.FIELD_ACC, location.getAccuracy() );
             values.put(LocationsDB.FIELD_TIME, location.getTime());
-            db.insert(values);
+            long i = db.insert(values);
+            Log.i(filename, "I inserted values " + i);
+            i = db.getCountLocation();
+            Log.i(filename, "I have values " + i);
     }
     public void clearLocArray(){GPSArray = new ArrayList<>(); db.del();}
     public String getProvider(){
@@ -410,6 +412,14 @@ public class GPSHandler implements GoogleApiClient.ConnectionCallbacks, OnConnec
                 Log.i(filename,"This should be called when maps opens and draw the path");
                 drawPoly();
             }
+        }else if (GPSArray.size()>0 && mMap != null){
+            Location loc = GPSArray.get(GPSArray.size()-1);
+            if (locLatLng == null){
+
+                locLatLng = new LatLng(loc.getLatitude(), loc.getLongitude());
+            }
+            mCurrentLocation = loc;
+            drawPoly();
         }
     }
     protected void startIntentService() {

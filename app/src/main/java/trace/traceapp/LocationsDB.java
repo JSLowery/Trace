@@ -117,6 +117,16 @@ public class LocationsDB extends SQLiteOpenHelper {
                 + " WHERE " + FIELD_NAME + " = '" + name+"'";
         mDB.execSQL(stmt);
     }
+    public int getCountLocation() {
+        int count = 0;
+        Cursor c = null;
+        String stmt = "select count(*) as count from " + DATABASE_TABLE;
+        c = mDB.rawQuery(stmt, null);
+        while (c.moveToNext()){
+            count = c.getInt(0);
+        }
+        return count;
+    }
     /** Deletes all locations from the table locNodes */
     public int delLoc(){
         int cnt = mDB.delete(LOCNODE_TABLE, null , null);
