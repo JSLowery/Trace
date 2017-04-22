@@ -128,7 +128,11 @@ public class LocationsDB extends SQLiteOpenHelper {
         int cnt = mDB.delete(DATABASE_TABLE, null , null);
         return cnt;
     }
-
+    public void remNode(String name){
+        String stmt = "DELETE FROM " + LOCNODE_TABLE+
+                " WHERE " + FIELD_NAME + " + '" + name + "';";
+        mDB.execSQL(stmt);
+    }
     /** Returns all the locations from the table LocNode */
     public Cursor getAllLocationsLoc(){
         if (mDB != null)

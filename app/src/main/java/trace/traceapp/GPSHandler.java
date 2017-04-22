@@ -74,11 +74,13 @@ public class GPSHandler implements GoogleApiClient.ConnectionCallbacks, OnConnec
     private GoogleApiClient mGoogleApiClient;
     private ArrayList<locNode> locNodeArr;
     LocationsDB db;
+    StatsDB2 dbstats;
     private Location mCurrentLocation;
     String path = String.valueOf(Environment.getExternalStoragePublicDirectory(
             Environment.DIRECTORY_DOCUMENTS));
     private Context context;
     public GPSHandler(Context context) {
+        dbstats = new StatsDB2(context);
         this.context = context;
         if (mGoogleApiClient == null) {
             mGoogleApiClient = new GoogleApiClient.Builder(context)
@@ -221,6 +223,7 @@ public class GPSHandler implements GoogleApiClient.ConnectionCallbacks, OnConnec
 
     //Sets the users CURRENT location
     private Location setMostRecentLocation(Location lastKnownLocation) {
+
         double lon;
         lon = lastKnownLocation.getLongitude();
         double lat;
@@ -232,6 +235,8 @@ public class GPSHandler implements GoogleApiClient.ConnectionCallbacks, OnConnec
         longitude = lon + "";
         latitude = lat + "";
         accuracy = acc + "";
+        if (location != null)
+        dbstats.updateDistance(location.distanceTo(lastKnownLocation));
         location = lastKnownLocation;
         provider = prov;
         bearing = lastKnownLocation.getBearing();
