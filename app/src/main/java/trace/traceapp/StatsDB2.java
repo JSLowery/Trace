@@ -214,11 +214,18 @@ public class StatsDB2 extends SQLiteOpenHelper {
 }
 
 /*
-private class DatabaseOpenHelper extends SQLiteOpenHelper{
+functions in gpsHandler
+    public double getTotalDistance(){return statsdb.getDistance();}
+    public String getName(){
+        //statsdb.updateName("PleaseWorkMatey");
+        return statsdb.getName();}
 
-    public DatabaseOpenHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version){
-
-    }
-}
+       // add up total distance stuff
+        distanceBetween(loc1.getLatitude(), loc1.getLongitude(),
+                loc2.getLatitude(), loc2.getLongitude(), results);
+        //get the distance, add new dist, update
+        double dist = statsdb.getDistance();
+        dist += results[0];
+        statsdb.updateDistance(dist);
 */
 
