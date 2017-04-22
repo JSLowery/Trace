@@ -160,7 +160,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     protected void onPause(){
         super.onPause();
         Log.i("testFile", "Maps called dump file");
-        appLocationManager.dumpToFile();
+
         mMap.setMyLocationEnabled(false);
     }
     protected void onResume(){

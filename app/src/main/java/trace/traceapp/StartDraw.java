@@ -105,7 +105,7 @@ public class StartDraw extends Activity {
 
     protected void onPause(){
         super.onPause();
-        appLocationManager.dumpToFile();
+
     }
 }
 

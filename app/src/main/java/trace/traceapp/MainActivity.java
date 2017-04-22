@@ -272,8 +272,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onPause() {
         super.onPause();
-        Log.i("testFile", "Main called dump file");
-        appLocationManager.dumpToFile();
+
 
     }
     protected void onDestroy(){
