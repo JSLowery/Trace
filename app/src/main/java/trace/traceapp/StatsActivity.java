@@ -11,6 +11,7 @@ import android.database.Cursor;
 import android.widget.ImageView;
 import android.net.Uri;
 import android.provider.MediaStore;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 
@@ -18,6 +19,7 @@ public class StatsActivity extends AppCompatActivity {
     private static GPSHandler appLocationManager = MainActivity.appLocationManager;
     private static int RESULT_LOAD_IMG = 1;
     String imgDecodableString;
+    StatsDB2 statsdb;
 
     private ListView locListView;
     @Override
@@ -26,7 +28,7 @@ public class StatsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_stats);
         locListView = (ListView) findViewById(R.id.LocationList);
 
-
+        statsdb = StatsDB2.getInstance(getApplicationContext());
         // 1 loads a list of Location objects from a JSON asset in the app
         //contains a Location class that contains all the information
         //about the locations to be displayed.
@@ -41,7 +43,8 @@ public class StatsActivity extends AppCompatActivity {
             listItems[i] = location.getLocName() + " "+ location.getTimesVisit();
             //listItems[i] = location.getTimesVisit()+"";
         }
-
+        TextView nameText = (TextView) findViewById(R.id.usernameStats);
+        nameText.setText("Name: " + statsdb.getName());
         // 4 creates and sets a simpl adapter for the listView.
         //it takes in the current context, a layout file what each row should look like
         // and the data that will populate the list as arguments.

@@ -74,6 +74,7 @@ public class GPSHandler implements GoogleApiClient.ConnectionCallbacks, OnConnec
     private GoogleApiClient mGoogleApiClient;
     private ArrayList<locNode> locNodeArr;
     LocationsDB db;
+    StatsDB2 statsdb;
     private Location mCurrentLocation;
     String path = String.valueOf(Environment.getExternalStoragePublicDirectory(
             Environment.DIRECTORY_DOCUMENTS));
@@ -89,7 +90,7 @@ public class GPSHandler implements GoogleApiClient.ConnectionCallbacks, OnConnec
         }
         mGoogleApiClient.connect();
         createLocationRequest();
-
+        statsdb = StatsDB2.getInstance(context);
         db = LocationsDB.getInstance(context);
         if (GPSArray == null)
         GPSArray= getFromFile();

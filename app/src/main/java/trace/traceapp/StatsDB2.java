@@ -22,6 +22,7 @@ public class StatsDB2 extends SQLiteOpenHelper {
 
     private static boolean init = false;
 
+    private static StatsDB2 sInstance;
     /** A constant, stores the the table name */
     public static final String DATABASE_TABLE_STATS = "stats2";
     public static final String FIELD_TDISTANCE_STATS = "tdistance";
@@ -54,6 +55,18 @@ public class StatsDB2 extends SQLiteOpenHelper {
         db.execSQL(sql);
         //initializes the database when it's created
         initDB(db);
+    }
+
+    public static synchronized StatsDB2 getInstance(Context context) {
+
+        // Use the application context, which will ensure that you
+        // don't accidentally leak an Activity's context.
+        // See this article for more information: http://bit.ly/6LRzfx
+        if (sInstance == null) {
+            sInstance = new StatsDB2(context.getApplicationContext());
+
+        }
+        return sInstance;
     }
 
     public void initDB(SQLiteDatabase mDB){

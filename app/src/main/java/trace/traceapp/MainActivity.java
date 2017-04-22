@@ -45,6 +45,7 @@ import static java.util.concurrent.TimeUnit.NANOSECONDS;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener
         {
+    private StatsDB2 statsdb;
     //LocationClient locationClient;
     private static final String TAG = "LocationActivity";
     private static final long INTERVAL = 60;
@@ -114,8 +115,7 @@ public class MainActivity extends AppCompatActivity
 
         //stuff for getting location
         updateValuesFromBundle(savedInstanceState);
-
-
+        statsdb = StatsDB2.getInstance(getApplicationContext());
     }
 
     @Override
@@ -158,6 +158,9 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_stats) {
+            statsdb.updateName("asdjfk;");
+            TextView name = (TextView) findViewById(R.id.username);
+            name.setText(statsdb.getName());
             startActivity(new Intent(MainActivity.this, StatsActivity.class));
         } else if (id == R.id.nav_mapview) {
             startActivity(new Intent(MainActivity.this, MapsActivity.class));
