@@ -166,12 +166,12 @@ public class StatsDB2 extends SQLiteOpenHelper {
     }
 
     public String getName(){
-            mDB = this.getReadableDatabase();
-            String query = "select " + FIELD_NAME_STATS + " from " + DATABASE_TABLE_STATS;
-            Cursor cursor = mDB.rawQuery(query, null);
-            cursor.moveToFirst();
-            final String name = cursor.getString(cursor.getColumnIndex(FIELD_NAME_STATS));
-            return name;
+        mDB = this.getReadableDatabase();
+        String query = "select " + FIELD_NAME_STATS + " from " + DATABASE_TABLE_STATS;
+        Cursor cursor = mDB.rawQuery(query, null);
+        cursor.moveToFirst();
+        final String name = cursor.getString(cursor.getColumnIndex(FIELD_NAME_STATS));
+        return name;
     }
 
     public String getHomeName(){
