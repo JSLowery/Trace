@@ -38,8 +38,8 @@ public class StatsActivity extends AppCompatActivity {
         for (int i =0; i< locationList.size(); i++)
         {
             locNode location = locationList.get(i);
-            listItems[i] = location.getLocName();
-            //listItems[i] = location.addressLabel;
+            listItems[i] = location.getLocName() + " "+ location.getTimesVisit();
+            //listItems[i] = location.getTimesVisit()+"";
         }
 
         // 4 creates and sets a simpl adapter for the listView.

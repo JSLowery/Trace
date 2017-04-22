@@ -113,8 +113,8 @@ public class LocationsDB extends SQLiteOpenHelper {
     // public long incrementLocTimesV
     public void incrementLocTV(String name){
         String stmt = "UPDATE " + LOCNODE_TABLE +
-                " SET " +FIELD_TIMESVISITED + " = "+FIELD_TIMESVISITED+1
-                + " WHERE " + FIELD_NAME + " = " + name;
+                " SET " +FIELD_TIMESVISITED + " = "+FIELD_TIMESVISITED+"+1"
+                + " WHERE " + FIELD_NAME + " = '" + name+"'";
         mDB.execSQL(stmt);
     }
     /** Deletes all locations from the table locNodes */

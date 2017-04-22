@@ -78,7 +78,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
     }
     public void drawAllPoints(){
-        mMap.clear();
+        //mMap.clear();
         mLocNodeArray = appLocationManager.getLocNodeArr();
         double lat = 40.3216491;
         double lng = -75.9911328;
