@@ -41,6 +41,8 @@ public class locNode {
         return locLongCoord;
     }
 
+   // public String getLocName() { return locName; }
+
     public Location getLoc() {
         return loc;
     }
