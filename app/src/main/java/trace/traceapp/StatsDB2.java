@@ -39,22 +39,6 @@ public class StatsDB2 extends SQLiteOpenHelper {
 
     public StatsDB2(Context context){
         super(context, DBNAME, null, VERSION);
-        //if(mDB == null){
-          //  mDB = getWritableDatabase();
-          //  Log.d("DB: ","getWritabledatabase() works");
-            //mDB.execSQL("DROP TABLE IF EXISTS " + DATABASE_TABLE_STATS);
-            //if(mDB.isOpen()){
-            //Log.d("Constructor: ","is the db open?");
-            //Log.d("Name: " , this.getName());
-            //mDB.close();
-            //mDB.delete(DATABASE_TABLE_STATS, "1", null);
-            //Log.d("Rows: ", "rows were removed man");
-            //}
-            //else{
-            //Log.d("Create: ","Oncreate about to run");
-            //onCreate(mDB);
-            //}
-        //}
     }
     @Override
     public void onCreate(SQLiteDatabase db) {
@@ -182,12 +166,12 @@ public class StatsDB2 extends SQLiteOpenHelper {
     }
 
     public String getName(){
-            mDB = this.getReadableDatabase();
-            String query = "select " + FIELD_NAME_STATS + " from " + DATABASE_TABLE_STATS;
-            Cursor cursor = mDB.rawQuery(query, null);
-            cursor.moveToFirst();
-            final String name = cursor.getString(cursor.getColumnIndex(FIELD_NAME_STATS));
-            return name;
+        mDB = this.getReadableDatabase();
+        String query = "select " + FIELD_NAME_STATS + " from " + DATABASE_TABLE_STATS;
+        Cursor cursor = mDB.rawQuery(query, null);
+        cursor.moveToFirst();
+        final String name = cursor.getString(cursor.getColumnIndex(FIELD_NAME_STATS));
+        return name;
     }
 
     public String getHomeName(){
@@ -216,16 +200,35 @@ public class StatsDB2 extends SQLiteOpenHelper {
 /*
 functions in gpsHandler
     public double getTotalDistance(){return statsdb.getDistance();}
-    public String getName(){
-        //statsdb.updateName("PleaseWorkMatey");
-        return statsdb.getName();}
+    public String getName(){return statsdb.getName();}
 
-       // add up total distance stuff
-        distanceBetween(loc1.getLatitude(), loc1.getLongitude(),
-                loc2.getLatitude(), loc2.getLongitude(), results);
+       //Total distance stuff
+       float[] results = new float[1];
+        distanceBetween(mPreviousLocation.getLatitude(), mPreviousLocation.getLongitude(),
+                mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude(), results);
         //get the distance, add new dist, update
         double dist = statsdb.getDistance();
         dist += results[0];
         statsdb.updateDistance(dist);
 */
 
+/*
+//old onCreate stuff
+
+        //if(mDB == null){
+          //  mDB = getWritableDatabase();
+          //  Log.d("DB: ","getWritabledatabase() works");
+            //mDB.execSQL("DROP TABLE IF EXISTS " + DATABASE_TABLE_STATS);
+            //if(mDB.isOpen()){
+            //Log.d("Constructor: ","is the db open?");
+            //Log.d("Name: " , this.getName());
+            //mDB.close();
+            //mDB.delete(DATABASE_TABLE_STATS, "1", null);
+            //Log.d("Rows: ", "rows were removed man");
+            //}
+            //else{
+            //Log.d("Create: ","Oncreate about to run");
+            //onCreate(mDB);
+            //}
+        //}
+ */
