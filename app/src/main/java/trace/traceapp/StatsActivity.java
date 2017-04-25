@@ -40,8 +40,11 @@ public class StatsActivity extends AppCompatActivity {
         for (int i =0; i< locationList.size(); i++)
         {
             locNode location = locationList.get(i);
-            listItems[i] = location.getLocName() + " "+ location.getTimesVisit();
+            listItems[i] = location.getLocName() +
+                    "                    Times Visited: "+ location.getTimesVisit();
             //listItems[i] = location.getTimesVisit()+"";
+            //God I hate putting whitespaces with the space bar. Could not remember the format
+            //to add whitespace before the text. Really messy but whatever for now.
         }
         TextView nameText = (TextView) findViewById(R.id.usernameStats);
         nameText.setText("Name: " + statsdb.getName());

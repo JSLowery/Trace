@@ -62,6 +62,7 @@ public class MainActivity extends AppCompatActivity
     protected boolean mAddressRequested;
     protected TextView mLocationAddressTextView;
     protected FragmentManager fm;
+            DrawView drawView;
     // end google api stuff
     static GPSHandler appLocationManager;
     @Override
@@ -76,6 +77,9 @@ public class MainActivity extends AppCompatActivity
         }
         Log.i(TAG, "onCreate");
         setContentView(R.layout.activity_main);
+
+//        drawView = new DrawView(this);
+//        setContentView(drawView);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         if (appLocationManager ==null)
@@ -283,13 +287,12 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onResume() {
         super.onResume();
-
+        appLocationManager.switchTo_ScreenOn_Updates();
     }
     @Override
     protected void onPause() {
         super.onPause();
-        Log.i("testFile", "Main called dump file");
-        appLocationManager.dumpToFile();
+        appLocationManager.switchTo_ScreenOff_Updates();
 
     }
     protected void onDestroy(){

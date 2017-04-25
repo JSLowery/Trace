@@ -117,6 +117,16 @@ public class LocationsDB extends SQLiteOpenHelper {
                 + " WHERE " + FIELD_NAME + " = '" + name+"'";
         mDB.execSQL(stmt);
     }
+    public int getCountLocation() {
+        int count = 0;
+        Cursor c = null;
+        String stmt = "select count(*) as count from " + DATABASE_TABLE;
+        c = mDB.rawQuery(stmt, null);
+        while (c.moveToNext()){
+            count = c.getInt(0);
+        }
+        return count;
+    }
     /** Deletes all locations from the table locNodes */
     public int delLoc(){
         int cnt = mDB.delete(LOCNODE_TABLE, null , null);
@@ -128,7 +138,11 @@ public class LocationsDB extends SQLiteOpenHelper {
         int cnt = mDB.delete(DATABASE_TABLE, null , null);
         return cnt;
     }
-
+    public void remNode(String name){
+        String stmt = "DELETE FROM " + LOCNODE_TABLE+
+                " WHERE " + FIELD_NAME + " + '" + name + "';";
+        mDB.execSQL(stmt);
+    }
     /** Returns all the locations from the table LocNode */
     public Cursor getAllLocationsLoc(){
         if (mDB != null)
