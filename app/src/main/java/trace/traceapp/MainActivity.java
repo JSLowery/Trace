@@ -36,6 +36,7 @@ import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.vision.text.Text;
 
 import java.util.ArrayList;
 
@@ -45,6 +46,7 @@ import static java.util.concurrent.TimeUnit.NANOSECONDS;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener
         {
+    private StatsDB2 statsdb;
     //LocationClient locationClient;
     private static final String TAG = "LocationActivity";
     private static final long INTERVAL = 60;
@@ -105,9 +107,21 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
+        statsdb = StatsDB2.getInstance(getApplicationContext());
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close){
+            //when the drawer is opened initilize username,distance,picture mayb
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+                TextView unameDrawerText = (TextView) findViewById(R.id.usernameDrawer);
+                TextView distanceDrawerText = (TextView) findViewById(R.id.totalDistanceDrawer);
+                unameDrawerText.setText(statsdb.getName());
+                distanceDrawerText.setText("Traveled " + statsdb.getDistance() + "mi");
+                //add image stuff here dave
+            }
+        };
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
@@ -118,7 +132,6 @@ public class MainActivity extends AppCompatActivity
 
         //stuff for getting location
         updateValuesFromBundle(savedInstanceState);
-
 
     }
 
@@ -162,6 +175,9 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_stats) {
+            //statsdb.updateName("asdjfk;");
+            //TextView name = (TextView) findViewById(R.id.username);
+            //name.setText(statsdb.getName());
             startActivity(new Intent(MainActivity.this, StatsActivity.class));
         } else if (id == R.id.nav_mapview) {
             startActivity(new Intent(MainActivity.this, MapsActivity.class));
