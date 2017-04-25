@@ -14,6 +14,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.Log;
 import android.view.View;
+import android.widget.LinearLayout;
 
 import java.util.ArrayList;
 
@@ -37,6 +38,16 @@ public class DrawView extends View {
         super(context);
         paint.setColor(Color.BLACK);
         paint.setStrokeWidth(5);
+//        Layout layout = (LinearLayout) this;
+//
+//        //set the properties for button
+//        Button btnTag = new Button(this);
+//        btnTag.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+//        btnTag.setText("Button");
+//        btnTag.setId(some_random_id);
+//
+//        //add button to the layout
+//        layout.addView(btnTag);
     }
 
     @Override

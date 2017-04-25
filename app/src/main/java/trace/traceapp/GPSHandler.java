@@ -75,6 +75,7 @@ public class GPSHandler implements GoogleApiClient.ConnectionCallbacks, OnConnec
     protected static final String LOCATION_ADDRESS_KEY ="location-address";
     private GoogleApiClient mGoogleApiClient;
     private ArrayList<locNode> locNodeArr;
+
     LocationsDB db;
     StatsDB2 dbstats;
     private Location mCurrentLocation;
@@ -350,7 +351,7 @@ public class GPSHandler implements GoogleApiClient.ConnectionCallbacks, OnConnec
         line = mMap.addPolyline(options);
         //line.setJointType(JointType.Round);
         mMap.addPolyline(new PolylineOptions());
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(locLatLng));
+       //mMap.moveCamera(CameraUpdateFactory.newLatLng(locLatLng));
         // mMap.animateCamera(CameraUpdateFactory.zoomTo(20.0f));
     }
     //Be Aware this will return speed in meters/ second
@@ -405,8 +406,9 @@ public class GPSHandler implements GoogleApiClient.ConnectionCallbacks, OnConnec
         mLocationRequest = new LocationRequest();
         mLocationRequest.setInterval(INTERVAL);
         mLocationRequest.setFastestInterval(FASTEST_INTERVAL);
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
         mLocationRequest.setSmallestDisplacement(SCREEN_ON_DISPLACEMENT);
+        
     }
     protected void createLocationRequestScreenOff() {
         mLocationRequest = new LocationRequest();

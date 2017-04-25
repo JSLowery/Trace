@@ -41,9 +41,7 @@ public class locNode {
     public double getLocLongCoord() {
         return locLongCoord;
     }
-
-   // public String getLocName() { return locName; }
-
+    public int getTimesVisited() {return timesVisit;}
     public Location getLoc() {
         return loc;
     }

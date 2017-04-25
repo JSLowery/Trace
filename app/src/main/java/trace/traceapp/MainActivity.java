@@ -53,7 +53,6 @@ public class MainActivity extends AppCompatActivity
     private static final long FASTEST_INTERVAL =0;
     protected static final String ADDRESS_REQUESTED_KEY = "address-request-pending";
     protected static final String LOCATION_ADDRESS_KEY = "location-address";
-     static RetainedFragment dataFragment;
     LocationRequest mLocationRequest;
     Location mCurrentLocation;
     //stuff for address
@@ -97,15 +96,9 @@ public class MainActivity extends AppCompatActivity
             Log.i("testfile", "made a new GPSHANDLER");
         }
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                updateUI();
-                Snackbar.make(view, "Write something here!", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+//
+//
+//
 
         statsdb = StatsDB2.getInstance(getApplicationContext());
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
