@@ -3,6 +3,7 @@ package trace.traceapp;
 import android.content.ContentValues;
 import android.content.Context;
 import android.location.Location;
+import android.util.Log;
 
 /**
  * Created by david on 4/11/2017.
@@ -84,6 +85,7 @@ public class locNode {
             values.put(LocationsDB.FIELD_LNG, locLongCoord );
             values.put(LocationsDB.FIELD_TIMESVISITED, timesVisit);
             db.insertLoc(values);
+        Log.i("test", "Hi my name is "+ locName + " and I stored myself");
     }
     /*public void setLocationCoord(float latitude, float longitude) {
         this.locLatCoord = latitude;

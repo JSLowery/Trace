@@ -69,16 +69,20 @@ public class GPSHandler implements GoogleApiClient.ConnectionCallbacks, OnConnec
     LocationRequest mLocationRequest;
     private static final long INTERVAL = 60;
     private static final long FASTEST_INTERVAL =1000*1; //1 seconds
+    private static final float PAUSE_DISPLACEMENT = 50.0f;
+    private static final float SCREEN_ON_DISPLACEMENT = 5.0f;
     protected static final String ADDRESS_REQUESTED_KEY = "address-request-pending";
-    protected static final String LOCATION_ADDRESS_KEY = "location-address";
+    protected static final String LOCATION_ADDRESS_KEY ="location-address";
     private GoogleApiClient mGoogleApiClient;
     private ArrayList<locNode> locNodeArr;
     LocationsDB db;
+    StatsDB2 dbstats;
     private Location mCurrentLocation;
     String path = String.valueOf(Environment.getExternalStoragePublicDirectory(
             Environment.DIRECTORY_DOCUMENTS));
     private Context context;
     public GPSHandler(Context context) {
+        dbstats = new StatsDB2(context);
         this.context = context;
         if (mGoogleApiClient == null) {
             mGoogleApiClient = new GoogleApiClient.Builder(context)
@@ -167,8 +171,7 @@ public class GPSHandler implements GoogleApiClient.ConnectionCallbacks, OnConnec
     {
         ArrayList<Location> tempLocArray = new ArrayList<>();
         if (GPSArray != null) {
-            tempLocArray =(ArrayList<Location>) GPSArray.clone();
-            GPSArray.clear();
+            return GPSArray;
         }
         if (mGoogleApiClient == null) {
             mGoogleApiClient = new GoogleApiClient.Builder(context)
@@ -200,7 +203,7 @@ public class GPSHandler implements GoogleApiClient.ConnectionCallbacks, OnConnec
                 }
                 while(cursor.moveToNext());
             }
-            db.del();
+            //db.del();
         }
 //        if (tempLocArray != null){
 //            for (int i=0;i<tempLocArray.size();i++){
@@ -221,6 +224,7 @@ public class GPSHandler implements GoogleApiClient.ConnectionCallbacks, OnConnec
 
     //Sets the users CURRENT location
     private Location setMostRecentLocation(Location lastKnownLocation) {
+
         double lon;
         lon = lastKnownLocation.getLongitude();
         double lat;
@@ -232,6 +236,8 @@ public class GPSHandler implements GoogleApiClient.ConnectionCallbacks, OnConnec
         longitude = lon + "";
         latitude = lat + "";
         accuracy = acc + "";
+        if (location != null)
+        dbstats.updateDistance(location.distanceTo(lastKnownLocation));
         location = lastKnownLocation;
         provider = prov;
         bearing = lastKnownLocation.getBearing();
@@ -257,7 +263,10 @@ public class GPSHandler implements GoogleApiClient.ConnectionCallbacks, OnConnec
     }
 
     //Getter and setter bull
-    public ArrayList<Location> getLocArray(){return GPSArray;}
+    public ArrayList<Location> getLocArray(){
+//        if (GPSArray == null)
+//            return new ArrayList<Location>();
+        return GPSArray;}
     private void addLocArray(Location location){
         GPSArray.add(location);
         ContentValues values = new ContentValues();
@@ -265,7 +274,10 @@ public class GPSHandler implements GoogleApiClient.ConnectionCallbacks, OnConnec
             values.put(LocationsDB.FIELD_LNG, location.getLongitude() );
             values.put(LocationsDB.FIELD_ACC, location.getAccuracy() );
             values.put(LocationsDB.FIELD_TIME, location.getTime());
-            db.insert(values);
+            long i = db.insert(values);
+            Log.i(filename, "I inserted values " + i);
+            i = db.getCountLocation();
+            Log.i(filename, "I have values " + i);
     }
     public void clearLocArray(){GPSArray = new ArrayList<>(); db.del();}
     public String getProvider(){
@@ -301,12 +313,13 @@ public class GPSHandler implements GoogleApiClient.ConnectionCallbacks, OnConnec
             locLatLng = new LatLng(mCurrentLocation.getLatitude(),mCurrentLocation.getLongitude());
             if (mListener != null)
                 mListener.onLocationChanged(location);
+                drawPoly();
 
         }
-        if (mCurrentLocation.getLongitude()==location.getLongitude() && mCurrentLocation.getLatitude()== location.getLatitude())
-            return;
+
         if (location.getAccuracy()<= 100 && location.distanceTo(mCurrentLocation)> location.getAccuracy())  {
             startIntentService();
+            Log.i(filename,"Distance between this and last node is " +mCurrentLocation.distanceTo(location) );
             mCurrentLocation = location;
 
             setMostRecentLocation(mCurrentLocation);
@@ -322,18 +335,20 @@ public class GPSHandler implements GoogleApiClient.ConnectionCallbacks, OnConnec
 
     }
     private void drawPoly(){
-        if (getLocArray() == null || locLatLng == null){
+        if (getLocArray() == null || locLatLng == null || mMap == null){
             return;
         }
         ArrayList<Location> locAr = getLocArray();
         Log.i(filename, "location array sie "+ getLocArray().size());
-        PolylineOptions options = new PolylineOptions().width(10).color(Color.BLUE).geodesic(true);
+        PolylineOptions options = new PolylineOptions().width(12).color(Color.BLUE).geodesic(true);
+        //options = options.s();
         for (int i = 0; i < locAr.size(); i++) {
             LatLng point = new LatLng(locAr.get(i).getLatitude(),locAr.get(i).getLongitude());
             options.add(point);
         }
 
         line = mMap.addPolyline(options);
+        //line.setJointType(JointType.Round);
         mMap.addPolyline(new PolylineOptions());
         mMap.moveCamera(CameraUpdateFactory.newLatLng(locLatLng));
         // mMap.animateCamera(CameraUpdateFactory.zoomTo(20.0f));
@@ -362,6 +377,16 @@ public class GPSHandler implements GoogleApiClient.ConnectionCallbacks, OnConnec
 
         }
     }
+    public void switchTo_ScreenOff_Updates(){
+        //stopLocationUpdates();
+        createLocationRequestScreenOff();
+        //startLocationUpdates();
+    }
+    public void switchTo_ScreenOn_Updates(){
+        //stopLocationUpdates();
+        createLocationRequest();
+        //startLocationUpdates();
+    }
     protected void startLocationUpdates() {
         PendingResult<Status> pendingResult = LocationServices.FusedLocationApi.requestLocationUpdates(
                 mGoogleApiClient, mLocationRequest, this);
@@ -381,6 +406,14 @@ public class GPSHandler implements GoogleApiClient.ConnectionCallbacks, OnConnec
         mLocationRequest.setInterval(INTERVAL);
         mLocationRequest.setFastestInterval(FASTEST_INTERVAL);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        mLocationRequest.setSmallestDisplacement(SCREEN_ON_DISPLACEMENT);
+    }
+    protected void createLocationRequestScreenOff() {
+        mLocationRequest = new LocationRequest();
+        mLocationRequest.setInterval(INTERVAL);
+        mLocationRequest.setFastestInterval(FASTEST_INTERVAL);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        mLocationRequest.setSmallestDisplacement(PAUSE_DISPLACEMENT);
     }
     public void onDisconnected(){
         Toast.makeText(context, "Connected from Google Play Services.", Toast.LENGTH_SHORT).show();
@@ -405,6 +438,14 @@ public class GPSHandler implements GoogleApiClient.ConnectionCallbacks, OnConnec
                 Log.i(filename,"This should be called when maps opens and draw the path");
                 drawPoly();
             }
+        }else if (GPSArray.size()>0 && mMap != null){
+            Location loc = GPSArray.get(GPSArray.size()-1);
+            if (locLatLng == null){
+
+                locLatLng = new LatLng(loc.getLatitude(), loc.getLongitude());
+            }
+            mCurrentLocation = loc;
+            drawPoly();
         }
     }
     protected void startIntentService() {

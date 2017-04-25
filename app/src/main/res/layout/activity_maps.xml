@@ -15,8 +15,16 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Save"
-        android:id="@+id/testButton"
+        android:id="@+id/SaveNodeButton"
         android:layout_alignParentLeft="true"
         android:layout_marginTop="70px"/>
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Clear"
+        android:id="@+id/ClearButton"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="20dp" />
 
 </RelativeLayout>

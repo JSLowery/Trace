@@ -2,6 +2,7 @@ package trace.traceapp;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.content.Intent;
@@ -11,12 +12,14 @@ import android.database.Cursor;
 import android.widget.ImageView;
 import android.net.Uri;
 import android.provider.MediaStore;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 
 public class StatsActivity extends AppCompatActivity {
     private static GPSHandler appLocationManager = MainActivity.appLocationManager;
     private static int RESULT_LOAD_IMG = 1;
+
     String imgDecodableString;
 
     private ListView locListView;
@@ -25,7 +28,8 @@ public class StatsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_stats);
         locListView = (ListView) findViewById(R.id.LocationList);
-
+//        TextView txt5 = (TextView) findViewById(R.id.textView5);
+//        txt5.setText(statsDB.getDistance()+"");
 
         // 1 loads a list of Location objects from a JSON asset in the app
         //contains a Location class that contains all the information
