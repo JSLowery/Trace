@@ -65,6 +65,7 @@ public class StartDraw extends Activity {
         //appLocationManager = new GPSHandler();
 
         drawView = new DrawView(this);
+
         drawView.setBackgroundColor(Color.WHITE);
         setContentView(drawView);
         drawView.setWillNotDraw(false);

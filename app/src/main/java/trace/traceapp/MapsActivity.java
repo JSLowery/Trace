@@ -41,7 +41,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         appLocationManager = MainActivity.appLocationManager;
          mLocationArray =appLocationManager.getLocArray();
         mLocNodeArray = appLocationManager.getLocNodeArr();
-        Button buttonOpenDialog = (Button) findViewById(R.id.testButton);
+        Button buttonClear = (Button) findViewById(R.id.ClearButton);
+        buttonClear.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View arg0){
+                appLocationManager.clearLocArray();
+                mMap.clear();
+                drawAllPoints();
+            }
+        });
+        Button buttonOpenDialog = (Button) findViewById(R.id.SaveNodeButton);
         buttonOpenDialog.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View arg0){
@@ -91,7 +100,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             // Add a marker and move the camera mLocationArray.get(0).getLatitude() mLocationArray.get(0).getLongitude()
             LatLng marker = new LatLng(lat, lng);
-            drawMarker(marker);
+            drawMarker(marker, mLocNodeArray.get(i).getLocName(), mLocNodeArray.get(i).getLocAddress());
 
             Log.i("testFile", "Added: "+marker.latitude+" "+marker.longitude);
 
@@ -140,15 +149,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 //        }
 //    };
 
-    private void drawMarker(LatLng point){
+    private void drawMarker(LatLng point, String name, String address){
 // Creating an instance of MarkerOptions
         MarkerOptions markerOptions = new MarkerOptions();
 
 // Setting latitude and longitude for the marker
-        markerOptions.position(point);
+        markerOptions.position(point)
+        .title(name)
+        .snippet(address);
         Log.i("testFile", "drawMarker"+point.toString());
 // Adding marker on the Google Map
         mMap.addMarker(markerOptions);
+
         mMap.moveCamera(CameraUpdateFactory.newLatLng(point));
 
     }
@@ -160,8 +172,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     protected void onPause(){
         super.onPause();
         Log.i("testFile", "Maps called dump file");
-
         mMap.setMyLocationEnabled(false);
+        appLocationManager.switchTo_ScreenOff_Updates();
     }
     protected void onResume(){
         super.onResume();
@@ -171,6 +183,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+        appLocationManager.switchTo_ScreenOn_Updates();
 //        handler.postAtTime(runnable, System.currentTimeMillis()+interval);
 //        handler.postDelayed(runnable, interval/6);
     }
