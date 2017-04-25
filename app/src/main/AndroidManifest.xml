@@ -63,6 +63,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        BASICALLY it was starting up two main activites so whatever was happening in the one
+        would happen in the other.
     -->
     </application>
 
