@@ -60,7 +60,7 @@ public class StartDraw extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         appLocationManager = MainActivity.appLocationManager;
-        setContentView(R.layout.activity_main);
+        //setContentView(R.layout.activity_main);
 
         //appLocationManager = new GPSHandler();
 

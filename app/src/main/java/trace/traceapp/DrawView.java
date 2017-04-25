@@ -32,22 +32,13 @@ public class DrawView extends View {
     private static final double downScale = 1.2;
 
     ArrayList<Location> mLocationArray = appLocationManager.getLocArray();
-    static GPSHandler appLocationManager = appLocationManager = MainActivity.appLocationManager;
+    static GPSHandler appLocationManager  = MainActivity.appLocationManager;
 
     public DrawView(Context context) {
         super(context);
         paint.setColor(Color.BLACK);
         paint.setStrokeWidth(5);
-//        Layout layout = (LinearLayout) this;
-//
-//        //set the properties for button
-//        Button btnTag = new Button(this);
-//        btnTag.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-//        btnTag.setText("Button");
-//        btnTag.setId(some_random_id);
-//
-//        //add button to the layout
-//        layout.addView(btnTag);
+
     }
 
     @Override

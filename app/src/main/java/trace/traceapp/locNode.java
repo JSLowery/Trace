@@ -85,15 +85,6 @@ public class locNode {
             db.insertLoc(values);
         Log.i("test", "Hi my name is "+ locName + " and I stored myself");
     }
-    /*public void setLocationCoord(float latitude, float longitude) {
-        this.locLatCoord = latitude;
-        this.locLongCoord = longitude;
-    }*/
-
-
-    
-
-
 
     
 }
