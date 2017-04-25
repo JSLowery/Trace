@@ -97,15 +97,6 @@ public class MainActivity extends AppCompatActivity
             Log.i("testfile", "made a new GPSHANDLER");
         }
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                updateUI();
-                Snackbar.make(view, "Write something here!", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
 
         statsdb = StatsDB2.getInstance(getApplicationContext());
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
