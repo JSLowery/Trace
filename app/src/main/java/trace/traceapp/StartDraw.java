@@ -7,8 +7,16 @@ package trace.traceapp;
 
 import android.app.Activity;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Rect;
+import android.media.MediaScannerConnection;
+
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v4.content.ContextCompat;
 
 import android.app.Activity;
@@ -48,6 +56,10 @@ import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import static android.Manifest.permission_group.LOCATION;
@@ -92,11 +104,113 @@ public class StartDraw extends Activity {
             @Override
             public void onClick(View view) {
 
+                File folder = new File(Environment.getExternalStorageDirectory().toString());
+                boolean success = false;
+                if (!folder.exists())
+                {
+                    success = folder.mkdirs();
+                }
+
+                System.out.println(success+"folder");
+
+                File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).toString() + "/sample.png");
+
+                if ( !file.exists() )
+                {
+                    try {
+                        success = file.createNewFile();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                System.out.println(success+"file");
+
+
+
+                FileOutputStream ostream = null;
+                try
+                {
+                    ostream = new FileOutputStream(file);
+
+                    System.out.println(ostream);
+                    View targetView = drawView;
+
+                    // myDrawView.setDrawingCacheEnabled(true);
+                    //   Bitmap save = Bitmap.createBitmap(myDrawView.getDrawingCache());
+                    //   myDrawView.setDrawingCacheEnabled(false);
+                    // copy this bitmap otherwise distroying the cache will destroy
+                    // the bitmap for the referencing drawable and you'll not
+                    // get the captured view
+                    //   Bitmap save = b1.copy(Bitmap.Config.ARGB_8888, false);
+                    //BitmapDrawable d = new BitmapDrawable(b);
+                    //canvasView.setBackgroundDrawable(d);
+                    //   myDrawView.destroyDrawingCache();
+                    // Bitmap save = myDrawView.getBitmapFromMemCache("0");
+                    // myDrawView.setDrawingCacheEnabled(true);
+                    //Bitmap save = myDrawView.getDrawingCache(false);
+                    Bitmap well = drawView.getBitmap();
+                    Bitmap save = Bitmap.createBitmap(320, 480, Bitmap.Config.ARGB_8888);
+                    Paint paint = new Paint();
+                    paint.setColor(Color.WHITE);
+                    Canvas now = new Canvas(save);
+                    now.drawRect(new Rect(0,0,320,480), paint);
+                    now.drawBitmap(well, new Rect(0,0,well.getWidth(),well.getHeight()), new Rect(0,0,320,480), null);
+
+                    // Canvas now = new Canvas(save);
+                    //myDrawView.layout(0, 0, 100, 100);
+                    //myDrawView.draw(now);
+                    if(save == null) {
+                        System.out.println("NULL bitmap save\n");
+                    }
+                    save.compress(Bitmap.CompressFormat.PNG, 100, ostream);
+                    //scanPhoto("sample.png");
+                    //bitmap.compress(Bitmap.CompressFormat.PNG, 100, ostream);
+                    ostream.flush();
+                    ostream.close();
+                }catch (NullPointerException e)
+                {
+                    e.printStackTrace();
+                    Toast.makeText(getApplicationContext(), "Null error", Toast.LENGTH_SHORT).show();
+                }
+
+                catch (FileNotFoundException e)
+                {
+                    e.printStackTrace();
+                    Toast.makeText(getApplicationContext(), "File error", Toast.LENGTH_SHORT).show();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+
             }
         });
 
     }
+    public void scanPhoto(final String imageFileName) {
+         MediaScannerConnection msConn = null;
+        final MediaScannerConnection.MediaScannerConnectionClient msConC = new MediaScannerConnection.MediaScannerConnectionClient() {
+            public void onMediaScannerConnected() {
+                //msConn.scanFile(imageFileName, null);
+                final Boolean flag = false;
+                Log.i("msClient",
+                        "connection established");
+            }
 
+            public void onScanCompleted(String path, Uri uri) {
+               // msConn.disconnect();
+                //flag = new Boolean(true);
+                Log.i("msClient", "scan completed");
+            }
+        };
+         msConn = new MediaScannerConnection(this,msConC);
+        msConn.connect();
+        msConn.scanFile(imageFileName, null);
+
+
+//        msConn.scanFile(imageFileName, null);
+//        msConn.disconnect();
+    }
     @Override
     public void onResume() {
         super.onResume();  // Always call the superclass method first

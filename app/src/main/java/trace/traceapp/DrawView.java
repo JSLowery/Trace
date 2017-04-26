@@ -4,6 +4,7 @@ package trace.traceapp;
  * Created by Drew on 3/21/2017.
  */
 
+import android.graphics.Bitmap;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
@@ -56,7 +57,12 @@ public class DrawView extends View {
     }
     public void init(Context context){
         paint.setColor(Color.BLACK);
-        paint.setStrokeWidth(5);
+        paint.setStrokeWidth(9);
+        paint.setAntiAlias(true);
+        paint.setDither(true);
+        paint.setStrokeCap(Paint.Cap.ROUND);
+        paint.setStrokeJoin(Paint.Join.ROUND);
+        paint.setStyle(Paint.Style.STROKE);
         //mLocationArray = appLocationManager.getLocArray();
         if (mLocationArray == null){
             mLocationArray = new ArrayList<>();
@@ -129,20 +135,28 @@ public class DrawView extends View {
                 yNext = yPrev + yChange;
                 canvas.drawLine(xPrev, yPrev, xNext, yNext, paint);//draw line from (xPrev,yPrev) to (xNext,yNext)
                 //output for testing
-                Log.d(TAG, "Distance " + String.valueOf(i) + "........" + String.valueOf(dist));
-                Log.d(TAG, "Bearing " + String.valueOf(i) + "........." + String.valueOf(angle));
-                Log.d(TAG, "Theta (rads) " + String.valueOf(i) + "...." + String.valueOf(findTheta(angle)));
-                Log.d(TAG, "Sin " + String.valueOf(i) + "............." + String.valueOf(Math.sin(degToRad(angle))));
-                Log.d(TAG, "xPrev " + String.valueOf(i) + "..........." + String.valueOf(xPrev));
-                Log.d(TAG, "yPrev " + String.valueOf(i) + "..........." + String.valueOf(yPrev));
-                Log.d(TAG, "xChange " + String.valueOf(i) + "........." + String.valueOf(xChange));
-                Log.d(TAG, "yChange " + String.valueOf(i) + "........." + String.valueOf(yChange));
+//                Log.d(TAG, "Distance " + String.valueOf(i) + "........" + String.valueOf(dist));
+//                Log.d(TAG, "Bearing " + String.valueOf(i) + "........." + String.valueOf(angle));
+//                Log.d(TAG, "Theta (rads) " + String.valueOf(i) + "...." + String.valueOf(findTheta(angle)));
+//                Log.d(TAG, "Sin " + String.valueOf(i) + "............." + String.valueOf(Math.sin(degToRad(angle))));
+//                Log.d(TAG, "xPrev " + String.valueOf(i) + "..........." + String.valueOf(xPrev));
+//                Log.d(TAG, "yPrev " + String.valueOf(i) + "..........." + String.valueOf(yPrev));
+//                Log.d(TAG, "xChange " + String.valueOf(i) + "........." + String.valueOf(xChange));
+//                Log.d(TAG, "yChange " + String.valueOf(i) + "........." + String.valueOf(yChange));
                 //loop until end of (lat,long) points
             }
         }
         //END
     }
+    public Bitmap getBitmap() {
+        this.setDrawingCacheEnabled(true);
+        this.buildDrawingCache();
+        Bitmap bmp = Bitmap.createBitmap(this.getDrawingCache());
+        this.setDrawingCacheEnabled(false);
 
+
+        return bmp;
+    }
     @Override
     protected void onSizeChanged(int w, int h, int oldW, int oldH) {
         this.w = w;
