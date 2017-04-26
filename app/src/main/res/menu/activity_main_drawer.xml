@@ -17,7 +17,7 @@
             <item
                 android:id="@+id/nav_share"
                 android:icon="@drawable/ic_menu_share"
-                android:title="Share" />
+                android:title="Trace" />
             <item
                 android:id="@+id/nav_savecanvas"
                 android:icon="@drawable/ic_menu_send"

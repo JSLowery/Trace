@@ -12,9 +12,13 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
 import java.util.ArrayList;
 
@@ -30,17 +34,34 @@ public class DrawView extends View {
     private int h;
     private double metPerPx;
     private static final double downScale = 1.2;
-
-    ArrayList<Location> mLocationArray = appLocationManager.getLocArray();
     static GPSHandler appLocationManager  = MainActivity.appLocationManager;
+    ArrayList<Location> mLocationArray = new ArrayList();
+
+
+
+
 
     public DrawView(Context context) {
         super(context);
-        paint.setColor(Color.BLACK);
-        paint.setStrokeWidth(5);
-
+        init(context);
+    }
+    public DrawView(Context context, AttributeSet attrs) {
+        super(context, attrs);
+        init(context);
     }
 
+    public DrawView(Context context, AttributeSet attrs, int defStyle) {
+        super(context, attrs, defStyle);
+        init(context);
+    }
+    public void init(Context context){
+        paint.setColor(Color.BLACK);
+        paint.setStrokeWidth(5);
+        //mLocationArray = appLocationManager.getLocArray();
+        if (mLocationArray == null){
+            mLocationArray = new ArrayList<>();
+        }
+    }
     @Override
     public void onDraw(Canvas canvas) {
         int xPrev, yPrev;
@@ -52,8 +73,8 @@ public class DrawView extends View {
         double latRange[] = new double[2];
 
         appLocationManager = MainActivity.appLocationManager;
-        mLocationArray =appLocationManager.getLocArray();
-
+        mLocationArray = new ArrayList<>();
+        mLocationArray = appLocationManager.getLocArray();
         if (mLocationArray.size() > 1) {
             //BEGIN to find how many meters per pixel for scale
             populateLatList();

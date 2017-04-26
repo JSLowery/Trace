@@ -35,6 +35,9 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.google.android.gms.common.ConnectionResult;
@@ -55,7 +58,9 @@ public class StartDraw extends Activity {
     static GPSHandler appLocationManager; //= MainActivity.appLocationManager;
     //ArrayList<Location> mLocationArray = appLocationManager.getLocArray();
     int arraySize;
-
+    private DrawView customView;
+    private Button clearDrawingBtn;
+    private Button saveDrawingBtn;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,9 +72,29 @@ public class StartDraw extends Activity {
         drawView = new DrawView(this);
 
         drawView.setBackgroundColor(Color.WHITE);
-        setContentView(drawView);
+        setContentView(R.layout.custom_layout_draw);
         drawView.setWillNotDraw(false);
         arraySize = drawView.getLocArraySize();
+        drawView = (DrawView)findViewById(R.id.custom_view);
+        clearDrawingBtn = (Button)findViewById(R.id.clear_drawing);
+        clearDrawingBtn.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        appLocationManager.clearLocArray();
+                        drawView.invalidate();
+                        arraySize = drawView.getLocArraySize();
+                    }
+                }
+        );
+        saveDrawingBtn = (Button)findViewById(R.id.save_drawing);
+        saveDrawingBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
+
     }
 
     @Override
@@ -91,7 +116,7 @@ public class StartDraw extends Activity {
     private Runnable runnable = new Runnable() {
         public void run() {
             drawView.invalidate();
-
+            Log.i("test", "i am running");
             arraySize = drawView.getLocArraySize();
 
             handler.postAtTime(runnable, System.currentTimeMillis()+interval);
