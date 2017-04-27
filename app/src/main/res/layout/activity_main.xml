@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.DrawerLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/drawer_layout"
@@ -7,66 +8,25 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     tools:openDrawer="start">
-    <android.support.design.widget.NavigationView
-        android:id="@+id/nav_view"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_gravity="start"
-        android:fitsSystemWindows="true"
-        app:headerLayout="@layout/nav_header_main"
-        app:menu="@menu/activity_main_drawer" />
+<!--
     <FrameLayout
         android:id="@+id/content_frame"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/tracemainactivity">
+
         <LinearLayout
+            android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-            <include
-                layout="@layout/app_bar_main"
+            <include layout="@layout/app_bar_main"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-            <RelativeLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="100dp"
-                android:orientation="vertical"
-                android:padding="50dp"
-                android:paddingBottom="50dp">
+                android:layout_height="50dp"/>
 
-                    <EditText
-                        android:id="@+id/usernameEdit"
-                        android:layout_width="175dp"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:ems="10"
-                        android:inputType="textPersonName"
-                        android:text="Enter Name" />
-
-                    <Button
-                        android:id="@+id/usernameButton"
-                        android:layout_width="72dp"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:paddingTop="10dp"
-                        android:text="Enter" />
-            </RelativeLayout>
-        </LinearLayout>
-    </FrameLayout>
-    <!--
-    <ScrollView
-        android:id="@+id/login_form"
-        android:layout_width="300dp"
-        android:layout_height="400dp">
-        <RelativeLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-            <EditText
+              <EditText
                 android:id="@+id/usernameEdit"
                 android:layout_width="175dp"
-                android:layout_height="wrap_content"
+                android:layout_height="500dp"
                 android:layout_gravity="center"
                 android:ems="10"
                 android:inputType="textPersonName"
@@ -75,24 +35,89 @@
             <Button
                 android:id="@+id/usernameButton"
                 android:layout_width="72dp"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_gravity="center"
                 android:paddingTop="10dp"
                 android:text="Enter" />
-        </RelativeLayout>
-    </ScrollView>
+
+        </LinearLayout>
+    </FrameLayout>
+    <LinearLayout
+        android:layout_width="304dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="left|start"
+        android:fitsSystemWindows="true">
+
+        <android.support.design.widget.NavigationView
+            android:id="@+id/nav_view"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="start"
+            android:fitsSystemWindows="true"
+            app:headerLayout="@layout/nav_header_main"
+            app:menu="@menu/activity_main_drawer" />
+    </LinearLayout>
+-->
+
 
     <FrameLayout
         android:id="@+id/content_frame"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/tracemainactivity">
+    <!-- Your normal content view -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <include layout="@layout/app_bar_main"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"/>
+
+        <EditText
+            android:id="@+id/usernameEdit"
+            android:layout_width="175dp"
+            android:layout_height="500dp"
+            android:layout_gravity="center"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:text="Enter Name" />
+
+        <Button
+            android:id="@+id/usernameButton"
+            android:layout_width="72dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:paddingTop="10dp"
+            android:text="Enter"
+            android:visibility="visible" />
+
+
+        <!-- The rest of your content view -->
+
+    </LinearLayout>
+
+    <!-- Your drawer view. This can be any view, LinearLayout
+         is just an example. As we have set fitSystemWindows=true
+         this will be displayed under the status bar. -->
 
     </FrameLayout>
+    <LinearLayout
+        android:layout_width="304dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="left|start"
+        android:fitsSystemWindows="true">
 
-    -->
-
-
+        <!-- Your drawer content -->
+        <android.support.design.widget.NavigationView
+            android:id="@+id/nav_view"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="start"
+            android:fitsSystemWindows="true"
+            app:headerLayout="@layout/nav_header_main"
+            app:menu="@menu/activity_main_drawer" />
+    </LinearLayout>
 </android.support.v4.widget.DrawerLayout>
 
 
