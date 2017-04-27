@@ -7,24 +7,34 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     tools:openDrawer="start">
-    <include
-        layout="@layout/app_bar_main"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+    <android.support.design.widget.NavigationView
+        android:id="@+id/nav_view"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:fitsSystemWindows="true"
+        app:headerLayout="@layout/nav_header_main"
+        app:menu="@menu/activity_main_drawer" />
     <FrameLayout
         android:id="@+id/content_frame"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/tracemainactivity">
-
-            <ScrollView
-                android:id="@+id/login_form"
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <include
+                layout="@layout/app_bar_main"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+            <RelativeLayout
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                android:layout_height="wrap_content"
+                android:layout_margin="100dp"
+                android:orientation="vertical"
+                android:padding="50dp"
+                android:paddingBottom="50dp">
+
                     <EditText
                         android:id="@+id/usernameEdit"
                         android:layout_width="175dp"
@@ -41,18 +51,48 @@
                         android:layout_gravity="center"
                         android:paddingTop="10dp"
                         android:text="Enter" />
-                </LinearLayout>
-            </ScrollView>
+            </RelativeLayout>
+        </LinearLayout>
+    </FrameLayout>
+    <!--
+    <ScrollView
+        android:id="@+id/login_form"
+        android:layout_width="300dp"
+        android:layout_height="400dp">
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <EditText
+                android:id="@+id/usernameEdit"
+                android:layout_width="175dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:ems="10"
+                android:inputType="textPersonName"
+                android:text="Enter Name" />
+
+            <Button
+                android:id="@+id/usernameButton"
+                android:layout_width="72dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:paddingTop="10dp"
+                android:text="Enter" />
+        </RelativeLayout>
+    </ScrollView>
+
+    <FrameLayout
+        android:id="@+id/content_frame"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/tracemainactivity">
+
     </FrameLayout>
 
-    <android.support.design.widget.NavigationView
-        android:id="@+id/nav_view"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_gravity="start"
-        android:fitsSystemWindows="true"
-        app:headerLayout="@layout/nav_header_main"
-        app:menu="@menu/activity_main_drawer" />
+    -->
+
+
 </android.support.v4.widget.DrawerLayout>
 
 

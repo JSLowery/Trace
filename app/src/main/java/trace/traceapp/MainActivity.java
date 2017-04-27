@@ -105,7 +105,6 @@ public class MainActivity extends AppCompatActivity
         statsdb = StatsDB2.getInstance(getApplicationContext());
         final EditText nameTxt = (EditText) findViewById(R.id.usernameEdit);
         final Button nameBut = (Button) findViewById(R.id.usernameButton);
-        nameTxt.setPadding(0,75,0,0);
         //nameTxt.setVisibility(View.VISIBLE);
         //nameBut.setVisibility(View.VISIBLE);
         //only display the login the first run of app
