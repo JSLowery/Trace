@@ -82,8 +82,8 @@ public class GPSHandler implements GoogleApiClient.ConnectionCallbacks, OnConnec
             Environment.DIRECTORY_DOCUMENTS));
     private Context context;
     public GPSHandler(Context context) {
-        dbstats = new StatsDB2(context);
         this.context = context;
+        dbstats = new StatsDB2(context);
         if (mGoogleApiClient == null) {
             mGoogleApiClient = new GoogleApiClient.Builder(context)
                     .addConnectionCallbacks(this)

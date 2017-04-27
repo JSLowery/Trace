@@ -26,6 +26,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -65,6 +67,8 @@ public class MainActivity extends AppCompatActivity
             DrawView drawView;
     // end google api stuff
     static GPSHandler appLocationManager;
+    private String dummyNameToInitDB;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -97,8 +101,51 @@ public class MainActivity extends AppCompatActivity
             Log.i("testfile", "made a new GPSHANDLER");
         }
 
-
+        //get instance of the database
         statsdb = StatsDB2.getInstance(getApplicationContext());
+        final EditText nameTxt = (EditText) findViewById(R.id.usernameEdit);
+        final Button nameBut = (Button) findViewById(R.id.usernameButton);
+        nameTxt.setPadding(0,75,0,0);
+        //nameTxt.setVisibility(View.VISIBLE);
+        //nameBut.setVisibility(View.VISIBLE);
+        //only display the login the first run of app
+        //first run when db is initialized to name
+        if(statsdb.getName() == "name") {
+            //enter username in the textfield and hit button to enter it
+            //final EditText nameTxt = (EditText) findViewById(R.id.usernameEdit);
+            //final Button nameBut = (Button) findViewById(R.id.usernameButton);
+            //nameTxt.setVisibility(View.VISIBLE);
+            //nameBut.setVisibility(View.VISIBLE);
+            nameBut.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    String thename = nameTxt.getText().toString().trim();
+                    if (thename != "") {
+                        //set dummy private variable
+                        dummyNameToInitDB = thename;
+                        //set text in mainactivity
+                        //TextView welcomeText = (TextView)findViewById(R.id.);
+                        //set text in drawer
+                        //init db in onstart()
+                        TextView unameDrawerText = (TextView) findViewById(R.id.usernameDrawer);
+                        unameDrawerText.setText(thename);
+
+                        // second approach---something with intents
+                        nameTxt.setVisibility(View.INVISIBLE);
+                        nameBut.setVisibility(View.INVISIBLE);
+
+                    }
+                }
+            });
+        }
+        else {
+            //hide the name field and enter button if user already entered it
+            //final EditText nameTxt = (EditText) findViewById(R.id.usernameEdit);
+            //final Button nameBut = (Button) findViewById(R.id.usernameButton);
+            nameTxt.setVisibility(View.INVISIBLE);
+            nameBut.setVisibility(View.INVISIBLE);
+            dummyNameToInitDB = null;
+        }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close){
@@ -166,7 +213,7 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_stats) {
-            //statsdb.updateName("asdjfk;");
+            //statsdb.updateName("name");
             //TextView name = (TextView) findViewById(R.id.username);
             //name.setText(statsdb.getName());
             startActivity(new Intent(MainActivity.this, StatsActivity.class));
@@ -185,6 +232,8 @@ public class MainActivity extends AppCompatActivity
     protected void onStart() {
         Log.i("testFile", "Main called get from file");
         appLocationManager.getFromFile();
+        if(dummyNameToInitDB != null)
+            statsdb.updateName(dummyNameToInitDB);
         super.onStart();
     }
 
@@ -298,6 +347,13 @@ public class MainActivity extends AppCompatActivity
         Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
     }
 
+    public StatsDB2 getStatsdb(){
+        return this.statsdb;
+    }
+    public void updateStatsDBName(String name){
+        //cannot be done in oncreate but maybe in a function???
+        statsdb.updateName(name);
+    }
 //    class AddressResultReceiver extends ResultReceiver {
 //        public AddressResultReceiver(Handler handler) {
 //            super(handler);

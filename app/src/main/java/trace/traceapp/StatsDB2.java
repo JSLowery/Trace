@@ -118,12 +118,12 @@ public class StatsDB2 extends SQLiteOpenHelper {
     }
 
     public void updateName(String name){
-        if(mDB != null) {
+        //if(mDB != null) {
             mDB = this.getWritableDatabase();
             ContentValues values = new ContentValues();
             values.put(FIELD_NAME_STATS, name);
             mDB.update(DATABASE_TABLE_STATS, values, null, null);
-        }
+        //}
     }
 
     public void updateHomeName(String homename){
