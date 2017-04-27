@@ -126,6 +126,9 @@ public class GPSHandler implements GoogleApiClient.ConnectionCallbacks, OnConnec
 //            loc.storeSelf(context);
 //        }
     }
+    public void delLocNode(int x){
+        locNodeArr.remove(x);
+    }
     public void dumpToFile(){
 
 

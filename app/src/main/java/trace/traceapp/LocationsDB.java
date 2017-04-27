@@ -140,7 +140,7 @@ public class LocationsDB extends SQLiteOpenHelper {
     }
     public void remNode(String name){
         String stmt = "DELETE FROM " + LOCNODE_TABLE+
-                " WHERE " + FIELD_NAME + " + '" + name + "';";
+                " WHERE " + FIELD_NAME + " = '" + name + "';";
         mDB.execSQL(stmt);
     }
     /** Returns all the locations from the table LocNode */

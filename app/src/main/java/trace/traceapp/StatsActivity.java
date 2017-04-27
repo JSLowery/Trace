@@ -1,5 +1,8 @@
 package trace.traceapp;
 
+import android.content.DialogInterface;
+import android.location.Location;
+import android.provider.CalendarContract;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -55,7 +58,9 @@ public class StatsActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 //Toast.makeText(getBaseContext(), "I was clicked", Toast.LENGTH_SHORT).show();
-                openDialog();
+                System.out.println(position);
+
+                openDialog(position);
             }
         });
 
@@ -94,15 +99,32 @@ public class StatsActivity extends AppCompatActivity {
 
     //query statement to get most visited location.
 
-    void openDialog() {
-        locNode locationDialog = new locNode();
+    void openDialog(int x) {
+        ArrayList<locNode> LNarr = appLocationManager.getLocNodeArr();
+        final locNode locationDialog = LNarr.get(x);
+        final int y = x;
        // Cursor c = LocationsDB.rawQuery("SELECT FROM WHERE);
         new AlertDialog.Builder(this)
                 .setTitle("Address")
-                .setMessage(locationDialog.getLocName())//insert address
+                .setMessage(locationDialog.getLocAddress())//insert address
                 .setPositiveButton("Confirm", null)
-                .setNegativeButton("Delete", null) //supposed to delete current entry
+                .setNegativeButton("Delete", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        LocationsDB db = LocationsDB.getInstance(getApplicationContext());
+                        db.remNode(locationDialog.getLocName());
+                        appLocationManager.delLocNode(y);
+
+                        //onCreate(new Bundle());
+                        //get Array index, get string from element
+                        //db.remNode(LocationsDB.FIELD_NAME);
+                        //System.out.println(getParent().getString());
+                    }
+                }) //supposed to delete current entry
                 .create().show();
+                //onCreate(new Bundle());
+        //applicationCOntext()
+        //getLocNode, LocationDB db db.remLoc(getthe name)
     }
 
     public void loadImagefromGallery(View view) {
