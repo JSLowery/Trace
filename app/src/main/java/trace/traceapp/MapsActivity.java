@@ -144,7 +144,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             public boolean onMyLocationButtonClick() {
 
-                return true;
+                return false;
             }
         });
 
