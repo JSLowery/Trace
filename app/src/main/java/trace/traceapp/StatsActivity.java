@@ -27,6 +27,7 @@ public class StatsActivity extends AppCompatActivity {
     private static int RESULT_LOAD_IMG = 1;
     String imgDecodableString;
     StatsDB2 statsdb;
+    String[] listItems;
 
     private ListView locListView;
     @Override
@@ -39,9 +40,22 @@ public class StatsActivity extends AppCompatActivity {
         // 1 loads a list of Location objects from a JSON asset in the app
         //contains a Location class that contains all the information
         //about the locations to be displayed.
-        final ArrayList<locNode> locationList = appLocationManager.getLocNodeArr();
+
         // 2 creates an array of strings that will contain the text to be displayed.
-        String[] listItems = new String[locationList.size()];
+       displaylist();
+
+        TextView nameText = (TextView) findViewById(R.id.usernameStats);
+        nameText.setText("Name: " + statsdb.getName());
+        TextView distanceText = (TextView) findViewById(R.id.tdistanceStats);
+        distanceText.setText("Traveled: " + statsdb.getDistance() + "mi");
+        // 4 creates and sets a simpl adapter for the listView.
+        //it takes in the current context, a layout file what each row should look like
+        // and the data that will populate the list as arguments.
+
+    }
+    public void displaylist(){
+        final ArrayList<locNode> locationList = appLocationManager.getLocNodeArr();
+        listItems = new String[locationList.size()];
 
         // 3 Populates the listView with the titles of the locations lodaed in section one.
         for (int i =0; i< locationList.size(); i++)
@@ -63,20 +77,11 @@ public class StatsActivity extends AppCompatActivity {
                 openDialog(position);
             }
         });
-
-        TextView nameText = (TextView) findViewById(R.id.usernameStats);
-        nameText.setText("Name: " + statsdb.getName());
-        TextView distanceText = (TextView) findViewById(R.id.tdistanceStats);
-        distanceText.setText("Traveled: " + statsdb.getDistance() + "mi");
-        // 4 creates and sets a simpl adapter for the listView.
-        //it takes in the current context, a layout file what each row should look like
-        // and the data that will populate the list as arguments.
         ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, listItems);
         //ArrayAdapter subadapter = new ArrayAdapter(this, android.R.layout.simple_list_item_2, listItems);
         locListView.setAdapter(adapter);
         //locListView.setAdapter(subadapter);
     }
-
     //An adapter loads information to be displayed from a data source, then inserts
     //the views into the listView.
     //ListView is a subclass of AdapterView.
@@ -114,7 +119,7 @@ public class StatsActivity extends AppCompatActivity {
                         LocationsDB db = LocationsDB.getInstance(getApplicationContext());
                         db.remNode(locationDialog.getLocName());
                         appLocationManager.delLocNode(y);
-
+                        displaylist();
                         //onCreate(new Bundle());
                         //get Array index, get string from element
                         //db.remNode(LocationsDB.FIELD_NAME);
