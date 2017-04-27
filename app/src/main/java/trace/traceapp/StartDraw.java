@@ -60,7 +60,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
 
 import static android.Manifest.permission_group.LOCATION;
 import static java.util.concurrent.TimeUnit.NANOSECONDS;
@@ -113,7 +116,9 @@ public class StartDraw extends Activity {
 
                 System.out.println(success+"folder");
 
-                File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).toString() + "/sample.png");
+                File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).toString() +"/"+
+                        (new SimpleDateFormat("yyyyMMdd_HHmmss", Locale
+                        .getDefault())).format(new Date()) +  ".png");
 
                 if ( !file.exists() )
                 {
@@ -181,7 +186,10 @@ public class StartDraw extends Activity {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-
+                Intent intent =
+                        new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+                intent.setData(Uri.fromFile(file));
+                sendBroadcast(intent);
 
             }
         });
