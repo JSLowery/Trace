@@ -26,6 +26,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import android.widget.ShareActionProvider;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -61,7 +62,7 @@ public class MainActivity extends AppCompatActivity
     protected boolean mAddressRequested;
     protected TextView mLocationAddressTextView;
     protected FragmentManager fm;
-            DrawView drawView;
+    DrawView drawView;
     // end google api stuff
     static GPSHandler appLocationManager;
     @Override
@@ -120,10 +121,6 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        //begin the Google API stuff, this is for a test
-        //locationClient = new LocationClient(this, this, this);//this is no longer part of andriod... fuck
-
-        //stuff for getting location
         updateValuesFromBundle(savedInstanceState);
 
     }
@@ -142,6 +139,11 @@ public class MainActivity extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
+        // Inflate menu resource file.
+       // getMenuInflater().inflate(R.menu.main, menu);
+
+
+
         return true;
     }
 
@@ -176,9 +178,9 @@ public class MainActivity extends AppCompatActivity
             startActivity(new Intent(MainActivity.this, MapsActivity.class));
         }  else if (id == R.id.nav_share) {
             startActivity(new Intent(MainActivity.this, StartDraw.class));
-        } else if (id == R.id.nav_savecanvas) {
-
         }
+
+
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);

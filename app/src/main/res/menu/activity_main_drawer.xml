@@ -4,24 +4,21 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_stats"
-            android:icon="@drawable/ic_menu_camera"
+            android:icon="@drawable/ic_menu_manage"
             android:title="Stats" />
-        <item
-            android:id="@+id/nav_mapview"
-            android:icon="@drawable/ic_menu_gallery"
-            android:title="Map View" />
+
     </group>
 
-    <item android:title="Communicate">
+    <item android:title="Maps">
         <menu>
             <item
                 android:id="@+id/nav_share"
-                android:icon="@drawable/ic_menu_share"
+                android:icon="@drawable/ic_menu_gallery"
                 android:title="Trace" />
             <item
-                android:id="@+id/nav_savecanvas"
-                android:icon="@drawable/ic_menu_send"
-                android:title="Save Canvas" />
+                android:id="@+id/nav_mapview"
+                android:icon="@drawable/ic_menu_gallery"
+                android:title="Map View" />
         </menu>
     </item>
 

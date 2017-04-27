@@ -20,13 +20,13 @@
 
         <Button
             android:id="@+id/clear_drawing"
-            android:layout_width="147dp"
+            android:layout_width="120dp"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_toEndOf="@+id/save_drawing"
-            android:layout_weight="0.40"
             android:textAppearance="@style/Widget.MediaRouter.ControllerText.Secondary.Light"
             android:text="Clear Drawing" />
+
     </RelativeLayout>
 
     <trace.traceapp.DrawView

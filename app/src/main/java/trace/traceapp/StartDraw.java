@@ -187,6 +187,7 @@ public class StartDraw extends Activity {
         });
 
     }
+
     public void scanPhoto(final String imageFileName) {
          MediaScannerConnection msConn = null;
         final MediaScannerConnection.MediaScannerConnectionClient msConC = new MediaScannerConnection.MediaScannerConnectionClient() {
