@@ -1,7 +1,9 @@
 package trace.traceapp;
 
+import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.content.Intent;
@@ -12,6 +14,8 @@ import android.widget.ImageView;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.widget.TextView;
+import android.widget.Toast;
+import android.app.AlertDialog;
 
 import java.util.ArrayList;
 
@@ -46,6 +50,15 @@ public class StatsActivity extends AppCompatActivity {
             //God I hate putting whitespaces with the space bar. Could not remember the format
             //to add whitespace before the text. Really messy but whatever for now.
         }
+        //when someone clicks on a list item
+        locListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                //Toast.makeText(getBaseContext(), "I was clicked", Toast.LENGTH_SHORT).show();
+                openDialog();
+            }
+        });
+
         TextView nameText = (TextView) findViewById(R.id.usernameStats);
         nameText.setText("Name: " + statsdb.getName());
         TextView distanceText = (TextView) findViewById(R.id.tdistanceStats);
@@ -80,6 +93,17 @@ public class StatsActivity extends AppCompatActivity {
     //query statement to get total distance and place double into text view.
 
     //query statement to get most visited location.
+
+    void openDialog() {
+        locNode locationDialog = new locNode();
+       // Cursor c = LocationsDB.rawQuery("SELECT FROM WHERE);
+        new AlertDialog.Builder(this)
+                .setTitle("Address")
+                .setMessage(locationDialog.getLocName())//insert address
+                .setPositiveButton("Confirm", null)
+                .setNegativeButton("Delete", null) //supposed to delete current entry
+                .create().show();
+    }
 
     public void loadImagefromGallery(View view) {
         // Create intent to Open Image applications like Gallery, Google Photos
