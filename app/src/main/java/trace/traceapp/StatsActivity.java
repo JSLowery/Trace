@@ -112,7 +112,7 @@ public class StatsActivity extends AppCompatActivity {
         new AlertDialog.Builder(this)
                 .setTitle("Address")
                 .setMessage(locationDialog.getLocAddress())//insert address
-                .setPositiveButton("Confirm", null)
+                .setPositiveButton("Cancel", null)
                 .setNegativeButton("Delete", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
