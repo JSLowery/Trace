@@ -116,7 +116,7 @@ public class MainActivity extends AppCompatActivity
                 TextView unameDrawerText = (TextView) findViewById(R.id.usernameDrawer);
                 TextView distanceDrawerText = (TextView) findViewById(R.id.totalDistanceDrawer);
                 unameDrawerText.setText(statsdb.getName());
-                distanceDrawerText.setText("Traveled " + statsdb.getDistance() + "mi");
+                distanceDrawerText.setText("Traveled " + statsdb.getDistance() + "m");
                 //add image stuff here dave
             }
         };

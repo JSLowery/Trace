@@ -19,7 +19,7 @@ public class LocNodeFrag extends DialogFragment {
     static LocNodeFrag newInstance(){
         LocNodeFrag mLNF = new LocNodeFrag();
         Bundle args = new Bundle();
-        args.putString("title", "Dialog Frag");
+        args.putString("title", "Locations:");
         mLNF.setArguments(args);
         return mLNF;
     }

@@ -47,7 +47,7 @@ public class StatsActivity extends AppCompatActivity {
         TextView nameText = (TextView) findViewById(R.id.usernameStats);
         nameText.setText("Name: " + statsdb.getName());
         TextView distanceText = (TextView) findViewById(R.id.tdistanceStats);
-        distanceText.setText("Traveled: " + statsdb.getDistance() + "mi");
+        distanceText.setText("Traveled: " + statsdb.getDistance() + "m");
         // 4 creates and sets a simpl adapter for the listView.
         //it takes in the current context, a layout file what each row should look like
         // and the data that will populate the list as arguments.

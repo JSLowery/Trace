@@ -5,8 +5,12 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+
 import android.util.Log;
 import android.view.ViewDebug;
+
+import java.math.RoundingMode;
+import java.math.BigDecimal;
 
 /**
  * close the databaseeeeee after use
@@ -110,7 +114,10 @@ public class StatsDB2 extends SQLiteOpenHelper {
     public void updateDistance(double distance){
         //1 meter = 0.000621371 miles
         //convert to miles
-        distance *= 0.000621371;
+        distance = BigDecimal.valueOf(distance)
+                .setScale(1, RoundingMode.HALF_UP)
+                .doubleValue();
+        //distance *= 0.000621371;
         mDB = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(FIELD_TDISTANCE_STATS,distance);
@@ -160,6 +167,7 @@ public class StatsDB2 extends SQLiteOpenHelper {
         Cursor cursor = mDB.rawQuery(query,null);
         cursor.moveToFirst();
         final double dist = cursor.getDouble(cursor.getColumnIndex(FIELD_TDISTANCE_STATS));
+
         return dist;
     }
 
