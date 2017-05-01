@@ -241,7 +241,7 @@ public class GPSHandler implements GoogleApiClient.ConnectionCallbacks, OnConnec
         latitude = lat + "";
         accuracy = acc + "";
         if (location != null)
-        dbstats.updateDistance(location.distanceTo(lastKnownLocation));
+        dbstats.updateDistance(location.distanceTo(lastKnownLocation)+dbstats.getDistance());
         location = lastKnownLocation;
         provider = prov;
         bearing = lastKnownLocation.getBearing();
