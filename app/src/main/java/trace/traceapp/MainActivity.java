@@ -27,6 +27,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ShareActionProvider;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -66,6 +68,8 @@ public class MainActivity extends AppCompatActivity
     DrawView drawView;
     // end google api stuff
     static GPSHandler appLocationManager;
+    private String dummyNameToInitDB;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -106,6 +110,51 @@ public class MainActivity extends AppCompatActivity
 //
 
         statsdb = StatsDB2.getInstance(getApplicationContext());
+        //final EditText nameTxt = (EditText) findViewById(R.id.usernameEdit);
+        //final Button nameBut = (Button) findViewById(R.id.usernameButton);
+//nameTxt.setVisibility(View.VISIBLE);
+//nameBut.setVisibility(View.VISIBLE);
+//only display the login the first run of app
+//first run when db is initialized to name
+        dummyNameToInitDB = "";
+        if(statsdb.getName().equals("name")) {
+            //enter username in the textfield and hit button to enter it
+            final EditText nameTxt = (EditText) findViewById(R.id.usernameEdit);
+            final Button nameBut = (Button) findViewById(R.id.usernameButton);
+            nameBut.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    String thename = nameTxt.getText().toString().trim();
+                    if (!thename.equals("")) {
+                        //set dummy private variable
+                        dummyNameToInitDB = thename;
+                        //set text in mainactivity
+                        //TextView welcomeText = (TextView)findViewById(R.id.);
+                        //set text in drawer
+                        TextView unameDrawerText = (TextView) findViewById(R.id.usernameDrawer);
+                        unameDrawerText.setText(thename);
+
+
+
+                        //init db in onstart() with dummy variable
+
+                        // second approach---something with intents
+                        nameTxt.setVisibility(View.INVISIBLE);
+                        nameBut.setVisibility(View.INVISIBLE);
+
+                    }
+                }
+            });
+        }
+        else {
+            //hide the name field and enter button if user already entered it
+            final EditText nameTxt = (EditText) findViewById(R.id.usernameEdit);
+            final Button nameBut = (Button) findViewById(R.id.usernameButton);
+            nameTxt.setVisibility(View.INVISIBLE);
+            nameBut.setVisibility(View.INVISIBLE);
+            dummyNameToInitDB = "";
+        }
+
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close){
@@ -115,7 +164,8 @@ public class MainActivity extends AppCompatActivity
                 super.onDrawerOpened(drawerView);
                 TextView unameDrawerText = (TextView) findViewById(R.id.usernameDrawer);
                 TextView distanceDrawerText = (TextView) findViewById(R.id.totalDistanceDrawer);
-                unameDrawerText.setText(statsdb.getName());
+                if(!statsdb.getName().equals("name"))
+                    unameDrawerText.setText(statsdb.getName());
                 distanceDrawerText.setText("Traveled " + statsdb.getDistance() + "mi");
                 //add image stuff here dave
             }
@@ -193,6 +243,8 @@ public class MainActivity extends AppCompatActivity
     protected void onStart() {
         Log.i("testFile", "Main called get from file");
         appLocationManager.getFromFile();
+        if(!dummyNameToInitDB.equals(""))
+            statsdb.updateName(dummyNameToInitDB);
         super.onStart();
     }
 

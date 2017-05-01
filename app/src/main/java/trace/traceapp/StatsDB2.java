@@ -110,7 +110,7 @@ public class StatsDB2 extends SQLiteOpenHelper {
     public void updateDistance(double distance){
         //1 meter = 0.000621371 miles
         //convert to miles
-        distance *= 0.000621371;
+        //distance *= 0.000621371;
         mDB = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(FIELD_TDISTANCE_STATS,distance);
