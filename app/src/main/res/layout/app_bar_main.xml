@@ -15,9 +15,21 @@
             android:id="@+id/instructions"
             android:layout_width="match_parent"
             android:layout_height="300dp"
-            android:layout_gravity="center_vertical"
+            android:layout_gravity="bottom"
             android:scrollbars="vertical"
-            android:text="TextView\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n" />
+            android:text="Trace pulls location updates from the GPS to draw an image of your travels.  It also keeps track of locations that you save, and how frequent you visit them.  After you enter your name, you’re all set.  You could also add your picture on the stats page.
+\n\n
+Swipe left on the screen or hit the button in the top left corner to bring up the navigation menu. Select from one of these options:
+\n\n
+Trace\n
+Here you can view the image that draws as you go.  It will display a line representing your path and circles that represents destinations that you save along the way.  Tap on a circle to view it on the map.
+If you want to save your image, tap the save button and view it later in your photo gallery.  You can clear the drawing by tapping the clear button.
+\n\n
+Map\n
+See a real map with all of your saved locations displayed.  Move around and see the different locations that you’ve visited.
+\n\n
+To add a location, tap the save button in the top left corner.  Enter the name, and now, each time you are within a 60 meter radius of that location, it will increment the number of times you’ve visited it.
+            \n\nStats \nOn the stats page you can view all of the locations that you’ve been to and the total distance that you’ve traveled.  Tap the image with the plus sign to add your picture if you want to personalize your app more."/>
 
     </LinearLayout>
 
