@@ -21,6 +21,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -77,6 +78,9 @@ public class MainActivity extends AppCompatActivity
         }
         Log.i(TAG, "onCreate");
         setContentView(R.layout.activity_main);
+
+        TextView instructionTextView = (TextView) findViewById(R.id.instructions);
+        instructionTextView.setMovementMethod(new ScrollingMovementMethod());
 
 //        drawView = new DrawView(this);
 //        setContentView(drawView);
