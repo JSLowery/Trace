@@ -63,9 +63,6 @@ public class StatsActivity extends AppCompatActivity {
             locNode location = locationList.get(i);
             listItems[i] = location.getLocName() +
                     "                    \nTimes Visited: "+ location.getTimesVisit();
-            //listItems[i] = location.getTimesVisit()+"";
-            //God I hate putting whitespaces with the space bar. Could not remember the format
-            //to add whitespace before the text. Really messy but whatever for now.
         }
         //when someone clicks on a list item
         locListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
